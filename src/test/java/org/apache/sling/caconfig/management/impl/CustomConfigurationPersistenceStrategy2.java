@@ -158,7 +158,8 @@ public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPer
         
         // if resource collection parent properties are given replace them as well
         if (data.getProperties() != null) {
-            replaceProperties(configResourceParent, data.getProperties());
+            Resource propsResource = getOrCreateResource(resourceResolver, parentPath + "/colPropsResource", ValueMap.EMPTY);
+            replaceProperties(propsResource, data.getProperties());
         }
         
         commit(resourceResolver);

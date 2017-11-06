@@ -20,12 +20,16 @@ package org.apache.sling.caconfig.management.impl;
 
 import static org.apache.sling.caconfig.management.impl.CustomConfigurationPersistenceStrategy2.containsJcrContent;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy2;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.Constants;
+import org.osgi.service.cm.ConfigurationAdmin;
 
 /**
  * Test {@link ConfigurationManagerImpl} with custom persistence.
@@ -33,6 +37,16 @@ import org.osgi.framework.Constants;
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigurationManagerImplCustomPersistence2Test extends ConfigurationManagerImplTest {
     
+    @Override
+    protected void provideCustomOsgiConfig() throws Exception {
+        // provide custom lookup resource name for collection properties
+        ConfigurationAdmin configAdmin = context.getService(ConfigurationAdmin.class);
+        org.osgi.service.cm.Configuration mgmtSettingsConfig = configAdmin.getConfiguration(ConfigurationManagementSettingsImpl.class.getName());
+        Dictionary<String, Object> mgmtSettings = new Hashtable<>();
+        mgmtSettings.put("configCollectionPropertiesResourceNames", new String[] { "colPropsResource", "." });
+        mgmtSettingsConfig.update(mgmtSettings);
+    }
+
     @Before
     public void setUpCustomPersistence() {
         // custom strategy which redirects all config resources to a jcr:content subnode

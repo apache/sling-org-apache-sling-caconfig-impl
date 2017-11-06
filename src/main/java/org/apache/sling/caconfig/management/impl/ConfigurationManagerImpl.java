@@ -216,7 +216,13 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
         if (writebackConfigResourceCollectionParentPath != null) {
             Resource writebackConfigResourceCollectionParent = resource.getResourceResolver().getResource(writebackConfigResourceCollectionParentPath);
             if (writebackConfigResourceCollectionParent != null) {
-                resourceCollectionParentProps = writebackConfigResourceCollectionParent.getValueMap();
+                for (String resourceName : configurationManagementSettings.getConfigCollectionPropertiesResourceNames()) {
+                    Resource propsResource = writebackConfigResourceCollectionParent.getChild(resourceName);
+                    if (propsResource != null) {
+                        resourceCollectionParentProps = propsResource.getValueMap();
+                        break;
+                    }
+                }
             }
         }
         

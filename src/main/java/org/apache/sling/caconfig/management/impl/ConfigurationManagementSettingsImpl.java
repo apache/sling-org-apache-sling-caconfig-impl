@@ -19,6 +19,9 @@
 package org.apache.sling.caconfig.management.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,11 +51,17 @@ public class ConfigurationManagementSettingsImpl implements ConfigurationManagem
             "^jcr:.+$"
         };
 
+        @AttributeDefinition(name="Config collection parent properties resource names",
+                description = "Names of resource to try to look up configuration collection properties in. If list is empty only the collection parent resource is checked." +
+                              " If the list is not empty than only those listed resources are used for look up. If you want to include the collection parent resource you can use a dot for the value.")
+        String[] configCollectionPropertiesResourceNames();
+        
     }
     
     private static final Logger log = LoggerFactory.getLogger(ConfigurationManagementSettingsImpl.class);
     
     private Pattern[] ignorePropertyNameRegex;
+    private Collection<String> configCollectionPropertiesResourceNames;
     
     
     @Activate
@@ -66,7 +75,14 @@ public class ConfigurationManagementSettingsImpl implements ConfigurationManagem
                log.warn("Ignoring invalid regex pattern: " + patternString, ex);
            }
         }
+        
         this.ignorePropertyNameRegex = patterns.toArray(new Pattern[patterns.size()]);
+
+        String[] configCollectionPropertiesResourceNames = config.configCollectionPropertiesResourceNames();
+        if (configCollectionPropertiesResourceNames == null || configCollectionPropertiesResourceNames.length == 0) {
+            configCollectionPropertiesResourceNames = new String[] { "." };
+        }
+        this.configCollectionPropertiesResourceNames = Collections.unmodifiableList(Arrays.asList(configCollectionPropertiesResourceNames));
     }
     
     @Override
@@ -83,4 +99,9 @@ public class ConfigurationManagementSettingsImpl implements ConfigurationManagem
         return ignoredPropertyNames;
     }
 
+    @Override
+    public Collection<String> getConfigCollectionPropertiesResourceNames() {
+        return configCollectionPropertiesResourceNames;
+    }
+    
 }

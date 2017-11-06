@@ -18,6 +18,7 @@
  */
 package org.apache.sling.caconfig.management;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -34,5 +35,10 @@ public interface ConfigurationManagementSettings {
      * @return Property names that should be ignored/filtered out from the given set of property names.
      */
     Set<String> getIgnoredPropertyNames(Set<String> propertyNames);
+
+    /**
+     * @return Config collection parent properties resource names.
+     */
+    Collection<String> getConfigCollectionPropertiesResourceNames();
     
 }

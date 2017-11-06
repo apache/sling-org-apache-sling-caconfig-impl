@@ -81,7 +81,9 @@ public class ConfigurationManagerImplTest {
     private static final String CONFIG_NESTED_NAME = "testConfigNested";
    
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
+        provideCustomOsgiConfig();
+        
         context.registerService(ConfigurationMetadataProvider.class, configurationMetadataProvider);
         ConfigurationTestUtils.registerConfigurationResolver(context,
                 "configBucketNames", getAlternativeBucketNames());
@@ -194,6 +196,10 @@ public class ConfigurationManagerImplTest {
         when(configurationMetadataProvider.getConfigurationMetadata(CONFIG_NESTED_NAME)).thenReturn(configNestedMetadata);
 
         when(configurationMetadataProvider.getConfigurationNames()).thenReturn(ImmutableSortedSet.of(CONFIG_NAME, CONFIG_COL_NAME, CONFIG_NESTED_NAME));
+    }
+    
+    protected void provideCustomOsgiConfig() throws Exception {
+        // may be overwritten by sublcasses
     }
     
     protected String getConfigResolvePath(String path) {
@@ -590,7 +596,8 @@ public class ConfigurationManagerImplTest {
                 new ConfigurationCollectionPersistData(ImmutableList.of(
                         new ConfigurationPersistData(ImmutableMap.<String, Object>of("prop1", "value1")).collectionItemName("0"),
                         new ConfigurationPersistData(ImmutableMap.<String, Object>of("prop2", 5)).collectionItemName("1"))
-        ));
+                ).properties(ImmutableMap.<String, Object>of("sling:configCollectionInherit", true))
+        );
         context.resourceResolver().commit();
 
         String configPath0 = getConfigCollectionItemPersistPath(getConfigCollectionParentPersistPath("/conf/testNoConfig/sling:configs/" + CONFIG_COL_NAME) + "/0");
@@ -600,6 +607,9 @@ public class ConfigurationManagerImplTest {
         String configPath1 = getConfigCollectionItemPersistPath(getConfigCollectionParentPersistPath("/conf/testNoConfig/sling:configs/" + CONFIG_COL_NAME) + "/1");
         ValueMap props1 = context.resourceResolver().getResource(configPath1).getValueMap();
         assertEquals((Integer)5, props1.get("prop2"));
+        
+        ConfigurationCollectionData colData = underTest.getConfigurationCollection(contextResourceNoConfig, CONFIG_COL_NAME);
+        assertEquals(true, colData.getProperties().get("sling:configCollectionInherit"));
     }
 
     @Test

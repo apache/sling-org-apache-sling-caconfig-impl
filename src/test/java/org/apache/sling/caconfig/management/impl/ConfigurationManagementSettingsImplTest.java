@@ -22,21 +22,16 @@ import static org.junit.Assert.assertEquals;
 
 import org.apache.sling.caconfig.management.ConfigurationManagementSettings;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 public class ConfigurationManagementSettingsImplTest {
 
     @Rule
     public SlingContext context = new SlingContext();
-    
-    @Before
-    public void setUp() {
-        
-    }
     
     @Test
     public void testDefault() {
@@ -45,16 +40,21 @@ public class ConfigurationManagementSettingsImplTest {
         assertEquals(ImmutableSet.<String>of(), underTest.getIgnoredPropertyNames(ImmutableSet.<String>of()));
         assertEquals(ImmutableSet.<String>of(), underTest.getIgnoredPropertyNames(ImmutableSet.<String>of("abc", "def")));
         assertEquals(ImmutableSet.<String>of("jcr:xyz", "jcr:def"), underTest.getIgnoredPropertyNames(ImmutableSet.<String>of("abc", "jcr:xyz", "jcr:def")));
+        
+        assertEquals(ImmutableList.of("."), underTest.getConfigCollectionPropertiesResourceNames());
     }
 
     @Test
     public void testCustomConfig() {
         ConfigurationManagementSettings underTest = context.registerInjectActivateService(new ConfigurationManagementSettingsImpl(),
-                "ignorePropertyNameRegex", new String[] { "^.*e.*$", "^.*b.*$" });
+                "ignorePropertyNameRegex", new String[] { "^.*e.*$", "^.*b.*$" },
+                "configCollectionPropertiesResourceNames", new String[] { "a", "b" });
         
         assertEquals(ImmutableSet.<String>of(), underTest.getIgnoredPropertyNames(ImmutableSet.<String>of()));
         assertEquals(ImmutableSet.<String>of("abc", "def"), underTest.getIgnoredPropertyNames(ImmutableSet.<String>of("abc", "def")));
         assertEquals(ImmutableSet.<String>of("abc", "jcr:def"), underTest.getIgnoredPropertyNames(ImmutableSet.<String>of("abc", "jcr:xyz", "jcr:def")));
+
+        assertEquals(ImmutableList.of("a", "b"), underTest.getConfigCollectionPropertiesResourceNames());
     }
 
 }
