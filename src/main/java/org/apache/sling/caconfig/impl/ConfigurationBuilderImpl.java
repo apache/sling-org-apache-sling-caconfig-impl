@@ -188,7 +188,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
             // apply resource inheritance
             configResource = configurationInheritanceStrategy.getResource(transformedResources);
             // apply overrides
-            configResource = configurationOverrideMultiplexer.overrideProperties(contentResource.getPath(), name, configResource, configResource.getResourceResolver());
+            configResource = configurationOverrideMultiplexer.overrideProperties(contentResource.getPath(), name, configResource, contentResource.getResourceResolver());
             // build name
             if (isCollection) {
                 // get untransformed resource for getting collection item name
