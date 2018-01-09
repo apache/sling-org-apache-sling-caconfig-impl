@@ -360,45 +360,40 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
         final List<CollectionInheritanceDecider> deciders = this.collectionInheritanceDeciders;
         final Set<String> blockedItems = new HashSet<>();
 
-        boolean inherit = false;
         while (paths.hasNext()) {
             final String path = paths.next();
             
-            Resource item = null;
-            String bucketNameUsed = null;
+            boolean inherit = false;
+            boolean foundAnyParent = false;
             for (String bucketName : bucketNames) {
                 String name = bucketName + "/" + configName;
                 String configPath = buildResourcePath(path, name);
-                item = resourceResolver.getResource(configPath);
+                Resource item = resourceResolver.getResource(configPath);
                 if (item != null) {
-                    bucketNameUsed = bucketName;
-                    break;
+                    log.trace("o Check children of collection parent resource: {}", item.getPath());
+                    if (item.hasChildren()) {
+                        for (Resource child : item.getChildren()) {
+                            if (isValidResourceCollectionItem(child)
+                                    && !result.containsKey(child.getName())
+                                    && include(deciders, bucketName, child, blockedItems)) {
+                                log.trace("+ Found collection resource item {}", child.getPath());
+                                result.put(child.getName(), child);
+                           }
+                        }
+                    }
+
+                    // check collection inheritance mode on current level - should we check on next-highest level as well?
+                    final ValueMap valueMap = item.getValueMap();
+                    inherit = inherit || PropertyUtil.getBooleanValueAdditionalKeys(valueMap, PROPERTY_CONFIG_COLLECTION_INHERIT,
+                            config.configCollectionInheritancePropertyNames());
+                    foundAnyParent = true;
                 }
                 else {
                     log.trace("- No collection parent resource found: {}", configPath);
                 }
             }
-
-            if (item != null) {
-                log.trace("o Check children of collection parent resource: {}", item.getPath());
-                if (item.hasChildren()) {
-                    for (Resource child : item.getChildren()) {
-                        if (isValidResourceCollectionItem(child)
-                                && !result.containsKey(child.getName())
-                                && include(deciders, bucketNameUsed, child, blockedItems)) {
-                            log.trace("+ Found collection resource item {}", child.getPath());
-                            result.put(child.getName(), child);
-                       }
-                    }
-                }
-
-                // check collection inheritance mode on current level - should we check on next-highest level as well?
-                final ValueMap valueMap = item.getValueMap();
-                inherit = PropertyUtil.getBooleanValueAdditionalKeys(valueMap, PROPERTY_CONFIG_COLLECTION_INHERIT,
-                        config.configCollectionInheritancePropertyNames());
-                if (!inherit) {
-                    break;
-                }
+            if (foundAnyParent && !inherit) {
+                break;
             }
         }
 
