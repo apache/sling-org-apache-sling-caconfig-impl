@@ -126,8 +126,8 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
 
     /**
      * Searches the resource hierarchy upwards for all config references and returns them.
-     * @param refs List to add found resources to
      * @param startResource Resource to start searching
+     * @param bucketNames Bucket names to search in
      */
     @SuppressWarnings("unchecked")
     private Iterator<String> findConfigRefs(final Resource startResource, final Collection<String> bucketNames) {
