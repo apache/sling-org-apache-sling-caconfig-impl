@@ -52,6 +52,7 @@ import org.apache.sling.caconfig.resource.spi.CollectionInheritanceDecider;
 import org.apache.sling.caconfig.resource.spi.ConfigurationResourceResolvingStrategy;
 import org.apache.sling.caconfig.resource.spi.ContextResource;
 import org.apache.sling.caconfig.resource.spi.InheritanceDecision;
+import org.apache.sling.settings.SlingSettingsService;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -90,6 +91,10 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
                             + "always starting with " + PROPERTY_CONFIG_COLLECTION_INHERIT + ". Once a property with a value is found, that value is used and the following property names are skipped.")
         String[] configCollectionInheritancePropertyNames();
 
+        @AttributeDefinition(name = "Run-mode aware",
+                description = "Also resolve configuration stored in run-mode specific buckets named '<bucketname>.<runmode>'.")
+        boolean runModeAware() default false;
+            
     }
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConfigurationResourceResolvingStrategy.class);
@@ -103,6 +108,9 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
             policy=ReferencePolicy.DYNAMIC,
             fieldOption=FieldOption.REPLACE)
     private volatile List<CollectionInheritanceDecider> collectionInheritanceDeciders;
+    
+    @Reference
+    private SlingSettingsService slingSettings;
 
     @Activate
     private void activate(final Config config) {
@@ -310,13 +318,14 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
 
     @Override
     public Iterator<Resource> getResourceInheritanceChain(Resource contentResource, Collection<String> bucketNames, String configName) {
-        if (!isEnabledAndParamsValid(contentResource, bucketNames, configName)) {
+        final Collection<String> expandedBucketNames = expandBucketNames(bucketNames);
+        if (!isEnabledAndParamsValid(contentResource, expandedBucketNames, configName)) {
             return null;
         }
         final ResourceResolver resourceResolver = contentResource.getResourceResolver();
 
-        Iterator<String> paths = getResolvePaths(contentResource, bucketNames);
-        return getResourceInheritanceChainInternal(bucketNames, configName, paths, resourceResolver);
+        Iterator<String> paths = getResolvePaths(contentResource, expandedBucketNames);
+        return getResourceInheritanceChainInternal(expandedBucketNames, configName, paths, resourceResolver);
     }
 
     private boolean include(final List<CollectionInheritanceDecider> deciders,
@@ -398,11 +407,12 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
 
     @Override
     public Collection<Resource> getResourceCollection(final Resource contentResource, final Collection<String> bucketNames, final String configName) {
-        if (!isEnabledAndParamsValid(contentResource, bucketNames, configName)) {
+        final Collection<String> expandedBucketNames = expandBucketNames(bucketNames);
+        if (!isEnabledAndParamsValid(contentResource, expandedBucketNames, configName)) {
             return null;
         }
-        Iterator<String> paths = getResolvePaths(contentResource, bucketNames);
-        Collection<Resource> result = getResourceCollectionInternal(bucketNames, configName, paths, contentResource.getResourceResolver());
+        Iterator<String> paths = getResolvePaths(contentResource, expandedBucketNames);
+        Collection<Resource> result = getResourceCollectionInternal(expandedBucketNames, configName, paths, contentResource.getResourceResolver());
         if (!result.isEmpty()) {
             return result;
         }
@@ -415,14 +425,15 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
     @Override
     public Collection<Iterator<Resource>> getResourceCollectionInheritanceChain(final Resource contentResource,
             final Collection<String> bucketNames, final String configName) {
-        if (!isEnabledAndParamsValid(contentResource, bucketNames, configName)) {
+        final Collection<String> expandedBucketNames = expandBucketNames(bucketNames);
+        if (!isEnabledAndParamsValid(contentResource, expandedBucketNames, configName)) {
             return null;
         }
         final ResourceResolver resourceResolver = contentResource.getResourceResolver();
-        final List<String> paths = IteratorUtils.toList(getResolvePaths(contentResource, bucketNames));
+        final List<String> paths = IteratorUtils.toList(getResolvePaths(contentResource, expandedBucketNames));
         
         // get resource collection with respect to collection inheritance
-        Collection<Resource> resourceCollection = getResourceCollectionInternal(bucketNames, configName, paths.iterator(), resourceResolver);
+        Collection<Resource> resourceCollection = getResourceCollectionInternal(expandedBucketNames, configName, paths.iterator(), resourceResolver);
         
         // get inheritance chain for each item found
         // yes, this resolves the closest item twice, but is the easiest solution to combine both logic aspects
@@ -430,7 +441,7 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
             @Override
             public Object transform(Object input) {
                 Resource item = (Resource)input;
-                return getResourceInheritanceChainInternal(bucketNames, configName + "/" + item.getName(), paths.iterator(), resourceResolver);
+                return getResourceInheritanceChainInternal(expandedBucketNames, configName + "/" + item.getName(), paths.iterator(), resourceResolver);
             }
         });
         if (result.hasNext()) {
@@ -468,6 +479,32 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
     @Override
     public String getResourceCollectionParentPath(Resource contentResource, String bucketName, String configName) {
         return getResourcePath(contentResource, bucketName, configName);
+    }
+    
+    /**
+     * Expands list of bucket names if the runmode-aware feature is activated.
+     * Adds a variant for each given bucket name with a suffix ".{rundmode}" attached.
+     * The list returned contains the entries with runmode suffix first so they have higher precedence than the original buckets. 
+     * @param bucketNames Original bucket names
+     * @return Expanded bucket names
+     */
+    private Collection<String> expandBucketNames(Collection<String> bucketNames) {
+        if (!config.runModeAware()) {
+            return bucketNames;
+        }
+        
+        Set<String> runModes = slingSettings.getRunModes();
+        List<String> expandedBucketNames = new ArrayList<>((runModes.size() + 1) * bucketNames.size());
+        for (String originalBucketName : bucketNames) {
+            for (String runMode : runModes) {
+                expandedBucketNames.add(originalBucketName + "." + runMode);
+            }
+            expandedBucketNames.add(originalBucketName);
+        }
+        if (log.isTraceEnabled()) {
+            log.trace("o Use expanded list of bucket names: " + expandedBucketNames);
+        }
+        return expandedBucketNames;
     }
 
 }
