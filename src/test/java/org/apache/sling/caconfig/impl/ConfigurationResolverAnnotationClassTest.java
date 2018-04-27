@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.caconfig.ConfigurationResolveException;
 import org.apache.sling.caconfig.ConfigurationResolver;
 import org.apache.sling.caconfig.example.ListConfig;
@@ -61,6 +62,7 @@ public class ConfigurationResolverAnnotationClassTest {
     @Before
     public void setUp() {
         underTest = ConfigurationTestUtils.registerConfigurationResolver(context);
+        context.registerInjectActivateService(new ConfigurationBuilderAdapterFactory());
 
         // content resources
         context.build().resource("/content/site1", PROPERTY_CONFIG_REF, "/conf/content/site1");
@@ -330,6 +332,21 @@ public class ConfigurationResolverAnnotationClassTest {
     public void testNonExistingContentResource_List() {
         Collection<ListConfig> cfgList = underTest.get(null).asCollection(ListConfig.class);
         assertTrue(cfgList.isEmpty());
+    }
+
+    @Test
+    public void testConfigAdaptMultipleTimes() {
+        context.build().resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.SimpleConfig",
+                "stringParam", "configValue1");
+        context.build().resource("/conf/content/site1/sling:configs/config2",
+                "stringParam", "configValue2");
+
+        SimpleConfig cfg2 = site1Page1.adaptTo(ConfigurationBuilder.class).name("config2").as(SimpleConfig.class);
+        assertEquals("configValue2", cfg2.stringParam());
+
+        // make sure the config name from first call is not cached in the ConfigurationBuilder instance
+        SimpleConfig cfg = site1Page1.adaptTo(ConfigurationBuilder.class).as(SimpleConfig.class);
+        assertEquals("configValue1", cfg.stringParam());
     }
 
 }

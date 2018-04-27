@@ -62,8 +62,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     private final ConfigurationOverrideMultiplexer configurationOverrideMultiplexer;
     private final ConfigurationMetadataProvider configurationMetadataProvider;
     private final Collection<String> configBucketNames;
-
-    private String configName;
+    private final String configName;
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationBuilderImpl.class);
     
@@ -75,6 +74,19 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
             final ConfigurationOverrideMultiplexer configurationOverrideMultiplexer,
             final ConfigurationMetadataProvider configurationMetadataProvider,
             final Collection<String> configBucketNames) {
+        this(resource, configurationResolver, configurationResourceResolvingStrategy, configurationPersistenceStrategy,
+                configurationInheritanceStrategy, configurationOverrideMultiplexer, configurationMetadataProvider, configBucketNames, null);
+    }
+
+    private ConfigurationBuilderImpl(final Resource resource,
+            final ConfigurationResolver configurationResolver,
+            final ConfigurationResourceResolvingStrategy configurationResourceResolvingStrategy,
+            final ConfigurationPersistenceStrategyMultiplexer configurationPersistenceStrategy,
+            final ConfigurationInheritanceStrategy configurationInheritanceStrategy,
+            final ConfigurationOverrideMultiplexer configurationOverrideMultiplexer,
+            final ConfigurationMetadataProvider configurationMetadataProvider,
+            final Collection<String> configBucketNames,
+            final String configName) {
         this.contentResource = resource;
         this.configurationResolver = configurationResolver;
         this.configurationResourceResolvingStrategy = configurationResourceResolvingStrategy;
@@ -83,13 +95,21 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
         this.configurationOverrideMultiplexer = configurationOverrideMultiplexer;
         this.configurationMetadataProvider = configurationMetadataProvider;
         this.configBucketNames = configBucketNames;
+        this.configName = configName;
     }
 
     @Override
-    public ConfigurationBuilder name(String configName) {
+    public ConfigurationBuilder name(final String configName) {
         ConfigNameUtil.ensureValidConfigName(configName);
-        this.configName = configName;
-        return this;
+        return new ConfigurationBuilderImpl(contentResource,
+                configurationResolver,
+                configurationResourceResolvingStrategy,
+                configurationPersistenceStrategy,
+                configurationInheritanceStrategy,
+                configurationOverrideMultiplexer,
+                configurationMetadataProvider,
+                configBucketNames,
+                configName);
     }
 
     /**
