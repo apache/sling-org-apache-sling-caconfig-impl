@@ -20,8 +20,7 @@ package org.apache.sling.caconfig.management;
 
 import java.util.Collection;
 
-import javax.annotation.Nonnull;
-
+import org.jetbrains.annotations.NotNull;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -34,6 +33,6 @@ public interface ConfigurationResourceResolverConfig {
      * All bucket names starting with sling:configs and the alternative ones.
      * @return Bucket names
      */
-    @Nonnull Collection<String> configBucketNames();
+    @NotNull Collection<String> configBucketNames();
     
 }

@@ -26,15 +26,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.caconfig.ConfigurationResolveException;
 import org.apache.sling.caconfig.impl.metadata.AnnotationClassParser;
 import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Maps the property of a resource to a dynamic proxy object implementing
@@ -55,7 +54,7 @@ final class ConfigurationProxy {
      * @return Dynamic proxy object
      */
     @SuppressWarnings("unchecked")
-    public @Nonnull static <T> T get(@Nullable Resource resource, @Nonnull Class<T> clazz, ChildResolver childResolver) {
+    public @NotNull static <T> T get(@Nullable Resource resource, @NotNull Class<T> clazz, ChildResolver childResolver) {
 
         // only annotation interface classes are supported
         if (!clazz.isAnnotation()) {

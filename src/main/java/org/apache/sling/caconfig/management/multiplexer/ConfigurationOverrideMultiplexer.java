@@ -20,11 +20,10 @@ package org.apache.sling.caconfig.management.multiplexer;
 
 import java.util.Map;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -40,7 +39,7 @@ public interface ConfigurationOverrideMultiplexer {
      * @param configName Config name
      * @return true if the whole configuration is overridden.
      */
-    boolean isAllOverridden(@Nonnull String contextPath, @Nonnull String configName);
+    boolean isAllOverridden(@NotNull String contextPath, @NotNull String configName);
 
     /**
      * Override properties for given context path and configuration name.
@@ -49,7 +48,7 @@ public interface ConfigurationOverrideMultiplexer {
      * @param properties Resolved configuration properties
      * @return Overwritten or replaced properties - or null if no override took place
      */
-    @CheckForNull Map<String,Object> overrideProperties(@Nonnull String contextPath, @Nonnull String configName, @Nonnull Map<String,Object> properties);
+    @Nullable Map<String,Object> overrideProperties(@NotNull String contextPath, @NotNull String configName, @NotNull Map<String,Object> properties);
     
     /**
      * Override properties in given configuration resource (if any overrides are defined).
@@ -60,7 +59,7 @@ public interface ConfigurationOverrideMultiplexer {
      * @deprecated Please use {@link #overrideProperties(String, String, Resource, ResourceResolver)} instead.
      */
     @Deprecated
-    @CheckForNull Resource overrideProperties(@Nonnull String contextPath, @Nonnull String configName, @CheckForNull Resource configResource);
+    @Nullable Resource overrideProperties(@NotNull String contextPath, @NotNull String configName, @Nullable Resource configResource);
 
     /**
      * Override properties in given configuration resource (if any overrides are defined).
@@ -70,7 +69,7 @@ public interface ConfigurationOverrideMultiplexer {
      * @param resourceResolver Resource resolver
      * @return Resource with overwritten configuration properties - or original configuration resource if no override took place
      */
-    @CheckForNull Resource overrideProperties(@Nonnull String contextPath, @Nonnull String configName, @CheckForNull Resource configResource,
-            @Nonnull ResourceResolver resourceResolver);
+    @Nullable Resource overrideProperties(@NotNull String contextPath, @NotNull String configName, @Nullable Resource configResource,
+            @NotNull ResourceResolver resourceResolver);
 
 }

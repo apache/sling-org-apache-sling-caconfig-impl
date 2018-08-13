@@ -20,9 +20,8 @@ package org.apache.sling.caconfig.management.multiplexer;
 
 import java.util.Collection;
 
-import javax.annotation.Nonnull;
-
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy2;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -37,20 +36,20 @@ public interface ConfigurationPersistenceStrategyMultiplexer extends Configurati
      * @param configName Configuration name
      * @return Possible configuration names in order of persistence strategy service ranking.
      */
-    @Nonnull Collection<String> getAllConfigNames(@Nonnull String configName);
+    @NotNull Collection<String> getAllConfigNames(@NotNull String configName);
 
     /**
      * Get all configuration names from all configuration persistence strategies. This can be used when no nested parent resources is known.
      * @param configName Configuration name
      * @return Possible configuration names in order of persistence strategy service ranking.
      */
-    @Nonnull Collection<String> getAllCollectionParentConfigNames(@Nonnull String configName);
+    @NotNull Collection<String> getAllCollectionParentConfigNames(@NotNull String configName);
 
     /**
      * Get all configuration names from all configuration persistence strategies. This can be used when no nested parent resources is known.
      * @param configName Configuration name
      * @return Possible configuration names in order of persistence strategy service ranking.
      */
-    @Nonnull Collection<String> getAllCollectionItemConfigNames(@Nonnull String configName);
+    @NotNull Collection<String> getAllCollectionItemConfigNames(@NotNull String configName);
         
 }

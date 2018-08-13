@@ -18,10 +18,9 @@
  */
 package org.apache.sling.caconfig.management;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-
 import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -35,31 +34,31 @@ public interface ValueInfo<T> {
      * Property name.
      * @return Property name.
      */
-    @Nonnull String getName();
+    @NotNull String getName();
     
     /**
      * Property metadata.
      * @return Property metadata. Null if no metadata exists.
      */
-    @CheckForNull PropertyMetadata<T> getPropertyMetadata();
+    @Nullable PropertyMetadata<T> getPropertyMetadata();
     
     /**
      * Get value stored for the current context path. No inherited value. No default value.
      * @return Value
      */
-    @CheckForNull T getValue();
+    @Nullable T getValue();
     
     /**
      * Get value storedf or the current context path, or inherited from upper levels, or the default value.
      * @return Value
      */
-    @CheckForNull T getEffectiveValue();
+    @Nullable T getEffectiveValue();
     
     /**
      * Get the path of the configuration resource the value is stored in.
      * @return Resource path or null if no resource associated. 
      */
-    @CheckForNull String getConfigSourcePath();
+    @Nullable String getConfigSourcePath();
 
     /**
      * @return true if no value is defined but a default value is returned.

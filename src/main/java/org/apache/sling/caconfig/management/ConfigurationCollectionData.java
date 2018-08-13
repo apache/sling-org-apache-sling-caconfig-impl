@@ -21,9 +21,8 @@ package org.apache.sling.caconfig.management;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -36,21 +35,21 @@ public interface ConfigurationCollectionData {
      * Get configuration name.
      * @return Configuration name
      */
-    @Nonnull String getConfigName();
+    @NotNull String getConfigName();
 
     /**
      * @return Configuration collection items
      */
-    @Nonnull Collection<ConfigurationData> getItems();
+    @NotNull Collection<ConfigurationData> getItems();
     
     /**
      * @return Path of the configuration collection resource parent path or null if it cannot be determined.
      */
-    @CheckForNull String getResourcePath();
+    @Nullable String getResourcePath();
     
     /**
      * @return Properties for the configuration collection itself. Does not contain configuration data, but control data e.g. for enabling collection inheritance.
      */
-    @Nonnull Map<String, Object> getProperties();
+    @NotNull Map<String, Object> getProperties();
     
 }
