@@ -18,6 +18,8 @@
  */
 package org.apache.sling.caconfig.management.impl;
 
+import static org.apache.sling.api.resource.ResourceResolver.PROPERTY_RESOURCE_TYPE;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,7 +50,8 @@ public class ConfigurationManagementSettingsImpl implements ConfigurationManagem
         @AttributeDefinition(name="Ignore Property Regex",
                       description = "List of regular expressions with property names that should be ignored when reading or writing configuration data properties.")
         String[] ignorePropertyNameRegex() default {
-            "^jcr:.+$"
+            "^jcr:.+$",
+            PROPERTY_RESOURCE_TYPE
         };
 
         @AttributeDefinition(name="Config collection parent properties resource names",
