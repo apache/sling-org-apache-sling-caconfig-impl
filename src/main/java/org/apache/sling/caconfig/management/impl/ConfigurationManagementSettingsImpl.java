@@ -51,7 +51,7 @@ public class ConfigurationManagementSettingsImpl implements ConfigurationManagem
                       description = "List of regular expressions with property names that should be ignored when reading or writing configuration data properties.")
         String[] ignorePropertyNameRegex() default {
             "^jcr:.+$",
-            PROPERTY_RESOURCE_TYPE
+            "^" + PROPERTY_RESOURCE_TYPE + "$"
         };
 
         @AttributeDefinition(name="Config collection parent properties resource names",
