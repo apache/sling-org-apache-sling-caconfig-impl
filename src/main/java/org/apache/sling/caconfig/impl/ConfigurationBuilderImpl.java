@@ -65,7 +65,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     private final String configName;
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationBuilderImpl.class);
-    
+
     public ConfigurationBuilderImpl(final Resource resource,
             final ConfigurationResolver configurationResolver,
             final ConfigurationResourceResolvingStrategy configurationResourceResolvingStrategy,
@@ -157,7 +157,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     private <T> Collection<T> getConfigResourceCollection(String configName, Class<T> clazz, Converter<T> converter) {
         if (this.contentResource != null) {
            validateConfigurationName(configName);
-           
+
            // get all possible colection parent config names
            Collection<String> collectionParentConfigNames = configurationPersistenceStrategy.getAllCollectionParentConfigNames(configName);
            List<Iterator<Resource>> resourceInheritanceChains = new ArrayList<>();
@@ -184,7 +184,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
             return Collections.emptyList();
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     private <T> T convert(final Iterator<Resource> resourceInhertianceChain, final Class<T> clazz, final Converter<T> converter,
             final String name, final boolean isCollection) {
@@ -224,15 +224,15 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
             log.trace("+ Found config resource for context path " + contentResource.getPath() + ": " + configResource.getPath() + " "
                     + MapUtil.traceOutput(configResource.getValueMap()));
         }
-        
+
         // if no config resource found still check for overrides
         if (configResource == null && contentResource != null) {
             configResource = configurationOverrideMultiplexer.overrideProperties(contentResource.getPath(), name, (Resource)null, contentResource.getResourceResolver());
         }
-        
+
         return converter.convert(configResource, clazz, conversionName, isCollection);
     }
-    
+
     /**
      * Apply default values from configuration metadata (where no real data is present).
      * @param resource Resource
@@ -249,7 +249,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
         }
         return new ConfigurationResourceWrapper(resource, new ValueMapDecorator(updatedMap));
     }
-    
+
     /**
      * Apply default values from configuration metadata (where no real data is present).
      * @param props Properties
@@ -337,7 +337,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
             });
         }
     }
-    
+
     // --- ValueMap support ---
 
     @Override
@@ -369,7 +369,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
             }
         }
     }
-    
+
     // --- Adaptable support ---
 
     @Override
@@ -394,7 +394,13 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
             if (resource == null || clazz == ConfigurationBuilder.class) {
                 return null;
             }
-            return applyDefaultValues(resource, configName).adaptTo(clazz);
+            Resource defaultsAppliedResource = applyDefaultValues(resource, configName);
+
+            if(clazz==Resource.class){
+                return (T)defaultsAppliedResource;
+            }else{
+                return defaultsAppliedResource.adaptTo(clazz);
+            }
         }
     }
 
