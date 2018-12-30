@@ -21,6 +21,7 @@ package org.apache.sling.caconfig.impl.models.via;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.caconfig.ConfigurationResolver;
+import org.apache.sling.caconfig.impl.models.CAConfigViaProviderCacheProvider;
 import org.apache.sling.caconfig.models.via.ContextAwareConfigResource;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
 import org.junit.Before;
@@ -47,6 +48,9 @@ public class CAConfigViaProviderTest {
     @Mock
     private ConfigurationResolver configurationResolver;
 
+    @Mock
+    private CAConfigViaProviderCacheProvider cacheProvider;
+
     @InjectMocks
     private CAConfigViaProvider underTest;
 
@@ -69,6 +73,7 @@ public class CAConfigViaProviderTest {
         when(configurationResolver.get(site1Page1)).thenReturn(configurationBuilder);
         when(configurationBuilder.name(anyString())).thenReturn(configurationBuilder);
         when(configurationBuilder.asAdaptable(Resource.class)).thenReturn(configResource);
+
 
     }
 

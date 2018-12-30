@@ -23,15 +23,12 @@ import org.apache.sling.api.adapter.Adaptable;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.caconfig.ConfigurationResolver;
+import org.apache.sling.caconfig.impl.models.CAConfigViaProviderCacheProvider;
 import org.apache.sling.caconfig.models.via.ContextAwareConfigResource;
 import org.apache.sling.models.annotations.ViaProviderType;
 import org.apache.sling.models.spi.ViaProvider;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -41,6 +38,9 @@ public class CAConfigViaProvider implements ViaProvider {
     @Reference
     private ConfigurationResolver configurationResolver;
 
+    @Reference
+    private CAConfigViaProviderCacheProvider cacheProvider;
+
     @Override
     public Class<? extends ViaProviderType> getType() {
         return ContextAwareConfigResource.class;
@@ -49,14 +49,21 @@ public class CAConfigViaProvider implements ViaProvider {
     @Override
     public Object getAdaptable(Object original, String value) {
 
+
         Resource resource = getResource(original);
 
         if (isBlank(value) || resource == null) {
             return ORIGINAL;
         }
 
+        if(cacheProvider.contains(resource.getPath())){
+            return cacheProvider.get(resource.getPath());
+        }
+
         ConfigurationBuilder config = configurationResolver.get(resource);
         Resource adaptable = config.name(value).asAdaptable(Resource.class);
+
+        cacheProvider.put(resource.getPath(), adaptable);
 
         return adaptable;
     }
