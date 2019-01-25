@@ -27,6 +27,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.felix.inventory.Format;
 import org.apache.felix.inventory.InventoryPrinter;
 import org.apache.sling.caconfig.resource.spi.CollectionInheritanceDecider;
@@ -141,12 +142,17 @@ public class CAConfigInventoryPrinter implements InventoryPrinter {
     }
     
     private <T> int getServiceRanking(ServiceReference<T> serviceReference) {
-        Integer serviceRanking = (Integer)serviceReference.getProperty(Constants.SERVICE_RANKING);
+        Object serviceRanking = serviceReference.getProperty(Constants.SERVICE_RANKING);
         if (serviceRanking == null) {
             return 0;
         }
         else {
-            return serviceRanking;
+            if (serviceRanking instanceof Number) {
+                return ((Number)serviceRanking).intValue();
+            }
+            else {
+                return NumberUtils.toInt(serviceRanking.toString(), 0);
+            }
         }
     }
 
