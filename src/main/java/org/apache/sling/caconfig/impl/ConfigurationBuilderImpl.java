@@ -398,4 +398,23 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
         }
     }
 
+ // --- Config Node Existence Check Support ---
+    @Override
+    public <T> boolean has(Class<T> clazz) {
+        final String name = getConfigurationNameForAnnotationClass(clazz);
+        if (log.isDebugEnabled()) {
+            log.debug("Get configuration for context path {}, name '{}', class {}", contentResource.getPath(), name, clazz.getName());
+        }
+        return checkIfConfigNodeExists(name);
+    }
+    
+    private <T> boolean checkIfConfigNodeExists(String configName) {
+        Resource configResource = null;
+        if (this.contentResource != null) {
+            validateConfigurationName(configName);
+            configResource = this.configurationResourceResolvingStrategy
+                    .getResource(this.contentResource, configBucketNames, configName);
+        }
+        return configResource != null ? true : false;
+    }
 }
