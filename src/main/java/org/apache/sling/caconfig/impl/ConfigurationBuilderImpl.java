@@ -403,7 +403,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     public <T> boolean has(Class<T> clazz) {
         final String name = getConfigurationNameForAnnotationClass(clazz);
         if (log.isDebugEnabled()) {
-            log.debug("Get configuration for context path {}, name '{}', class {}", contentResource.getPath(), name, clazz.getName());
+            log.debug("Check configuration for context path {}, name '{}', class {}", contentResource.getPath(), name, clazz.getName());
         }
         return checkIfConfigNodeExists(name);
     }
