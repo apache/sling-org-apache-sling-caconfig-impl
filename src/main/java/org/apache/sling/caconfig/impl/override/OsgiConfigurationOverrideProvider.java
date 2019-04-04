@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.sling.caconfig.spi.ConfigurationOverrideProvider;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
@@ -77,7 +78,7 @@ public final class OsgiConfigurationOverrideProvider implements ConfigurationOve
     }
 
     @Override
-    public Collection<String> getOverrideStrings() {
+    public @NotNull Collection<String> getOverrideStrings() {
         return overrideStrings;
     }
     

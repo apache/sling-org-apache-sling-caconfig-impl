@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.sling.caconfig.spi.ConfigurationOverrideProvider;
+import org.jetbrains.annotations.NotNull;
 
 import com.google.common.collect.ImmutableList;
 
@@ -34,7 +35,7 @@ public class DummyConfigurationOverrideProvider implements ConfigurationOverride
     }
 
     @Override
-    public Collection<String> getOverrideStrings() {
+    public @NotNull Collection<String> getOverrideStrings() {
         return overrideStrings;
     }
 

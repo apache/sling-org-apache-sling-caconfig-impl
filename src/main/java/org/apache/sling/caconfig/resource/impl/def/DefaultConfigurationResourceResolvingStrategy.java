@@ -52,6 +52,7 @@ import org.apache.sling.caconfig.resource.spi.CollectionInheritanceDecider;
 import org.apache.sling.caconfig.resource.spi.ConfigurationResourceResolvingStrategy;
 import org.apache.sling.caconfig.resource.spi.ContextResource;
 import org.apache.sling.caconfig.resource.spi.InheritanceDecision;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -269,7 +270,7 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
     }
 
     @Override
-    public Resource getResource(final Resource contentResource, final Collection<String> bucketNames, final String configName) {
+    public Resource getResource(@NotNull final Resource contentResource, @NotNull final Collection<String> bucketNames, @NotNull final String configName) {
         Iterator<Resource> resources = getResourceInheritanceChain(contentResource, bucketNames, configName);
         if (resources != null && resources.hasNext()) {
             return resources.next();
@@ -309,7 +310,7 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
     }
 
     @Override
-    public Iterator<Resource> getResourceInheritanceChain(Resource contentResource, Collection<String> bucketNames, String configName) {
+    public Iterator<Resource> getResourceInheritanceChain(@NotNull Resource contentResource, @NotNull Collection<String> bucketNames, @NotNull String configName) {
         if (!isEnabledAndParamsValid(contentResource, bucketNames, configName)) {
             return null;
         }
@@ -397,7 +398,7 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
     }
 
     @Override
-    public Collection<Resource> getResourceCollection(final Resource contentResource, final Collection<String> bucketNames, final String configName) {
+    public Collection<Resource> getResourceCollection(@NotNull final Resource contentResource, @NotNull final Collection<String> bucketNames, @NotNull final String configName) {
         if (!isEnabledAndParamsValid(contentResource, bucketNames, configName)) {
             return null;
         }
@@ -413,8 +414,8 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
 
     @SuppressWarnings("unchecked")
     @Override
-    public Collection<Iterator<Resource>> getResourceCollectionInheritanceChain(final Resource contentResource,
-            final Collection<String> bucketNames, final String configName) {
+    public Collection<Iterator<Resource>> getResourceCollectionInheritanceChain(@NotNull final Resource contentResource,
+            @NotNull final Collection<String> bucketNames, @NotNull final String configName) {
         if (!isEnabledAndParamsValid(contentResource, bucketNames, configName)) {
             return null;
         }
@@ -447,7 +448,7 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
     }
 
     @Override
-    public String getResourcePath(Resource contentResource, String bucketName, String configName) {
+    public String getResourcePath(@NotNull Resource contentResource, @NotNull String bucketName, @NotNull String configName) {
         if (!isEnabledAndParamsValid(contentResource, Collections.singleton(bucketName), configName)) {
             return null;
         }
@@ -466,7 +467,7 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
     }
 
     @Override
-    public String getResourceCollectionParentPath(Resource contentResource, String bucketName, String configName) {
+    public String getResourceCollectionParentPath(@NotNull Resource contentResource, @NotNull String bucketName, @NotNull String configName) {
         return getResourcePath(contentResource, bucketName, configName);
     }
 

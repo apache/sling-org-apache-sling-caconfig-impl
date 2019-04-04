@@ -38,6 +38,8 @@ import org.apache.sling.caconfig.spi.ConfigurationOverrideProvider;
 import org.apache.sling.commons.osgi.Order;
 import org.apache.sling.commons.osgi.RankedServices;
 import org.apache.sling.commons.osgi.RankedServices.ChangeListener;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -73,7 +75,7 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
     }
     
     @Override
-    public boolean isAllOverridden(String contextPath, String configName) {
+    public boolean isAllOverridden(@NotNull String contextPath, @NotNull String configName) {
         for (OverrideItem override : allOverrides) {
             if (StringUtils.equals(configName, override.getConfigName()) && override.matchesPath(contextPath)) {
                 if (override.isAllProperties()) {
@@ -85,7 +87,7 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
     }
 
     @Override
-    public Map<String,Object> overrideProperties(String contextPath, String configName, Map<String,Object> properties) {
+    public Map<String,Object> overrideProperties(@NotNull String contextPath, @NotNull String configName, @NotNull Map<String,Object> properties) {
         if (allOverrides.size() == 0) {
             return null;
         }
@@ -111,7 +113,7 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
     }
     
     @Override
-    public Resource overrideProperties(String contextPath, String configName, Resource configResource) {
+    public Resource overrideProperties(@NotNull String contextPath, @NotNull String configName, @Nullable Resource configResource) {
         if (configResource == null) {
             return null;
         }
@@ -119,7 +121,7 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
     }
     
     @Override
-    public Resource overrideProperties(String contextPath, String configName, Resource configResource, ResourceResolver resourceResolver) {
+    public Resource overrideProperties(@NotNull String contextPath, @NotNull String configName, @Nullable Resource configResource, @NotNull ResourceResolver resourceResolver) {
         Map<String,Object> overrideProperties = overrideProperties(contextPath, configName, configResource != null ?  configResource.getValueMap() : ValueMap.EMPTY);
         if (overrideProperties == null) {
             return configResource;

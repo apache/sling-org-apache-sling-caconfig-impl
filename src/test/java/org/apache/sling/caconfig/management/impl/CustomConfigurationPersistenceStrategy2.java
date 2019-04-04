@@ -36,6 +36,8 @@ import org.apache.sling.caconfig.spi.ConfigurationCollectionPersistData;
 import org.apache.sling.caconfig.spi.ConfigurationPersistData;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceException;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy2;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This is a variant of {@link org.apache.sling.caconfig.impl.def.DefaultConfigurationPersistenceStrategy}
@@ -52,7 +54,7 @@ public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPer
     private static final Pattern JCR_CONTENT_PATTERN = Pattern.compile("(.*/)?" + Pattern.quote(CHILD_NODE_NAME) + "(/.*)?");
     
     @Override
-    public Resource getResource(Resource resource) {
+    public Resource getResource(@NotNull Resource resource) {
         assertNotNull(resource);
         if (containsJcrContent(resource.getPath())) {
             return resource;
@@ -63,7 +65,7 @@ public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPer
     }
 
     @Override
-    public Resource getCollectionParentResource(Resource resource) {
+    public Resource getCollectionParentResource(@NotNull Resource resource) {
         assertNotNull(resource);
         if (containsJcrContent(resource.getPath())) {
             return resource;
@@ -74,13 +76,13 @@ public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPer
     }
 
     @Override
-    public Resource getCollectionItemResource(Resource resource) {
+    public Resource getCollectionItemResource(@NotNull Resource resource) {
         assertNotNull(resource);
         return resource;
     }
 
     @Override
-    public String getResourcePath(String resourcePath) {
+    public String getResourcePath(@NotNull String resourcePath) {
         assertNotNull(resourcePath);
         if (containsJcrContent(resourcePath)) {
             return resourcePath;
@@ -91,7 +93,7 @@ public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPer
     }
 
     @Override
-    public String getCollectionParentResourcePath(String resourcePath) {
+    public String getCollectionParentResourcePath(@NotNull String resourcePath) {
         assertNotNull(resourcePath);
         if (containsJcrContent(resourcePath)) {
             return resourcePath;
@@ -102,13 +104,13 @@ public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPer
     }
 
     @Override
-    public String getCollectionItemResourcePath(String resourcePath) {
+    public String getCollectionItemResourcePath(@NotNull String resourcePath) {
         assertNotNull(resourcePath);
         return resourcePath;
     }
 
     @Override
-    public String getConfigName(String configName, String relatedConfigPath) {
+    public String getConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
         assertNotNull(configName);
         if (containsJcrContent(configName)) {
             return configName;
@@ -119,7 +121,7 @@ public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPer
     }
 
     @Override
-    public String getCollectionParentConfigName(String configName, String relatedConfigPath) {
+    public String getCollectionParentConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
         assertNotNull(configName);
         if (containsJcrContent(configName)) {
             return configName;
@@ -130,22 +132,22 @@ public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPer
     }
 
     @Override
-    public String getCollectionItemConfigName(String configName, String relatedConfigPath) {
+    public String getCollectionItemConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
         assertNotNull(configName);
         return configName;
     }
     
     @Override
-    public boolean persistConfiguration(ResourceResolver resourceResolver, String configResourcePath,
-            ConfigurationPersistData data) {
+    public boolean persistConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath,
+            @NotNull ConfigurationPersistData data) {
         getOrCreateResource(resourceResolver, getResourcePath(configResourcePath), data.getProperties());
         commit(resourceResolver);
         return true;
     }
 
     @Override
-    public boolean persistConfigurationCollection(ResourceResolver resourceResolver, String configResourceCollectionParentPath,
-            ConfigurationCollectionPersistData data) {
+    public boolean persistConfigurationCollection(@NotNull ResourceResolver resourceResolver, @NotNull String configResourceCollectionParentPath,
+            @NotNull ConfigurationCollectionPersistData data) {
         String parentPath = getCollectionParentResourcePath(configResourceCollectionParentPath);
         Resource configResourceParent = getOrCreateResource(resourceResolver, parentPath, ValueMap.EMPTY);
         
@@ -167,7 +169,7 @@ public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPer
     }
     
     @Override
-    public boolean deleteConfiguration(ResourceResolver resourceResolver, String configResourcePath) {
+    public boolean deleteConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath) {
         Resource resource = resourceResolver.getResource(configResourcePath);
         if (resource != null) {
             try {
@@ -204,6 +206,7 @@ public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPer
         }
     }
     
+    @SuppressWarnings("null")
     private void replaceProperties(Resource resource, Map<String,Object> properties) {
         ModifiableValueMap modValueMap = resource.adaptTo(ModifiableValueMap.class);
         // remove all existing properties that do not have jcr: namespace

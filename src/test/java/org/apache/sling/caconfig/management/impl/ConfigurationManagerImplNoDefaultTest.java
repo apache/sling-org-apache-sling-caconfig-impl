@@ -49,6 +49,7 @@ import com.google.common.collect.ImmutableSet;
  * Test {@link ConfigurationManagerImpl} with no default implementation of the multiplexed services.
  */
 @RunWith(MockitoJUnitRunner.class)
+@SuppressWarnings("null")
 public class ConfigurationManagerImplNoDefaultTest {
     
     @Rule

@@ -26,6 +26,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.caconfig.spi.ConfigurationOverrideProvider;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
@@ -82,7 +83,7 @@ public final class SystemPropertyConfigurationOverrideProvider implements Config
     }
 
     @Override
-    public Collection<String> getOverrideStrings() {
+    public @NotNull Collection<String> getOverrideStrings() {
         return overrideStrings;
     }
 

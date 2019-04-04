@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 
 import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
@@ -59,7 +60,7 @@ public class AnnotationClassConfigurationMetadataProvider implements Configurati
     }
 
     @Override
-    public SortedSet<String> getConfigurationNames() {
+    public @NotNull SortedSet<String> getConfigurationNames() {
         SortedSet<String> allConfigNames = new TreeSet<String>();
         for (BundleConfigurationMapping bundleMapping : bundleMappings.values()) {
             allConfigNames.addAll(bundleMapping.getConfigurationNames());

@@ -44,6 +44,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * Tests with content and configurations that form a deeper nested hierarchy.
  */
+@SuppressWarnings("null")
 public class DefaultConfigurationResourceResolvingStrategyHierarchyTest {
     
     private static final String BUCKET = "sling:test";

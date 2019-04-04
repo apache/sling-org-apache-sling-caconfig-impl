@@ -53,6 +53,7 @@ import org.apache.sling.caconfig.spi.ConfigurationPersistData;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceException;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
 import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -80,7 +81,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
     
     @SuppressWarnings("unchecked")
     @Override
-    public ConfigurationData getConfiguration(Resource resource, String configName) {
+    public ConfigurationData getConfiguration(@NotNull Resource resource, @NotNull String configName) {
         ConfigNameUtil.ensureValidConfigName(configName);
         if (log.isDebugEnabled()) {
             log.debug("Get configuration for context path {}, name '{}'", resource.getPath(), configName);
@@ -141,7 +142,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 
     @SuppressWarnings("unchecked")
     @Override
-    public ConfigurationCollectionData getConfigurationCollection(Resource resource, String configName) {
+    public@NotNull  ConfigurationCollectionData getConfigurationCollection(@NotNull Resource resource, @NotNull String configName) {
         ConfigNameUtil.ensureValidConfigName(configName);
         if (log.isDebugEnabled()) {
             log.debug("Get configuration collection for context path {}, name '{}'", resource.getPath(), configName);
@@ -271,7 +272,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
     }
 
     @Override
-    public void persistConfiguration(Resource resource, String configName, ConfigurationPersistData data) {
+    public void persistConfiguration(@NotNull Resource resource, @NotNull String configName, @NotNull ConfigurationPersistData data) {
         ConfigNameUtil.ensureValidConfigName(configName);
         String configResourcePath = configurationResourceResolvingStrategy.getResourcePath(resource, CONFIGS_BUCKET_NAME, configName);
         if (configResourcePath == null) {
@@ -286,7 +287,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
     }
 
     @Override
-    public void persistConfigurationCollection(Resource resource, String configName, ConfigurationCollectionPersistData data) {
+    public void persistConfigurationCollection(@NotNull Resource resource, @NotNull String configName, @NotNull ConfigurationCollectionPersistData data) {
         ConfigNameUtil.ensureValidConfigName(configName);
         String configResourceParentPath = configurationResourceResolvingStrategy.getResourceCollectionParentPath(resource, CONFIGS_BUCKET_NAME, configName);
         if (configResourceParentPath == null) {
@@ -301,7 +302,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
     }
 
     @Override
-    public ConfigurationData newCollectionItem(Resource resource, String configName) {
+    public ConfigurationData newCollectionItem(@NotNull Resource resource, @NotNull String configName) {
         ConfigNameUtil.ensureValidConfigName(configName);
         ConfigurationMetadata configMetadata = getConfigurationMetadata(configName);
         if (configMetadata != null) {
@@ -313,7 +314,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
     }
 
     @Override
-    public void deleteConfiguration(Resource resource, String configName) {
+    public void deleteConfiguration(@NotNull Resource resource, @NotNull String configName) {
         ConfigNameUtil.ensureValidConfigName(configName);
         
         // try to delete from all config bucket names
@@ -336,12 +337,12 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
     }
     
     @Override
-    public SortedSet<String> getConfigurationNames() {
+    public @NotNull SortedSet<String> getConfigurationNames() {
         return configurationMetadataProvider.getConfigurationNames();
     }
 
     @Override
-    public ConfigurationMetadata getConfigurationMetadata(String configName) {
+    public ConfigurationMetadata getConfigurationMetadata(@NotNull String configName) {
         ConfigNameUtil.ensureValidConfigName(configName);
         ConfigurationMetadata metadata = configurationMetadataProvider.getConfigurationMetadata(configName);
         if (metadata != null) {
@@ -419,7 +420,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
     }
 
     @Override
-    public String getPersistenceResourcePath(String configResourcePath) {
+    public String getPersistenceResourcePath(@NotNull String configResourcePath) {
         return configurationPersistenceStrategy.getResourcePath(configResourcePath);
     }
 

@@ -30,6 +30,7 @@ import org.apache.sling.caconfig.management.multiplexer.ContextPathStrategyMulti
 import org.apache.sling.caconfig.resource.ConfigurationResourceResolver;
 import org.apache.sling.caconfig.resource.impl.util.ConfigNameUtil;
 import org.apache.sling.caconfig.resource.spi.ContextResource;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -42,19 +43,19 @@ public class ConfigurationResourceResolverImpl implements ConfigurationResourceR
     private ConfigurationResourceResolvingStrategyMultiplexer configurationResourceResolvingStrategy;
 
     @Override
-    public Resource getResource(Resource resource, String bucketName, String configName) {
+    public Resource getResource(@NotNull Resource resource, @NotNull String bucketName, @NotNull String configName) {
         ConfigNameUtil.ensureValidConfigName(configName);
         return configurationResourceResolvingStrategy.getResource(resource, Collections.singleton(bucketName), configName);
     }
 
     @Override
-    public Collection<Resource> getResourceCollection(Resource resource, String bucketName, String configName) {
+    public @NotNull Collection<Resource> getResourceCollection(@NotNull Resource resource, @NotNull String bucketName, @NotNull String configName) {
         ConfigNameUtil.ensureValidConfigName(configName);
         return configurationResourceResolvingStrategy.getResourceCollection(resource, Collections.singleton(bucketName), configName);
     }
 
     @Override
-    public String getContextPath(Resource resource) {
+    public String getContextPath(@NotNull Resource resource) {
         Iterator<ContextResource> it = contextPathStrategy.findContextResources(resource);
         if (it.hasNext()) {
             return it.next().getResource().getPath();
@@ -65,7 +66,7 @@ public class ConfigurationResourceResolverImpl implements ConfigurationResourceR
     }
 
     @Override
-    public Collection<String> getAllContextPaths(Resource resource) {
+    public @NotNull Collection<String> getAllContextPaths(@NotNull Resource resource) {
         final List<String> contextPaths = new ArrayList<>();
         Iterator<ContextResource> contextResources = contextPathStrategy.findContextResources(resource);
         while (contextResources.hasNext()) {

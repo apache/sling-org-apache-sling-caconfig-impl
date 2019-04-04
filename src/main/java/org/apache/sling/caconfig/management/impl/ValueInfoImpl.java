@@ -28,6 +28,7 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.management.ValueInfo;
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationOverrideMultiplexer;
 import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
+import org.jetbrains.annotations.NotNull;
 
 final class ValueInfoImpl<T> implements ValueInfo<T> {
     
@@ -64,7 +65,7 @@ final class ValueInfoImpl<T> implements ValueInfo<T> {
     }
     
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return name;
     }
  
@@ -108,6 +109,7 @@ final class ValueInfoImpl<T> implements ValueInfo<T> {
     }
 
     @Override
+    @SuppressWarnings("null")
     public boolean isInherited() {
         if (isDefault() || effectiveValue == null) {
             return false;

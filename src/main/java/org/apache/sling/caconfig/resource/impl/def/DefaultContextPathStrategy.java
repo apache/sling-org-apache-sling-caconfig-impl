@@ -29,6 +29,7 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.caconfig.resource.spi.ContextPathStrategy;
 import org.apache.sling.caconfig.resource.spi.ContextResource;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
@@ -74,7 +75,7 @@ public class DefaultContextPathStrategy implements ContextPathStrategy {
     }
 
     @Override
-    public Iterator<ContextResource> findContextResources(Resource resource) {
+    public @NotNull Iterator<ContextResource> findContextResources(@NotNull Resource resource) {
         if (!config.enabled()) {
             return Collections.emptyIterator();
         }

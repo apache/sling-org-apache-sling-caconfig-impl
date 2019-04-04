@@ -43,6 +43,7 @@ import org.apache.sling.caconfig.management.multiplexer.ConfigurationOverrideMul
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy2;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
 import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
+import org.jetbrains.annotations.NotNull;
 
 final class ConfigurationDataImpl implements ConfigurationData {
     
@@ -107,7 +108,7 @@ final class ConfigurationDataImpl implements ConfigurationData {
     }
     
     @Override
-    public String getConfigName() {
+    public @NotNull String getConfigName() {
         return configName;
     }
 
@@ -128,7 +129,7 @@ final class ConfigurationDataImpl implements ConfigurationData {
     }
 
     @Override
-    public Set<String> getPropertyNames() {
+    public @NotNull Set<String> getPropertyNames() {
         if (propertyNamesCache == null) {
             propertyNamesCache = new LinkedHashSet<>();
             if (configMetadata != null) {
@@ -143,7 +144,7 @@ final class ConfigurationDataImpl implements ConfigurationData {
     }
 
     @Override
-    public ValueMap getValues() {
+    public @NotNull ValueMap getValues() {
         if (valuesCache == null) {
             Map<String,Object> props = new HashMap<>();
             if (writebackConfigurationResource != null) {
@@ -157,7 +158,7 @@ final class ConfigurationDataImpl implements ConfigurationData {
     }
 
     @Override
-    public ValueMap getEffectiveValues() {
+    public @NotNull ValueMap getEffectiveValues() {
         if (effectiveValuesCache == null) {
             Map<String,Object> props = new HashMap<>();
             if (configMetadata != null) {
@@ -260,6 +261,7 @@ final class ConfigurationDataImpl implements ConfigurationData {
     }
 
     @Override
+    @SuppressWarnings("null")
     public boolean isInherited() {
         // detect if the whole config or config item was inherited
         if (resolvedConfigurationResource != null && resolvedConfigurationResource.getPath() != null) {

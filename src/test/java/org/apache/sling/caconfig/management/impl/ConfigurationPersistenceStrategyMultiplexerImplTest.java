@@ -33,6 +33,8 @@ import org.apache.sling.caconfig.spi.ConfigurationCollectionPersistData;
 import org.apache.sling.caconfig.spi.ConfigurationPersistData;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy2;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -93,25 +95,25 @@ public class ConfigurationPersistenceStrategyMultiplexerImplTest {
         context.registerService(org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy.class,
                 new org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy() {
             @Override
-            public Resource getResource(Resource resource) {
+            public Resource getResource(@NotNull Resource resource) {
                 return resource2;
             }
             @Override
-            public String getResourcePath(String resourcePath) {
+            public String getResourcePath(@NotNull String resourcePath) {
                 return resource2.getPath();
             }
             @Override
-            public boolean persistConfiguration(ResourceResolver resourceResolver, String configResourcePath,
-                    ConfigurationPersistData data) {
+            public boolean persistConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath,
+                    @NotNull ConfigurationPersistData data) {
                 return true;
             }
             @Override
-            public boolean persistConfigurationCollection(ResourceResolver resourceResolver,
-                    String configResourceCollectionParentPath, ConfigurationCollectionPersistData data) {
+            public boolean persistConfigurationCollection(@NotNull ResourceResolver resourceResolver,
+                    @NotNull String configResourceCollectionParentPath, @NotNull ConfigurationCollectionPersistData data) {
                 return false;
             }
             @Override
-            public boolean deleteConfiguration(ResourceResolver resourceResolver, String configResourcePath) {
+            public boolean deleteConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath) {
                 return false;
             }
         }, Constants.SERVICE_RANKING, 2000);
@@ -119,53 +121,53 @@ public class ConfigurationPersistenceStrategyMultiplexerImplTest {
         // strategy 2
         context.registerService(ConfigurationPersistenceStrategy2.class, new ConfigurationPersistenceStrategy2() {
             @Override
-            public Resource getResource(Resource resource) {
+            public Resource getResource(@NotNull Resource resource) {
                 return resource1;
             }
             @Override
-            public Resource getCollectionParentResource(Resource resource) {
+            public Resource getCollectionParentResource(@NotNull Resource resource) {
                 return resource1;
             }
             @Override
-            public Resource getCollectionItemResource(Resource resource) {
+            public Resource getCollectionItemResource(@NotNull Resource resource) {
                 return resource1;
             }
             @Override
-            public String getResourcePath(String resourcePath) {
+            public String getResourcePath(@NotNull String resourcePath) {
                 return resource1.getPath();
             }
             @Override
-            public String getCollectionParentResourcePath(String resourcePath) {
+            public String getCollectionParentResourcePath(@NotNull String resourcePath) {
                 return resource1.getPath();
             }
             @Override
-            public String getCollectionItemResourcePath(String resourcePath) {
+            public String getCollectionItemResourcePath(@NotNull String resourcePath) {
                 return resource1.getPath();
             }
             @Override
-            public String getConfigName(String configName, String relatedConfigPath) {
+            public String getConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
                 return resource1.getPath();
             }
             @Override
-            public String getCollectionParentConfigName(String configName, String relatedConfigPath) {
+            public String getCollectionParentConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
                 return resource1.getPath();
             }
             @Override
-            public String getCollectionItemConfigName(String configName, String relatedConfigPath) {
+            public String getCollectionItemConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
                 return resource1.getPath();
             }
             @Override
-            public boolean persistConfiguration(ResourceResolver resourceResolver, String configResourcePath,
-                    ConfigurationPersistData data) {
+            public boolean persistConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath,
+                    @NotNull ConfigurationPersistData data) {
                 return false;
             }
             @Override
-            public boolean persistConfigurationCollection(ResourceResolver resourceResolver,
-                    String configResourceCollectionParentPath, ConfigurationCollectionPersistData data) {
+            public boolean persistConfigurationCollection(@NotNull ResourceResolver resourceResolver,
+                    @NotNull String configResourceCollectionParentPath, @NotNull ConfigurationCollectionPersistData data) {
                 return true;
             }
             @Override
-            public boolean deleteConfiguration(ResourceResolver resourceResolver, String configResourcePath) {
+            public boolean deleteConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath) {
                 return true;
             }
         }, Constants.SERVICE_RANKING, 1000);

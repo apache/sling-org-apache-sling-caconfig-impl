@@ -25,6 +25,7 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceMetadata;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Wrapper that returns an enhanced value map for the resource
@@ -51,8 +52,8 @@ public final class ConfigurationResourceWrapper extends AbstractResource {
         }
     }
     
-    @SuppressWarnings("unchecked")
-    public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
+    @SuppressWarnings({ "unchecked", "null" })
+    public <AdapterType> AdapterType adaptTo(@NotNull Class<AdapterType> type) {
         if (type == ValueMap.class) {
             return (AdapterType)props;
         }
@@ -63,7 +64,7 @@ public final class ConfigurationResourceWrapper extends AbstractResource {
         return props;
     }
 
-    public String getPath() {
+    public @NotNull String getPath() {
         return resource.getPath();
     }
 
@@ -87,7 +88,7 @@ public final class ConfigurationResourceWrapper extends AbstractResource {
         return resource.getChild(relPath);
     }
 
-    public String getResourceType() {
+    public @NotNull String getResourceType() {
         return resource.getResourceType();
     }
 
@@ -103,11 +104,11 @@ public final class ConfigurationResourceWrapper extends AbstractResource {
         return resource.isResourceType(resourceType);
     }
 
-    public ResourceMetadata getResourceMetadata() {
+    public @NotNull ResourceMetadata getResourceMetadata() {
         return resource.getResourceMetadata();
     }
 
-    public ResourceResolver getResourceResolver() {
+    public @NotNull ResourceResolver getResourceResolver() {
         return resource.getResourceResolver();
     }
     

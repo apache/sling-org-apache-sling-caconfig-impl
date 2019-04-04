@@ -29,6 +29,7 @@ import org.apache.sling.caconfig.management.multiplexer.ConfigurationInheritance
 import org.apache.sling.caconfig.spi.ConfigurationInheritanceStrategy;
 import org.apache.sling.commons.osgi.Order;
 import org.apache.sling.commons.osgi.RankedServices;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -63,7 +64,7 @@ public class ConfigurationInheritanceStrategyMultiplexerImpl implements Configur
      */
     @SuppressWarnings("unchecked")
     @Override
-    public Resource getResource(Iterator<Resource> configResources) {
+    public Resource getResource(@NotNull Iterator<Resource> configResources) {
         List<ConfigurationInheritanceStrategy> itemList = items.getList();
         if (itemList.isEmpty()) {
             return null;

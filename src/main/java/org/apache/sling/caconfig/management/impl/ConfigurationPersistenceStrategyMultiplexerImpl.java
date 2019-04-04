@@ -31,6 +31,8 @@ import org.apache.sling.caconfig.spi.ConfigurationPersistData;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy2;
 import org.apache.sling.commons.osgi.Order;
 import org.apache.sling.commons.osgi.RankedServices;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -64,7 +66,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
      * Transform the configuration resource by the first implementation that has an answer.
      */    
     @Override
-    public Resource getResource(Resource resource) {
+    public Resource getResource(@NotNull Resource resource) {
         for (ConfigurationPersistenceStrategy2 item : items) {
             Resource result = item.getResource(resource);
             if (result != null) {
@@ -75,7 +77,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
     }
 
     @Override
-    public Resource getCollectionParentResource(Resource resource) {
+    public Resource getCollectionParentResource(@NotNull Resource resource) {
         for (ConfigurationPersistenceStrategy2 item : items) {
             Resource result = item.getCollectionParentResource(resource);
             if (result != null) {
@@ -86,7 +88,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
     }
 
     @Override
-    public Resource getCollectionItemResource(Resource resource) {
+    public Resource getCollectionItemResource(@NotNull Resource resource) {
         for (ConfigurationPersistenceStrategy2 item : items) {
             Resource result = item.getCollectionItemResource(resource);
             if (result != null) {
@@ -97,7 +99,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
     }    
         
     @Override
-    public String getResourcePath(String resourcePath) {
+    public String getResourcePath(@NotNull String resourcePath) {
         for (ConfigurationPersistenceStrategy2 item : items) {
             String result = item.getResourcePath(resourcePath);
             if (result != null) {
@@ -108,7 +110,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
     }
 
     @Override
-    public String getCollectionParentResourcePath(String resourcePath) {
+    public String getCollectionParentResourcePath(@NotNull String resourcePath) {
         for (ConfigurationPersistenceStrategy2 item : items) {
             String result = item.getCollectionParentResourcePath(resourcePath);
             if (result != null) {
@@ -119,7 +121,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
     }
 
     @Override
-    public String getCollectionItemResourcePath(String resourcePath) {
+    public String getCollectionItemResourcePath(@NotNull String resourcePath) {
         for (ConfigurationPersistenceStrategy2 item : items) {
             String result = item.getCollectionItemResourcePath(resourcePath);
             if (result != null) {
@@ -130,7 +132,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
     }
 
     @Override
-    public String getConfigName(String configName, String relatedConfigPath) {
+    public String getConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
         for (ConfigurationPersistenceStrategy2 item : items) {
             String result = item.getConfigName(configName, relatedConfigPath);
             if (result != null) {
@@ -141,7 +143,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
     }
 
     @Override
-    public String getCollectionParentConfigName(String configName, String relatedConfigPath) {
+    public String getCollectionParentConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
         for (ConfigurationPersistenceStrategy2 item : items) {
             String result = item.getCollectionParentConfigName(configName, relatedConfigPath);
             if (result != null) {
@@ -152,7 +154,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
     }
 
     @Override
-    public String getCollectionItemConfigName(String configName, String relatedConfigPath) {
+    public String getCollectionItemConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
         for (ConfigurationPersistenceStrategy2 item : items) {
             String result = item.getCollectionItemConfigName(configName, relatedConfigPath);
             if (result != null) {
@@ -163,7 +165,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
     }
     
     @Override
-    public Collection<String> getAllConfigNames(String configName) {
+    public @NotNull Collection<String> getAllConfigNames(@NotNull String configName) {
         Set<String> configNames = new LinkedHashSet<>();
         for (ConfigurationPersistenceStrategy2 item : items) {
             String result = item.getConfigName(configName, null);
@@ -175,7 +177,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
     }
 
     @Override
-    public Collection<String> getAllCollectionParentConfigNames(String configName) {
+    public @NotNull Collection<String> getAllCollectionParentConfigNames(@NotNull String configName) {
         Set<String> configNames = new LinkedHashSet<>();
         for (ConfigurationPersistenceStrategy2 item : items) {
             String result = item.getCollectionParentConfigName(configName, null);
@@ -187,7 +189,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
     }
 
     @Override
-    public Collection<String> getAllCollectionItemConfigNames(String configName) {
+    public @NotNull Collection<String> getAllCollectionItemConfigNames(@NotNull String configName) {
         Set<String> configNames = new LinkedHashSet<>();
         for (ConfigurationPersistenceStrategy2 item : items) {
             String result = item.getCollectionItemConfigName(configName, null);
@@ -202,8 +204,8 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
      * Persist configuration data with the first implementation that accepts it.
      */
     @Override
-    public boolean persistConfiguration(ResourceResolver resourceResolver, String configResourcePath,
-            ConfigurationPersistData data) {
+    public boolean persistConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath,
+            @NotNull ConfigurationPersistData data) {
         for (ConfigurationPersistenceStrategy2 item : items) {
             if (item.persistConfiguration(resourceResolver, configResourcePath, data)) {
                 return true;
@@ -216,8 +218,8 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
      * Persist configuration data with the first implementation that accepts it.
      */
     @Override
-    public boolean persistConfigurationCollection(ResourceResolver resourceResolver, String configResourceCollectionParentPath,
-            ConfigurationCollectionPersistData data) {
+    public boolean persistConfigurationCollection(@NotNull ResourceResolver resourceResolver, @NotNull String configResourceCollectionParentPath,
+            @NotNull ConfigurationCollectionPersistData data) {
         for (ConfigurationPersistenceStrategy2 item : items) {
             if (item.persistConfigurationCollection(resourceResolver, configResourceCollectionParentPath, data)) {
                 return true;
@@ -227,7 +229,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
     }
 
     @Override
-    public boolean deleteConfiguration(ResourceResolver resourceResolver, String configResourcePath) {
+    public boolean deleteConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath) {
         for (ConfigurationPersistenceStrategy2 item : items) {
             if (item.deleteConfiguration(resourceResolver, configResourcePath)) {
                 return true;

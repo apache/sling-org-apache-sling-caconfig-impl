@@ -72,6 +72,7 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
     private boolean enabled;
 
     @Override
+    @SuppressWarnings({ "unused", "null" })
     public void addBindings(Bindings bindings) {
         if (!enabled || !bindings.containsKey(SlingBindings.REQUEST)) {
             return;
@@ -142,6 +143,7 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
         }
         
         private Object getConfigValue(String configName) {
+            @SuppressWarnings("null")
             ConfigurationBuilder configBuilder = resource.adaptTo(ConfigurationBuilder.class).name(configName);
             if (isCollection(configName)) {
                 return configBuilder.asValueMapCollection();

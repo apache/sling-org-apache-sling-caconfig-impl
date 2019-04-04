@@ -32,6 +32,7 @@ import org.apache.sling.caconfig.resource.spi.ContextPathStrategy;
 import org.apache.sling.caconfig.resource.spi.ContextResource;
 import org.apache.sling.commons.osgi.Order;
 import org.apache.sling.commons.osgi.RankedServices;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -66,7 +67,7 @@ public class ContextPathStrategyMultiplexerImpl implements ContextPathStrategyMu
      * Merges all results from the detected implementations into a single answer.
      */
     @Override
-    public Iterator<ContextResource> findContextResources(Resource resource) {
+    public @NotNull Iterator<ContextResource> findContextResources(@NotNull Resource resource) {
         List<Iterator<ContextResource>> allResults = getAllResults(resource);
         if (allResults.isEmpty()) {
             return Collections.emptyIterator();

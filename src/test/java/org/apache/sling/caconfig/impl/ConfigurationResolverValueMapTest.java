@@ -45,6 +45,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Test {@link ConfigurationResolver} with ValueMap for reading the config.
  */
+@SuppressWarnings("null")
 public class ConfigurationResolverValueMapTest {
 
     @Rule

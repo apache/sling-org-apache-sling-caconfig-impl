@@ -34,6 +34,7 @@ import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
 import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -101,7 +102,7 @@ public class ConfigurationMetadataProviderMultiplexerImplTest {
         }
         context.registerService(ConfigurationMetadataProvider.class, new ConfigurationMetadataProvider() {
             @Override
-            public SortedSet<String> getConfigurationNames() {
+            public @NotNull SortedSet<String> getConfigurationNames() {
                 return new TreeSet<>(metadata.keySet());
             }
             @Override

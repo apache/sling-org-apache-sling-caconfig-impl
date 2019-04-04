@@ -36,6 +36,8 @@ import org.apache.sling.caconfig.spi.ConfigurationPersistData;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceAccessDeniedException;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceException;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy2;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -78,7 +80,7 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
     }
         
     @Override
-    public Resource getResource(Resource resource) {
+    public Resource getResource(@NotNull Resource resource) {
         if (!config.enabled()) {
             return null;
         }
@@ -86,7 +88,7 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
     }
     
     @Override
-    public Resource getCollectionParentResource(Resource resource) {
+    public Resource getCollectionParentResource(@NotNull Resource resource) {
         if (!config.enabled()) {
             return null;
         }
@@ -94,7 +96,7 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
     }
 
     @Override
-    public Resource getCollectionItemResource(Resource resource) {
+    public Resource getCollectionItemResource(@NotNull Resource resource) {
         if (!config.enabled()) {
             return null;
         }
@@ -102,7 +104,7 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
     }
 
     @Override
-    public String getResourcePath(String resourcePath) {
+    public String getResourcePath(@NotNull String resourcePath) {
         if (!config.enabled()) {
             return null;
         }
@@ -110,7 +112,7 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
     }
 
     @Override
-    public String getCollectionParentResourcePath(String resourcePath) {
+    public String getCollectionParentResourcePath(@NotNull String resourcePath) {
         if (!config.enabled()) {
             return null;
         }
@@ -118,7 +120,7 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
     }
 
     @Override
-    public String getCollectionItemResourcePath(String resourcePath) {
+    public String getCollectionItemResourcePath(@NotNull String resourcePath) {
         if (!config.enabled()) {
             return null;
         }
@@ -126,7 +128,7 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
     }
 
     @Override
-    public String getConfigName(String configName, String relatedConfigPath) {
+    public String getConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
         if (!config.enabled()) {
             return null;
         }
@@ -134,7 +136,7 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
     }
 
     @Override
-    public String getCollectionParentConfigName(String configName, String relatedConfigPath) {
+    public String getCollectionParentConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
         if (!config.enabled()) {
             return null;
         }
@@ -142,7 +144,7 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
     }
 
     @Override
-    public String getCollectionItemConfigName(String configName, String relatedConfigPath) {
+    public String getCollectionItemConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
         if (!config.enabled()) {
             return null;
         }
@@ -150,8 +152,8 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
     }
     
     @Override
-    public boolean persistConfiguration(ResourceResolver resourceResolver, String configResourcePath,
-            ConfigurationPersistData data) {
+    public boolean persistConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath,
+            @NotNull ConfigurationPersistData data) {
         if (!config.enabled()) {
             return false;
         }
@@ -161,8 +163,8 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
     }
 
     @Override
-    public boolean persistConfigurationCollection(ResourceResolver resourceResolver, String configResourceCollectionParentPath,
-            ConfigurationCollectionPersistData data) {
+    public boolean persistConfigurationCollection(@NotNull ResourceResolver resourceResolver, @NotNull String configResourceCollectionParentPath,
+            @NotNull ConfigurationCollectionPersistData data) {
         if (!config.enabled()) {
             return false;
         }
@@ -180,7 +182,7 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
     }
 
     @Override
-    public boolean deleteConfiguration(ResourceResolver resourceResolver, String configResourcePath) {
+    public boolean deleteConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath) {
         if (!config.enabled()) {
             return false;
         }

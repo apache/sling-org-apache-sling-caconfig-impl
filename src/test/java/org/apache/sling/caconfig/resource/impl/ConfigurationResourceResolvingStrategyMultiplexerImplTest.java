@@ -36,6 +36,8 @@ import org.apache.sling.caconfig.resource.spi.ConfigurationResourceResolvingStra
 import org.apache.sling.hamcrest.ResourceCollectionMatchers;
 import org.apache.sling.hamcrest.ResourceMatchers;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,6 +48,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 
+@SuppressWarnings("null")
 public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
 
     private static final String BUCKET = "sling:test";
@@ -124,33 +127,33 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
         // strategy 1
         context.registerService(ConfigurationResourceResolvingStrategy.class, new ConfigurationResourceResolvingStrategy() {
             @Override
-            public Resource getResource(Resource resource, Collection<String> bucketNames, String configName) {
+            public Resource getResource(@NotNull Resource resource, @NotNull Collection<String> bucketNames, @NotNull String configName) {
                 return context.resourceResolver().getResource("/conf/site1/sling:test/test");
             }
             @Override
-            public Collection<Resource> getResourceCollection(Resource resource, Collection<String> bucketNames, String configName) {
+            public Collection<Resource> getResourceCollection(@NotNull Resource resource, @NotNull Collection<String> bucketNames, @NotNull String configName) {
                 return ImmutableList.copyOf(context.resourceResolver().getResource("/conf/site1/sling:test/feature").listChildren());
             }
             @Override
-            public Iterator<Resource> getResourceInheritanceChain(Resource resource, Collection<String> bucketNames, String configName) {
+            public Iterator<Resource> getResourceInheritanceChain(@NotNull Resource resource, @NotNull Collection<String> bucketNames, @NotNull String configName) {
                 return Iterators.singletonIterator(getResource(resource, bucketNames, configName));
             }
             @Override
-            public Collection<Iterator<Resource>> getResourceCollectionInheritanceChain(Resource resource,
-                    Collection<String> bucketNames, String configName) {
+            public Collection<Iterator<Resource>> getResourceCollectionInheritanceChain(@NotNull Resource resource,
+                    @NotNull Collection<String> bucketNames, @NotNull String configName) {
                 return Collections2.transform(getResourceCollection(resource, bucketNames, configName), new Function<Resource, Iterator<Resource>>() {
                     @Override
-                    public Iterator<Resource> apply(Resource input) {
+                    public Iterator<Resource> apply(@Nullable Resource input) {
                         return Iterators.singletonIterator(input);
                     }
                 });
             }
             @Override
-            public String getResourcePath(Resource resource, String bucketName, String configName) {
+            public String getResourcePath(@NotNull Resource resource, @NotNull String bucketName, @NotNull String configName) {
                 return "/conf/site1/sling:test/test";
             }
             @Override
-            public String getResourceCollectionParentPath(Resource resource, String bucketName, String configName) {
+            public String getResourceCollectionParentPath(@NotNull Resource resource, @NotNull String bucketName, @NotNull String configName) {
                 return "/conf/site1/sling:test/feature";
             }
         }, Constants.SERVICE_RANKING, 2000);
@@ -158,33 +161,33 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
         // strategy 2
         context.registerService(ConfigurationResourceResolvingStrategy.class, new ConfigurationResourceResolvingStrategy() {
             @Override
-            public Resource getResource(Resource resource, Collection<String> bucketNames, String configName) {
+            public Resource getResource(@NotNull Resource resource, @NotNull Collection<String> bucketNames, @NotNull String configName) {
                 return context.resourceResolver().getResource("/libs/conf/sling:test/test");
             }
             @Override
-            public Collection<Resource> getResourceCollection(Resource resource, Collection<String> bucketNames, String configName) {
+            public Collection<Resource> getResourceCollection(@NotNull Resource resource, @NotNull Collection<String> bucketNames, @NotNull String configName) {
                 return ImmutableList.copyOf(context.resourceResolver().getResource("/libs/conf/sling:test/feature").listChildren());
             }
             @Override
-            public Iterator<Resource> getResourceInheritanceChain(Resource resource, Collection<String> bucketNames, String configName) {
+            public Iterator<Resource> getResourceInheritanceChain(@NotNull Resource resource, @NotNull Collection<String> bucketNames, @NotNull String configName) {
                 return Iterators.singletonIterator(getResource(resource, bucketNames, configName));
             }
             @Override
-            public Collection<Iterator<Resource>> getResourceCollectionInheritanceChain(Resource resource,
-                    Collection<String> bucketNames, String configName) {
+            public Collection<Iterator<Resource>> getResourceCollectionInheritanceChain(@NotNull Resource resource,
+                    @NotNull Collection<String> bucketNames, @NotNull String configName) {
                 return Collections2.transform(getResourceCollection(resource, bucketNames, configName), new Function<Resource, Iterator<Resource>>() {
                     @Override
-                    public Iterator<Resource> apply(Resource input) {
+                    public Iterator<Resource> apply(@Nullable Resource input) {
                         return Iterators.singletonIterator(input);
                     }
                 });
             }
             @Override
-            public String getResourcePath(Resource resource, String bucketName, String configName) {
+            public String getResourcePath(@NotNull Resource resource, @NotNull String bucketName, @NotNull String configName) {
                 return null;
             }
             @Override
-            public String getResourceCollectionParentPath(Resource resource, String bucketName, String configName) {
+            public String getResourceCollectionParentPath(@NotNull Resource resource, @NotNull String bucketName, @NotNull String configName) {
                 return null;
             }
         }, Constants.SERVICE_RANKING, 1000);
@@ -214,7 +217,7 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
         return Collections2.transform(underTest.getResourceCollectionInheritanceChain(site1Page1, BUCKETS, "feature"),
                 new Function<Iterator<Resource>, Resource>() {
                 @Override
-                public Resource apply(Iterator<Resource> input) {
+                public Resource apply(@Nullable Iterator<Resource> input) {
                     return input.next();
                 }
             });

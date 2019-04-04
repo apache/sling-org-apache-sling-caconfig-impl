@@ -27,6 +27,7 @@ import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
 import org.apache.sling.commons.osgi.Order;
 import org.apache.sling.commons.osgi.RankedServices;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -60,7 +61,7 @@ public class ConfigurationMetadataProviderMultiplexerImpl implements Configurati
      * Merge configuration names from all providers.
      */
     @Override
-    public SortedSet<String> getConfigurationNames() {
+    public @NotNull SortedSet<String> getConfigurationNames() {
         SortedSet<String> configNames = new TreeSet<>();
         for (ConfigurationMetadataProvider item : items) {
             configNames.addAll(item.getConfigurationNames());

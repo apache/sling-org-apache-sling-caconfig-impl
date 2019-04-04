@@ -22,6 +22,7 @@ import org.apache.sling.api.adapter.AdapterFactory;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.caconfig.ConfigurationResolver;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
@@ -38,7 +39,7 @@ public class ConfigurationBuilderAdapterFactory implements AdapterFactory {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <AdapterType> AdapterType getAdapter(final Object adaptable, final Class<AdapterType> type) {
+    public <AdapterType> AdapterType getAdapter(@NotNull final Object adaptable, @NotNull final Class<AdapterType> type) {
         if (adaptable instanceof Resource && type == ConfigurationBuilder.class) {
             return (AdapterType) resolver.get((Resource) adaptable);
         }

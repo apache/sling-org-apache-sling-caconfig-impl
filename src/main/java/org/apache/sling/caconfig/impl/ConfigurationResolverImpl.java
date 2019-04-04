@@ -34,6 +34,7 @@ import org.apache.sling.caconfig.management.multiplexer.ConfigurationMetadataPro
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationOverrideMultiplexer;
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationPersistenceStrategyMultiplexer;
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationResourceResolvingStrategyMultiplexer;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -81,7 +82,7 @@ public class ConfigurationResolverImpl implements ConfigurationResolver, Configu
     }
     
     @Override
-    public ConfigurationBuilder get(Resource resource) {
+    public @NotNull ConfigurationBuilder get(@NotNull Resource resource) {
         return new ConfigurationBuilderImpl(resource, this,
                 configurationResourceResolvingStrategy, configurationPersistenceStrategy,
                 configurationInheritanceStrategy, configurationOverrideMultiplexer, configurationMetadataProvider,
@@ -89,7 +90,7 @@ public class ConfigurationResolverImpl implements ConfigurationResolver, Configu
     }
 
     @Override
-    public Collection<String> configBucketNames() {
+    public @NotNull Collection<String> configBucketNames() {
         return configBucketNames;
     }
 

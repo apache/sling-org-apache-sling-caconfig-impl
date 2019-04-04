@@ -26,6 +26,7 @@ import org.apache.sling.caconfig.management.ConfigurationCollectionData;
 import org.apache.sling.caconfig.management.ConfigurationData;
 import org.apache.sling.caconfig.management.ConfigurationManagementSettings;
 import org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants;
+import org.jetbrains.annotations.NotNull;
 
 final class ConfigurationCollectionDataImpl implements ConfigurationCollectionData {
     
@@ -47,12 +48,12 @@ final class ConfigurationCollectionDataImpl implements ConfigurationCollectionDa
     }
 
     @Override
-    public String getConfigName() {
+    public @NotNull String getConfigName() {
         return configName;
     }
 
     @Override
-    public Collection<ConfigurationData> getItems() {
+    public @NotNull Collection<ConfigurationData> getItems() {
         return items;
     }
 
@@ -62,7 +63,7 @@ final class ConfigurationCollectionDataImpl implements ConfigurationCollectionDa
     }
 
     @Override
-    public Map<String, Object> getProperties() {
+    public @NotNull Map<String, Object> getProperties() {
         if (filteredPropertiesCache == null) {
             filteredPropertiesCache = new HashMap<>();
             if (properties != null) {

@@ -29,6 +29,7 @@ import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.caconfig.impl.ConfigurationResourceWrapper;
 import org.apache.sling.caconfig.resource.impl.util.PropertyUtil;
 import org.apache.sling.caconfig.spi.ConfigurationInheritanceStrategy;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
@@ -66,7 +67,7 @@ public class DefaultConfigurationInheritanceStrategy implements ConfigurationInh
     }
     
     @Override
-    public Resource getResource(Iterator<Resource> configResources) {
+    public Resource getResource(@NotNull Iterator<Resource> configResources) {
         if (!config.enabled()) {
             return null;
         }

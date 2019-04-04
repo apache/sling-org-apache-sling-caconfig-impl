@@ -61,6 +61,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 
 @RunWith(MockitoJUnitRunner.class)
+@SuppressWarnings("null")
 public class ConfigurationManagerImplTest {
     
     @Rule

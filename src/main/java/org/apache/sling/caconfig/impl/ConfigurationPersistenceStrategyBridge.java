@@ -31,6 +31,8 @@ import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy2;
 import org.apache.sling.commons.osgi.Order;
 import org.apache.sling.commons.osgi.ServiceUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
@@ -137,67 +139,67 @@ public final class ConfigurationPersistenceStrategyBridge {
         }
 
         @Override
-        public Resource getResource(Resource resource) {
+        public Resource getResource(@NotNull Resource resource) {
             return delegate.getResource(resource);
         }
 
         @Override
-        public Resource getCollectionParentResource(Resource resource) {
+        public Resource getCollectionParentResource(@NotNull Resource resource) {
             // with SPI/Impl 1.2 it was not possible to manipulate collection parent resource
             return resource;
         }
 
         @Override
-        public Resource getCollectionItemResource(Resource resource) {
+        public Resource getCollectionItemResource(@NotNull Resource resource) {
             return delegate.getResource(resource);
         }
 
         @Override
-        public String getResourcePath(String resourcePath) {
+        public String getResourcePath(@NotNull String resourcePath) {
             return delegate.getResourcePath(resourcePath);
         }
 
         @Override
-        public String getCollectionParentResourcePath(String resourcePath) {
+        public String getCollectionParentResourcePath(@NotNull String resourcePath) {
             // with SPI/Impl 1.2 it was not possible to manipulate collection parent resource
             return resourcePath;
         }
 
         @Override
-        public String getCollectionItemResourcePath(String resourcePath) {
+        public String getCollectionItemResourcePath(@NotNull String resourcePath) {
             return delegate.getResourcePath(resourcePath);
         }
 
         @Override
-        public String getConfigName(String configName, String relatedConfigPath) {
+        public String getConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
             return delegate.getResourcePath(configName);
         }
 
         @Override
-        public String getCollectionParentConfigName(String configName, String relatedConfigPath) {
+        public String getCollectionParentConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
             // with SPI/Impl 1.2 it was not possible to manipulate collection parent resource
             return configName;
         }
 
         @Override
-        public String getCollectionItemConfigName(String configName, String relatedConfigPath) {
+        public String getCollectionItemConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
             return delegate.getResourcePath(configName);
         }
 
         @Override
-        public boolean persistConfiguration(ResourceResolver resourceResolver, String configResourcePath,
-                ConfigurationPersistData data) {
+        public boolean persistConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath,
+                @NotNull ConfigurationPersistData data) {
             return delegate.persistConfiguration(resourceResolver, configResourcePath, data);
         }
 
         @Override
-        public boolean persistConfigurationCollection(ResourceResolver resourceResolver,
-                String configResourceCollectionParentPath, ConfigurationCollectionPersistData data) {
+        public boolean persistConfigurationCollection(@NotNull ResourceResolver resourceResolver,
+                @NotNull String configResourceCollectionParentPath, @NotNull ConfigurationCollectionPersistData data) {
             return delegate.persistConfigurationCollection(resourceResolver, configResourceCollectionParentPath, data);
         }
 
         @Override
-        public boolean deleteConfiguration(ResourceResolver resourceResolver, String configResourcePath) {
+        public boolean deleteConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath) {
             return delegate.deleteConfiguration(resourceResolver, configResourcePath);
         }
         

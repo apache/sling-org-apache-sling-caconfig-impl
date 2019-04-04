@@ -252,6 +252,7 @@ public class ConfigurationProxyTest {
                 return ConfigurationProxy.get(child, clazz, childResolver(child));
             }
             @Override
+            @SuppressWarnings("null")
             public <T> Collection<T> getChildren(String configName, Class<T> clazz) {
                 List<T> collection = new ArrayList<>();
                 Resource childParent = resource!=null ? resource.getChild(configName) : null;

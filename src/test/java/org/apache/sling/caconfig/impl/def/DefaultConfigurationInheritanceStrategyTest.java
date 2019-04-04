@@ -33,6 +33,7 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 
+@SuppressWarnings("null")
 public class DefaultConfigurationInheritanceStrategyTest {
     
     private static final String PROPERTY_CONFIG_PROPERTY_INHERIT_CUSTOM = "custom:configPropertyInherit";

@@ -34,6 +34,7 @@ import org.apache.sling.caconfig.resource.spi.ContextPathStrategy;
 import org.apache.sling.caconfig.resource.spi.ContextResource;
 import org.apache.sling.hamcrest.ResourceIteratorMatchers;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -114,7 +115,7 @@ public class ContextPathStrategyMultiplexerImplTest {
         }
         context.registerService(ContextPathStrategy.class, new ContextPathStrategy() {
             @Override
-            public Iterator<ContextResource> findContextResources(Resource resource) {
+            public @NotNull Iterator<ContextResource> findContextResources(@NotNull Resource resource) {
                 return toContextResourceIterator(resources.iterator());
             }
         });

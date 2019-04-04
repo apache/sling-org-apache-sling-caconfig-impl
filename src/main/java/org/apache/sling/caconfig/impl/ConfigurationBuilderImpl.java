@@ -49,6 +49,7 @@ import org.apache.sling.caconfig.spi.ConfigurationInheritanceStrategy;
 import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
 import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +100,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     }
 
     @Override
-    public ConfigurationBuilder name(final String configName) {
+    public @NotNull ConfigurationBuilder name(@NotNull final String configName) {
         ConfigNameUtil.ensureValidConfigName(configName);
         return new ConfigurationBuilderImpl(contentResource,
                 configurationResolver,
@@ -166,8 +167,8 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
                        .getResourceCollectionInheritanceChain(this.contentResource, configBucketNames, collectionParentConfigName);
                if (result != null) {
                    resourceInheritanceChains.addAll(result);
-                   }
                }
+           }
 
            final Collection<T> result = new ArrayList<>();
            if (resourceInheritanceChains != null) {
@@ -284,7 +285,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     // --- Annotation class support ---
 
     @Override
-    public <T> T as(final Class<T> clazz) {
+    public @NotNull <T> T as(@NotNull final Class<T> clazz) {
         final String name = getConfigurationNameForAnnotationClass(clazz);
         if (log.isDebugEnabled()) {
             log.debug("Get configuration for context path {}, name '{}', class {}", contentResource.getPath(), name, clazz.getName());
@@ -293,7 +294,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     }
 
     @Override
-    public <T> Collection<T> asCollection(Class<T> clazz) {
+    public @NotNull <T> Collection<T> asCollection(@NotNull Class<T> clazz) {
         final String name = getConfigurationNameForAnnotationClass(clazz);
         if (log.isDebugEnabled()) {
             log.debug("Get configuration collection for context path {}, name '{}', class {}", contentResource.getPath(), name, clazz.getName());
@@ -341,7 +342,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     // --- ValueMap support ---
 
     @Override
-    public ValueMap asValueMap() {
+    public @NotNull ValueMap asValueMap() {
         if (log.isDebugEnabled()) {
             log.debug("Get ValueMap for context path {}, name '{}'", contentResource.getPath(), this.configName);
         }
@@ -349,7 +350,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     }
 
     @Override
-    public Collection<ValueMap> asValueMapCollection() {
+    public @NotNull Collection<ValueMap> asValueMapCollection() {
         if (log.isDebugEnabled()) {
             log.debug("Get ValueMap collection for context path {}, name '{}'", contentResource.getPath(), this.configName);
         }
@@ -373,7 +374,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     // --- Adaptable support ---
 
     @Override
-    public <T> T asAdaptable(Class<T> clazz) {
+    public <T> T asAdaptable(@NotNull Class<T> clazz) {
         if (log.isDebugEnabled()) {
             log.debug("Get adaptable for context path {}, name '{}', class {}", contentResource.getPath(), this.configName, clazz);
         }
@@ -381,7 +382,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     }
 
     @Override
-    public <T> Collection<T> asAdaptableCollection(Class<T> clazz) {
+    public @NotNull <T> Collection<T> asAdaptableCollection(@NotNull Class<T> clazz) {
         if (log.isDebugEnabled()) {
             log.debug("Get adaptable collection for context path {}, name '{}', class {}", contentResource.getPath(), this.configName, clazz);
         }

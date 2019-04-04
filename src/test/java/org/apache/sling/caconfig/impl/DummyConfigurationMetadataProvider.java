@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
 import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
+import org.jetbrains.annotations.NotNull;
 
 import com.google.common.collect.ImmutableSortedSet;
 
@@ -43,7 +44,7 @@ class DummyConfigurationMetadataProvider implements ConfigurationMetadataProvide
     }
     
     @Override
-    public SortedSet<String> getConfigurationNames() {
+    public @NotNull SortedSet<String> getConfigurationNames() {
         return ImmutableSortedSet.of(configName);
     }
     

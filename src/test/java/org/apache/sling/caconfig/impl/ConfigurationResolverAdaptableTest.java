@@ -44,6 +44,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Test {@link ConfigurationResolver} with custom adaptions (in this case: Sling Models) for reading the config.
  */
+@SuppressWarnings("null")
 public class ConfigurationResolverAdaptableTest {
 
     @Rule

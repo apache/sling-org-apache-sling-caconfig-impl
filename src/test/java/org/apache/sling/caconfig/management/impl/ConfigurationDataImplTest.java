@@ -46,6 +46,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 @RunWith(MockitoJUnitRunner.class)
+@SuppressWarnings("null")
 public class ConfigurationDataImplTest {
     
     @Rule

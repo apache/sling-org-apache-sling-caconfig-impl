@@ -50,6 +50,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * Test {@link ConfigurationResolver} with annotation classes for reading the config.
  */
+@SuppressWarnings("null")
 public class ConfigurationResolverCustomPersistence2Test {
 
     @Rule
