@@ -111,7 +111,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
                     }
                 }
                 
-                if (log.isTraceEnabled() && configResource != null) {
+                if (log.isTraceEnabled()) {
                     log.trace("+ Found config resource for context path " + resource.getPath() + ": " + configResource.getPath() + " "
                             + MapUtil.traceOutput(configResource.getValueMap()) + ", "
                             + "writeback config resource: " + writebackConfigResourcePath);
@@ -164,42 +164,40 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
         }
 
         String writebackConfigResourceCollectionParentPath = null;
-        if (configResourceInheritanceChains != null) {
-            for (Iterator<Resource> configResourceInheritanceChain : configResourceInheritanceChains) {
-                ResettableIterator resettableConfigResourceInheritanceChain = new ListIteratorWrapper(configResourceInheritanceChain);
-                Resource configResource = applyPersistenceAndInheritance(resource.getPath(), configName, resettableConfigResourceInheritanceChain, true, resource.getResourceResolver());
-                resettableConfigResourceInheritanceChain.reset();
-                Resource untransformedConfigResource = (Resource)resettableConfigResourceInheritanceChain.next();
-                if (configResource != null) {
-                    // get writeback resource for "reverse inheritance detection"
-                    Resource writebackConfigResource = null;
-                    
-                    String writebackConfigResourcePath = null;
-                    for (String configBucketName : configurationResourceResolverConfig.configBucketNames()) {
-                        writebackConfigResourceCollectionParentPath = configurationResourceResolvingStrategy.getResourceCollectionParentPath(resource, configBucketName, configName);
-                        if (writebackConfigResourceCollectionParentPath != null) {
-                            writebackConfigResourceCollectionParentPath = configurationPersistenceStrategy.getCollectionParentResourcePath(writebackConfigResourceCollectionParentPath);
-                            writebackConfigResourcePath = writebackConfigResourceCollectionParentPath + "/" + untransformedConfigResource.getName();
-                            writebackConfigResource = configResource.getResourceResolver().getResource(writebackConfigResourcePath);
-                            if (writebackConfigResource != null) {
-                                writebackConfigResource = configurationPersistenceStrategy.getCollectionItemResource(writebackConfigResource);
-                                break;
-                            }
+        for (Iterator<Resource> configResourceInheritanceChain : configResourceInheritanceChains) {
+            ResettableIterator resettableConfigResourceInheritanceChain = new ListIteratorWrapper(configResourceInheritanceChain);
+            Resource configResource = applyPersistenceAndInheritance(resource.getPath(), configName, resettableConfigResourceInheritanceChain, true, resource.getResourceResolver());
+            resettableConfigResourceInheritanceChain.reset();
+            Resource untransformedConfigResource = (Resource)resettableConfigResourceInheritanceChain.next();
+            if (configResource != null) {
+                // get writeback resource for "reverse inheritance detection"
+                Resource writebackConfigResource = null;
+                
+                String writebackConfigResourcePath = null;
+                for (String configBucketName : configurationResourceResolverConfig.configBucketNames()) {
+                    writebackConfigResourceCollectionParentPath = configurationResourceResolvingStrategy.getResourceCollectionParentPath(resource, configBucketName, configName);
+                    if (writebackConfigResourceCollectionParentPath != null) {
+                        writebackConfigResourceCollectionParentPath = configurationPersistenceStrategy.getCollectionParentResourcePath(writebackConfigResourceCollectionParentPath);
+                        writebackConfigResourcePath = writebackConfigResourceCollectionParentPath + "/" + untransformedConfigResource.getName();
+                        writebackConfigResource = configResource.getResourceResolver().getResource(writebackConfigResourcePath);
+                        if (writebackConfigResource != null) {
+                            writebackConfigResource = configurationPersistenceStrategy.getCollectionItemResource(writebackConfigResource);
+                            break;
                         }
                     }
-                    
-                    if (log.isTraceEnabled() && configResource != null) {
-                        log.trace("+ Found config resource for context path " + resource.getPath() + ": " + configResource.getPath() + " "
-                                + MapUtil.traceOutput(configResource.getValueMap()) + ", "
-                                + "writeback config resource: " + writebackConfigResourcePath);
-                    }
-                    resettableConfigResourceInheritanceChain.reset();
-                    configData.add(new ConfigurationDataImpl(configMetadata, configResource, writebackConfigResource,
-                            applyPersistence(resettableConfigResourceInheritanceChain, true),
-                            resource, configName, this, configurationManagementSettings,
-                            configurationOverrideMultiplexer, configurationPersistenceStrategy,
-                            true, untransformedConfigResource.getName()));
                 }
+                
+                if (log.isTraceEnabled()) {
+                    log.trace("+ Found config resource for context path " + resource.getPath() + ": " + configResource.getPath() + " "
+                            + MapUtil.traceOutput(configResource.getValueMap()) + ", "
+                            + "writeback config resource: " + writebackConfigResourcePath);
+                }
+                resettableConfigResourceInheritanceChain.reset();
+                configData.add(new ConfigurationDataImpl(configMetadata, configResource, writebackConfigResource,
+                        applyPersistence(resettableConfigResourceInheritanceChain, true),
+                        resource, configName, this, configurationManagementSettings,
+                        configurationOverrideMultiplexer, configurationPersistenceStrategy,
+                        true, untransformedConfigResource.getName()));
             }
         }
         // fallback for writeback path detection when no configuration resources does exist yet

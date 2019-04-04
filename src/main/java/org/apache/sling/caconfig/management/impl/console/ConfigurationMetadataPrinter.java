@@ -38,6 +38,9 @@ class ConfigurationMetadataPrinter implements ServiceConfigurationPrinter<Config
         
         for (String configName : service.getConfigurationNames()) {
             ConfigurationMetadata metadata = service.getConfigurationMetadata(configName);
+            if (metadata == null) {
+                continue;
+            }
             pw.print(INDENT);
             pw.print(BULLET);
             pw.println(metadata.getName());

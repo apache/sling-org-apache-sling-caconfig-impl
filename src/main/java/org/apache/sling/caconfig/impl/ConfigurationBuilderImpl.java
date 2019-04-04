@@ -171,12 +171,10 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
            }
 
            final Collection<T> result = new ArrayList<>();
-           if (resourceInheritanceChains != null) {
-               for (final Iterator<Resource> resourceInheritanceChain : resourceInheritanceChains) {
-                   final T obj = convert(resourceInheritanceChain, clazz, converter, configName, true);
-                   if (obj != null) {
-                       result.add(obj);
-                   }
+           for (final Iterator<Resource> resourceInheritanceChain : resourceInheritanceChains) {
+               final T obj = convert(resourceInheritanceChain, clazz, converter, configName, true);
+               if (obj != null) {
+                   result.add(obj);
                }
            }
            return result;

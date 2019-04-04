@@ -87,6 +87,7 @@ public class AnnotationClassConfigurationMetadataProvider implements Configurati
      * @param configName Configuration name
      * @return Configuration mapping or null if none found
      */
+    @SuppressWarnings("null")
     ConfigurationMapping getConfigurationMapping(String configName) {
         ConfigurationMapping matchingConfigMapping = null;
         BundleConfigurationMapping matchingBundleMapping = null;

@@ -51,7 +51,11 @@ public class ConfigurationResourceResolverImpl implements ConfigurationResourceR
     @Override
     public @NotNull Collection<Resource> getResourceCollection(@NotNull Resource resource, @NotNull String bucketName, @NotNull String configName) {
         ConfigNameUtil.ensureValidConfigName(configName);
-        return configurationResourceResolvingStrategy.getResourceCollection(resource, Collections.singleton(bucketName), configName);
+        Collection<Resource> result = configurationResourceResolvingStrategy.getResourceCollection(resource, Collections.singleton(bucketName), configName);
+        if (result == null) {
+            result = Collections.emptyList();
+        }
+        return result;
     }
 
     @Override

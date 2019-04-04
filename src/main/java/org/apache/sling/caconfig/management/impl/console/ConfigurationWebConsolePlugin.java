@@ -224,6 +224,9 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
                         
                         for (String propertyName : data.getPropertyNames()) {
                             ValueInfo<?> valueInfo = data.getValueInfo(propertyName);
+                            if (valueInfo == null) {
+                                continue;
+                            }
                             tableRows(pw);
                             td(pw, propertyName);
                             td(pw, valueInfo.getEffectiveValue());
