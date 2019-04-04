@@ -117,7 +117,7 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
         if (configResource == null) {
             return null;
         }
-        return overrideProperties(contextPath, configName, configResource, null);
+        return overrideProperties(contextPath, configName, configResource, configResource.getResourceResolver());
     }
     
     @Override
@@ -133,8 +133,8 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
         }
         if (log.isTraceEnabled()) {
             log.trace("! Override properties for context path " + contextPath + ", name '" + configName + "', "
-                    + (configResource.getPath() != null ? "config path " + configResource.getPath() : "no config path") + ": "
-                    + MapUtil.traceOutput(configResource.getValueMap()) + " -> " + MapUtil.traceOutput(overrideProperties));
+                    + (configResource != null ? "config path " + configResource.getPath() : "no config path") + ": "
+                    + (configResource != null ? MapUtil.traceOutput(configResource.getValueMap()) : "empty") + " -> " + MapUtil.traceOutput(overrideProperties));
         }
         return new ConfigurationResourceWrapper(configResourceToUse, new ValueMapDecorator(overrideProperties));
     }
