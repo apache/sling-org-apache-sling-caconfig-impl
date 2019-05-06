@@ -409,7 +409,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     }
     
     @Override
-    public <T> boolean has(String configName) {
+    public boolean has(String configName) {
         if (log.isDebugEnabled()) {
             log.debug("Check configuration for context path {}, configuration name '{}' ", contentResource.getPath(), configName);
         }
