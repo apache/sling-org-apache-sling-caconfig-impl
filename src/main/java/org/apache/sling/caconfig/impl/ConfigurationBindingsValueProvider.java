@@ -72,7 +72,7 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
     private boolean enabled;
 
     @Override
-    @SuppressWarnings({ "unused", "null" })
+    @SuppressWarnings("unused")
     public void addBindings(Bindings bindings) {
         if (!enabled || !bindings.containsKey(SlingBindings.REQUEST)) {
             return;

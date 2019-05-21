@@ -109,7 +109,6 @@ final class ValueInfoImpl<T> implements ValueInfo<T> {
     }
 
     @Override
-    @SuppressWarnings("null")
     public boolean isInherited() {
         if (isDefault() || effectiveValue == null) {
             return false;
