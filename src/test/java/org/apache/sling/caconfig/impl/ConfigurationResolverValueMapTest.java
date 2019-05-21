@@ -20,6 +20,7 @@ package org.apache.sling.caconfig.impl;
 
 import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -71,12 +72,16 @@ public class ConfigurationResolverValueMapTest {
         assertNull(props.get("stringParam", String.class));
         assertEquals(0, (int)props.get("intParam", 0));
         assertEquals(false, props.get("boolParam", false));
+
+        assertFalse(underTest.get(site1Page1).has("sampleName"));
     }
 
     @Test
     public void testNonExistingConfigCollection() {
         Collection<ValueMap> propsList = underTest.get(site1Page1).name("sampleList").asValueMapCollection();
         assertTrue(propsList.isEmpty());
+
+        assertFalse(underTest.get(site1Page1).has("sampleList"));
     }
 
     @Test
@@ -91,6 +96,8 @@ public class ConfigurationResolverValueMapTest {
         assertEquals("configValue1", props.get("stringParam", String.class));
         assertEquals(111, (int)props.get("intParam", 0));
         assertEquals(true, props.get("boolParam", false));
+
+        assertTrue(underTest.get(site1Page1).has("sampleName"));
     }
 
     @Test
@@ -107,6 +114,8 @@ public class ConfigurationResolverValueMapTest {
         assertEquals("configValue1.1", propsIterator.next().get("stringParam", String.class));
         assertEquals("configValue1.2", propsIterator.next().get("stringParam", String.class));
         assertEquals("configValue1.3", propsIterator.next().get("stringParam", String.class));
+
+        assertTrue(underTest.get(site1Page1).has("sampleList"));
     }
 
     @Test
@@ -122,6 +131,8 @@ public class ConfigurationResolverValueMapTest {
         assertEquals("defValue1", props.get("stringParam", String.class));
         assertEquals(999, (int)props.get("intParam", 0));
         assertEquals(true, props.get("boolParam", false));
+
+        assertTrue(underTest.get(site1Page1).has("sampleName"));
     }
 
     @Test
@@ -143,6 +154,8 @@ public class ConfigurationResolverValueMapTest {
         assertEquals(999, (int)propsList.get(1).get("intParam", 0));
         assertEquals("configValue1.3", propsList.get(2).get("stringParam", String.class));
         assertEquals(999, (int)propsList.get(2).get("intParam", 0));
+
+        assertTrue(underTest.get(site1Page1).has("sampleList"));
     }
 
     @Test
@@ -160,6 +173,8 @@ public class ConfigurationResolverValueMapTest {
         assertEquals("override1", props.get("stringParam", String.class));
         assertEquals(222, (int)props.get("intParam", 0));
         assertEquals(false, props.get("boolParam", false));
+
+        assertTrue(underTest.get(site1Page1).has("sampleName"));
     }
 
     /**
@@ -175,6 +190,8 @@ public class ConfigurationResolverValueMapTest {
         assertEquals("override1", props.get("stringParam", String.class));
         assertEquals(222, (int)props.get("intParam", 0));
         assertEquals(false, props.get("boolParam", false));
+
+        assertFalse(underTest.get(site1Page1).has("sampleName"));
     }
 
     @Test
@@ -194,6 +211,8 @@ public class ConfigurationResolverValueMapTest {
         assertEquals("override1", propsIterator.next().get("stringParam", String.class));
         assertEquals("override1", propsIterator.next().get("stringParam", String.class));
         assertEquals("override1", propsIterator.next().get("stringParam", String.class));
+
+        assertTrue(underTest.get(site1Page1).has("sampleList"));
     }
 
     @Test
@@ -203,12 +222,15 @@ public class ConfigurationResolverValueMapTest {
         assertNull(props.get("stringParam", String.class));
         assertEquals(0, (int)props.get("intParam", 0));
         assertEquals(false, props.get("boolParam", false));
+
+        assertFalse(underTest.get(null).has("sampleName"));
     }
 
     @Test
     public void testNonExistingContentResourceCollection() {
         Collection<ValueMap> propsList = underTest.get(null).name("sampleList").asValueMapCollection();
         assertTrue(propsList.isEmpty());
+        assertFalse(underTest.get(null).has("sampleList"));
     }
 
     @Test(expected=IllegalArgumentException.class)

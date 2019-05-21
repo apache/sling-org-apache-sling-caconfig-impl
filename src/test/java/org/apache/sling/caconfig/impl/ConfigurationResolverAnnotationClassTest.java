@@ -22,6 +22,7 @@ import static org.apache.sling.caconfig.impl.def.ConfigurationDefNameConstants.P
 import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_COLLECTION_INHERIT;
 import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -77,12 +78,16 @@ public class ConfigurationResolverAnnotationClassTest {
         assertNull(cfg.stringParam());
         assertEquals(5, cfg.intParam());
         assertEquals(false, cfg.boolParam());
+        
+        assertFalse(underTest.get(site1Page1).has(SimpleConfig.class));
     }
 
     @Test
     public void testNonExistingConfig_List() {
         Collection<ListConfig> cfgList = underTest.get(site1Page1).asCollection(ListConfig.class);
         assertTrue(cfgList.isEmpty());
+
+        assertFalse(underTest.get(site1Page1).has(ListConfig.class));
     }
 
     @Test
@@ -92,6 +97,8 @@ public class ConfigurationResolverAnnotationClassTest {
         assertNull(cfg.stringParam());
         assertNotNull(cfg.subConfig());
         assertNotNull(cfg.subListConfig());
+
+        assertFalse(underTest.get(site1Page1).has(NestedConfig.class));
     }
 
 
@@ -107,6 +114,8 @@ public class ConfigurationResolverAnnotationClassTest {
         assertEquals("configValue1", cfg.stringParam());
         assertEquals(111, cfg.intParam());
         assertEquals(true, cfg.boolParam());
+
+        assertTrue(underTest.get(site1Page1).has(SimpleConfig.class));
     }
 
     @Test
@@ -126,6 +135,8 @@ public class ConfigurationResolverAnnotationClassTest {
         assertEquals("configValue2", cfg.stringParam());
         assertEquals(222, cfg.intParam());
         assertEquals(true, cfg.boolParam());
+
+        assertTrue(underTest.get(site1Page1).has(SimpleConfig.class));
     }
 
     @Test
@@ -140,6 +151,8 @@ public class ConfigurationResolverAnnotationClassTest {
         assertEquals("configValue1.1", cfg.stringParam());
         assertEquals(1111, cfg.intParam());
         assertEquals(true, cfg.boolParam());
+
+        assertTrue(underTest.get(site1Page1).name("sampleName").has(SimpleConfig.class));
     }
 
     @Test
@@ -157,6 +170,8 @@ public class ConfigurationResolverAnnotationClassTest {
         assertEquals("value1", cfgIterator.next().stringParam());
         assertEquals("value2", cfgIterator.next().stringParam());
         assertEquals("value3", cfgIterator.next().stringParam());
+
+        assertTrue(underTest.get(site1Page1).has(ListConfig.class));
     }
 
     @Test
@@ -192,6 +207,8 @@ public class ConfigurationResolverAnnotationClassTest {
         ListNestedConfig config3 = cfgList.get(2);
         assertEquals("value3", config3.stringParam());
         assertEquals(0, config3.subListConfig().length);
+
+        assertTrue(underTest.get(site1Page1).has(ListNestedConfig.class));
     }
 
     @Test
@@ -240,6 +257,8 @@ public class ConfigurationResolverAnnotationClassTest {
         ListDoubleNestedConfig config3 = cfgList.get(2);
         assertEquals("value3", config3.stringParam());
         assertEquals(0, config3.subListNestedConfig().length);
+
+        assertTrue(underTest.get(site1Page1).has(ListDoubleNestedConfig.class));
     }
 
     @Test
@@ -264,6 +283,8 @@ public class ConfigurationResolverAnnotationClassTest {
         assertEquals(333, cfgList.get(1).intParam());
         assertEquals("configValue1.1", cfgList.get(2).stringParam());
         assertEquals(111, cfgList.get(2).intParam());
+
+        assertTrue(underTest.get(site1Page1).has(ListConfig.class));
     }
 
     @Test
@@ -293,6 +314,8 @@ public class ConfigurationResolverAnnotationClassTest {
         assertEquals("configValue2.1", listConfig[0].stringParam());
         assertEquals("configValue2.2", listConfig[1].stringParam());
         assertEquals("configValue2.3", listConfig[2].stringParam());
+
+        assertTrue(underTest.get(site1Page1).has(NestedConfig.class));
     }
 
     @Test
@@ -312,6 +335,8 @@ public class ConfigurationResolverAnnotationClassTest {
         assertEquals("configValue4", subConfig.stringParam());
         assertEquals(111, subConfig.intParam());
         assertEquals(true, subConfig.boolParam());
+
+        assertTrue(underTest.get(site1Page1).has(NestedConfig.class));
     }
 
     @Test(expected=ConfigurationResolveException.class)
@@ -327,12 +352,15 @@ public class ConfigurationResolverAnnotationClassTest {
         assertNull(cfg.stringParam());
         assertEquals(5, cfg.intParam());
         assertEquals(false, cfg.boolParam());
+
+        assertFalse(underTest.get(null).has(NestedConfig.class));
     }
 
     @Test
     public void testNonExistingContentResource_List() {
         Collection<ListConfig> cfgList = underTest.get(null).asCollection(ListConfig.class);
         assertTrue(cfgList.isEmpty());
+        assertFalse(underTest.get(null).has(ListConfig.class));
     }
 
     @Test
