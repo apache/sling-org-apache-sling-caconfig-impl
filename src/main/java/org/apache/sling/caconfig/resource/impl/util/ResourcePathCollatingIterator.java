@@ -18,11 +18,12 @@
  */
 package org.apache.sling.caconfig.resource.impl.util;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.collections.iterators.CollatingIterator;
+import org.apache.commons.collections4.iterators.CollatingIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.caconfig.resource.spi.ContextResource;
 
@@ -31,7 +32,7 @@ import org.apache.sling.caconfig.resource.spi.ContextResource;
  * (= sorted by path hierarchy starting with the deepest path).
  * Result is a new iterator with all resources combined from all iterators in the same order, duplicates not eliminated. 
  */
-public class ResourcePathCollatingIterator extends CollatingIterator {
+public class ResourcePathCollatingIterator extends CollatingIterator<ContextResource> {
 
     private static Comparator<ContextResource> PATH_LENGTH_COMPARATOR = new Comparator<ContextResource>() {
         @Override
@@ -51,8 +52,9 @@ public class ResourcePathCollatingIterator extends CollatingIterator {
         }
     };
 
+    @SuppressWarnings("unchecked")
     public ResourcePathCollatingIterator(List<Iterator<ContextResource>> iterator) {
-        super(PATH_LENGTH_COMPARATOR, iterator);
+        super(PATH_LENGTH_COMPARATOR, (Collection)iterator);
     }
     
 }

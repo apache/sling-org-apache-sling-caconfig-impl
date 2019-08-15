@@ -26,10 +26,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.IteratorUtils;
-import org.apache.commons.collections.ResettableListIterator;
-import org.apache.commons.collections.Transformer;
-import org.apache.commons.collections.iterators.ListIteratorWrapper;
+import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.collections4.ResettableListIterator;
+import org.apache.commons.collections4.Transformer;
+import org.apache.commons.collections4.iterators.ListIteratorWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceUtil;

@@ -22,28 +22,27 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.collections.iterators.FilterIterator;
+import org.apache.commons.collections4.Predicate;
+import org.apache.commons.collections4.iterators.FilterIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.caconfig.resource.spi.ContextResource;
 
 /**
  * Iterator that eliminates duplicate resources (having same path).
  */
-public class ResourceEliminateDuplicatesIterator extends FilterIterator {
+public class ResourceEliminateDuplicatesIterator extends FilterIterator<ContextResource> {
 
     public ResourceEliminateDuplicatesIterator(Iterator<ContextResource> iterator) {
-        super(iterator, new Predicate() {
+        super(iterator, new Predicate<ContextResource>() {
             private final Set<String> keys = new HashSet<>();
             
             @Override
-            public boolean evaluate(Object object) {
-                ContextResource contextResource = (ContextResource)object;
+            public boolean evaluate(ContextResource contextResource) {
                 String key = contextResource.getResource().getPath() + "#" + StringUtils.defaultString(contextResource.getConfigRef());
                 return keys.add(key);
             }
             
         });
     }
-    
+
 }

@@ -28,7 +28,6 @@ import com.google.common.collect.ImmutableList;
 
 public class PathEliminateDuplicatesIteratorTest {
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testIterator() {
         List<String> paths = ImmutableList.of(

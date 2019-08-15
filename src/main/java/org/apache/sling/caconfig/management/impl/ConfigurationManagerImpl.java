@@ -29,10 +29,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.apache.commons.collections.IteratorUtils;
-import org.apache.commons.collections.ResettableIterator;
-import org.apache.commons.collections.Transformer;
-import org.apache.commons.collections.iterators.ListIteratorWrapper;
+import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.collections4.ResettableIterator;
+import org.apache.commons.collections4.Transformer;
+import org.apache.commons.collections4.iterators.ListIteratorWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;

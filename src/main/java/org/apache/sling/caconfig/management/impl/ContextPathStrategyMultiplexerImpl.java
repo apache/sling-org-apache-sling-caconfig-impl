@@ -102,7 +102,6 @@ public class ContextPathStrategyMultiplexerImpl implements ContextPathStrategyMu
      * @param allResults List of all results
      * @return Merged result
      */
-    @SuppressWarnings("unchecked")
     private Iterator<ContextResource> mergeResults(List<Iterator<ContextResource>> allResults) {
         return new ResourceEliminateDuplicatesIterator(
                 new ResourcePathCollatingIterator(allResults)

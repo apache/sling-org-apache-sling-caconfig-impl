@@ -43,7 +43,6 @@ public class ResourcePathCollatingIteratorTest {
     @Rule
     public SlingContext context = new SlingContext();
     
-    @SuppressWarnings("unchecked")
     @Test
     public void testIterator() {
         context.build()
@@ -71,7 +70,6 @@ public class ResourcePathCollatingIteratorTest {
                 "/content/a"));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testWithConfigRef() {
         context.build()
@@ -98,7 +96,6 @@ public class ResourcePathCollatingIteratorTest {
         assertEquals("/conf/z", item2.getConfigRef());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testWithConfigRefAndServiceRanking() {
         context.build()

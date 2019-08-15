@@ -22,8 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.ResettableListIterator;
-import org.apache.commons.collections.iterators.ListIteratorWrapper;
+import org.apache.commons.collections4.ResettableListIterator;
+import org.apache.commons.collections4.iterators.ListIteratorWrapper;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationInheritanceStrategyMultiplexer;
 import org.apache.sling.caconfig.spi.ConfigurationInheritanceStrategy;

@@ -22,24 +22,24 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.collections.iterators.FilterIterator;
+import org.apache.commons.collections4.Predicate;
+import org.apache.commons.collections4.iterators.FilterIterator;
 
 /**
  * Iterator that eliminates duplicate paths.
  */
-public class PathEliminateDuplicatesIterator extends FilterIterator {
+public class PathEliminateDuplicatesIterator extends FilterIterator<String> {
 
     public PathEliminateDuplicatesIterator(Iterator<String> iterator) {
-        super(iterator, new Predicate() {
+        super(iterator, new Predicate<String>() {
             private final Set<String> resourcePaths = new HashSet<>();
             
             @Override
-            public boolean evaluate(Object object) {
-                return resourcePaths.add((String)object);
+            public boolean evaluate(String object) {
+                return resourcePaths.add(object);
             }
             
         });
     }
-    
+
 }

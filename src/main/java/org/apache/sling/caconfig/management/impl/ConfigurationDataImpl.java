@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
@@ -65,7 +65,6 @@ final class ConfigurationDataImpl implements ConfigurationData {
     private ValueMap valuesCache;
     private ValueMap effectiveValuesCache;
     
-    @SuppressWarnings("unchecked")
     public ConfigurationDataImpl(ConfigurationMetadata configMetadata,
             Resource resolvedConfigurationResource, Resource writebackConfigurationResource,
             Iterator<Resource> configurationResourceInheritanceChain,

@@ -36,11 +36,10 @@ import com.google.common.collect.ImmutableList;
 
 @SuppressWarnings("null")
 public class ResourceEliminateDuplicatesIteratorTest {
-    
+
     @Rule
     public SlingContext context = new SlingContext();
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testIterator() {
         context.build()
