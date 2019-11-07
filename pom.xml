@@ -22,13 +22,13 @@
 
     <parent>
         <groupId>org.apache.sling</groupId>
-        <artifactId>sling</artifactId>
-        <version>30</version>
+        <artifactId>sling-bundle-parent</artifactId>
+        <version>35</version>
         <relativePath />
     </parent>
 
     <artifactId>org.apache.sling.caconfig.impl</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <version>1.5.1-SNAPSHOT</version>
     <name>Apache Sling Context-Aware Configuration Implementation</name>
     <description>Apache Sling Context-Aware Configuration Implementation</description>
@@ -43,22 +43,12 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Import-Package>
-                          <!-- WebConsole support is optional -->
-                          org.apache.felix.webconsole;resolution:=optional,
-                          <!-- Support XSS API 1.x and 2.x - we use only classes from the API with same signature in both versions -->
-                          org.apache.sling.xss;version="[1.0.0,3)",
-                          <!-- Remove those package imports because embedded and relocated via shade plugin (see below) -->
-                          !org.apache.sling.commons.osgi,
-                          *
-                        </Import-Package>
-                    </instructions>
-                </configuration>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bnd-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bnd-baseline-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -109,6 +99,11 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.annotation.versioning</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!-- Artifact is shaded and inlined -->
         <dependency>
             <groupId>org.apache.sling</groupId>
@@ -131,7 +126,6 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>16.0.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -1,0 +1,8 @@
+# WebConsole support is optional
+# Support XSS API 1.x and 2.x - we use only classes from the API with same signature in both versions
+# Remove those package imports because embedded and relocated via shade plugin (see below)
+Import-Package: \
+  org.apache.felix.webconsole;resolution:=optional,\
+  org.apache.sling.xss;version="[1.0.0,3)",\
+  !org.apache.sling.commons.osgi,\
+  *
