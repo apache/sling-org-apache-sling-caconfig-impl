@@ -45,6 +45,26 @@
             <plugin>
                 <groupId>biz.aQute.bnd</groupId>
                 <artifactId>bnd-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bnd-process</id>
+                        <goals>
+                            <goal>bnd-process</goal>
+                        </goals>
+                        <configuration>
+                            <bnd>
+                            Import-Package: \
+                              <!-- WebConsole support is optional -->\
+                              org.apache.felix.webconsole;resolution:=optional,\
+                              <!-- Support XSS API 1.x and 2.x - we use only classes from the API with same signature in both versions -->\
+                              org.apache.sling.xss;version="[1.0.0,3)",\
+                              <!-- Remove those package imports because embedded and relocated via shade plugin (see below) -->\
+                              !org.apache.sling.commons.osgi,\
+                              *
+                            </bnd>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>biz.aQute.bnd</groupId>
