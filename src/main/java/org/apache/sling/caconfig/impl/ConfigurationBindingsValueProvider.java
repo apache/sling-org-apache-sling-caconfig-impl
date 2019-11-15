@@ -112,10 +112,6 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
         this.enabled = config.enabled();
     }
 
-    /**
-     * TODO
-     * @return
-     */
     private Resource getResource(Bindings bindings) {
         for (ConfigurationBindingsResourceDetectionStrategy resourceDetectionStrategy : resourceDetectionStrategies) {
             Resource resource = resourceDetectionStrategy.detectResource(bindings);
