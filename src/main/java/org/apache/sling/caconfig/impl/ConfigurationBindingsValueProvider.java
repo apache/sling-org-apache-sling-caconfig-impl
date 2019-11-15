@@ -25,18 +25,22 @@ import java.util.Set;
 
 import javax.script.Bindings;
 
-import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationMetadataProviderMultiplexer;
+import org.apache.sling.caconfig.resource.spi.ConfigurationBindingsResourceDetectionStrategy;
 import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
+import org.apache.sling.commons.osgi.Order;
+import org.apache.sling.commons.osgi.RankedServices;
 import org.apache.sling.scripting.api.BindingsValuesProvider;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.Designate;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
@@ -47,7 +51,14 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
  */
 @Component(immediate = true, service = BindingsValuesProvider.class, property = {
         "javax.script.name=sightly",
-        Constants.SERVICE_RANKING + "=100" })
+        Constants.SERVICE_RANKING + "=100"
+},
+reference = {
+        @Reference(name="configurationBindingsResourceDetectionStrategy", service=ConfigurationBindingsResourceDetectionStrategy.class,
+                bind="bindConfigurationBindingsResourceDetectionStrategy", unbind="unbindConfigurationBindingsResourceDetectionStrategy",
+                cardinality=ReferenceCardinality.MULTIPLE,
+                policy=ReferencePolicy.DYNAMIC, policyOption=ReferencePolicyOption.GREEDY)
+})
 @Designate(ocd = ConfigurationBindingsValueProvider.Config.class)
 public class ConfigurationBindingsValueProvider implements BindingsValuesProvider {
 
@@ -69,20 +80,30 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
     @Reference
     private ConfigurationMetadataProviderMultiplexer configMetadataProvider;
 
+    private RankedServices<ConfigurationBindingsResourceDetectionStrategy> resourceDetectionStrategies = new RankedServices<>(Order.DESCENDING);
+
     private boolean enabled;
+
+    protected void bindConfigurationBindingsResourceDetectionStrategy(ConfigurationBindingsResourceDetectionStrategy item, Map<String, Object> props) {
+        resourceDetectionStrategies.bind(item, props);
+    }
+
+    protected void unbindConfigurationBindingsResourceDetectionStrategy(ConfigurationBindingsResourceDetectionStrategy item, Map<String, Object> props) {
+        resourceDetectionStrategies.unbind(item, props);
+    }
 
     @Override
     @SuppressWarnings("unused")
     public void addBindings(Bindings bindings) {
-        if (!enabled || !bindings.containsKey(SlingBindings.REQUEST)) {
+        if (!enabled) {
             return;
         }
-        SlingHttpServletRequest request = (SlingHttpServletRequest)bindings.get(SlingBindings.REQUEST);
-        Resource resource = request.getResource();
+
+        Resource resource = getResource(bindings);
         if (resource == null) {
             return;
         }
-        Map<String,Object> configMap = new ConfigMap(resource, configMetadataProvider);
+        Map<String, Object> configMap = new ConfigMap(resource, configMetadataProvider);
         bindings.put(BINDING_VARIABLE, configMap);
     }
 
@@ -91,6 +112,19 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
         this.enabled = config.enabled();
     }
 
+    /**
+     * TODO
+     * @return
+     */
+    private Resource getResource(Bindings bindings) {
+        for (ConfigurationBindingsResourceDetectionStrategy resourceDetectionStrategy : resourceDetectionStrategies) {
+            Resource resource = resourceDetectionStrategy.detectResource(bindings);
+            if (resource != null) {
+                return resource;
+            }
+        }
+        return null;
+    }
     
     /**
      * This is a "virtual" containing configuration names as keys, and the underlying value maps/value map collections as values.

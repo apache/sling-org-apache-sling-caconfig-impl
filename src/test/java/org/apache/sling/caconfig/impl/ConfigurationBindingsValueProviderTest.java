@@ -37,7 +37,9 @@ import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.caconfig.ConfigurationBuilder;
+import org.apache.sling.caconfig.impl.def.DefaultConfigurationBindingsResourceDetectionStrategy;
 import org.apache.sling.caconfig.impl.metadata.ConfigurationMetadataProviderMultiplexerImpl;
+import org.apache.sling.caconfig.resource.spi.ConfigurationBindingsResourceDetectionStrategy;
 import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
 import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
@@ -82,6 +84,7 @@ public class ConfigurationBindingsValueProviderTest {
     @Before
     public void setUp() {
         context.registerInjectActivateService(new ConfigurationMetadataProviderMultiplexerImpl());
+        context.registerService(ConfigurationBindingsResourceDetectionStrategy.class, new DefaultConfigurationBindingsResourceDetectionStrategy());
         context.registerService(ConfigurationMetadataProvider.class, configMetadataProvider);
         when(configMetadataProvider.getConfigurationNames()).thenReturn(CONFIG_NAMES);
         
