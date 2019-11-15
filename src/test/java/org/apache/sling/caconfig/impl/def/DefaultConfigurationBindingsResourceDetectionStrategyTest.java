@@ -71,4 +71,10 @@ public class DefaultConfigurationBindingsResourceDetectionStrategyTest {
         when(bindings.containsKey(SlingBindings.REQUEST)).thenReturn(false);
         assertNull(underTest.detectResource(bindings));
     }
+
+    @Test
+    public void testWithResource() {
+        when(bindings.containsKey(SlingBindings.REQUEST)).thenReturn(true);
+        assertSame(resource, underTest.detectResource(bindings));
+    }
 }
