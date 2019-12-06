@@ -37,6 +37,7 @@ import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.caconfig.impl.metadata.ConfigurationMetadataProviderMultiplexerImpl;
+import org.apache.sling.caconfig.resource.impl.ConfigurationBindingsResourceDetectionStrategyMultiplexerImpl;
 import org.apache.sling.caconfig.resource.spi.ConfigurationBindingsResourceDetectionStrategy;
 import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
@@ -60,7 +61,7 @@ public class ConfigurationBindingsValueProviderTest {
 
     private static final ValueMap VALUEMAP = new ValueMapDecorator(
             ImmutableMap.<String, Object> of("param1", "value1"));
-    
+
     private static final SortedSet<String> CONFIG_NAMES = ImmutableSortedSet.of("name1", "name.2");
 
     @Rule
@@ -85,6 +86,7 @@ public class ConfigurationBindingsValueProviderTest {
     public void setUp() {
         context.registerInjectActivateService(new ConfigurationMetadataProviderMultiplexerImpl());
         context.registerService(ConfigurationMetadataProvider.class, configMetadataProvider);
+        context.registerInjectActivateService(new ConfigurationBindingsResourceDetectionStrategyMultiplexerImpl());
         context.registerService(ConfigurationBindingsResourceDetectionStrategy.class, configurationBindingsResourceDetectionStrategy);
         when(configMetadataProvider.getConfigurationNames()).thenReturn(CONFIG_NAMES);
 
@@ -92,7 +94,7 @@ public class ConfigurationBindingsValueProviderTest {
         when(configBuilder.name(anyString())).thenReturn(configBuilder);
         when(configBuilder.asValueMap()).thenReturn(VALUEMAP);
         when(configBuilder.asValueMapCollection()).thenReturn(ImmutableList.of(VALUEMAP));
-        
+
         when(configMetadataProvider.getConfigurationMetadata("name1")).thenReturn(
                 new ConfigurationMetadata("name1", ImmutableList.<PropertyMetadata<?>>of(), false));
         when(configMetadataProvider.getConfigurationMetadata("name.2")).thenReturn(
@@ -118,7 +120,7 @@ public class ConfigurationBindingsValueProviderTest {
 
         ArgumentCaptor<Map<String, ValueMap>> configMapCaptor = ArgumentCaptor.forClass(Map.class);
         verify(bindings).put(eq(ConfigurationBindingsValueProvider.BINDING_VARIABLE), configMapCaptor.capture());
-        
+
         Map<String, ValueMap> configMap = configMapCaptor.getValue();
         assertEquals(CONFIG_NAMES, configMap.keySet());
         assertEquals(VALUEMAP, configMap.get("name1"));
