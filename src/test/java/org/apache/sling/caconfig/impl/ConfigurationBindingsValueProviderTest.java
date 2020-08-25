@@ -34,10 +34,11 @@ import javax.script.Bindings;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
-import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.caconfig.impl.metadata.ConfigurationMetadataProviderMultiplexerImpl;
+import org.apache.sling.caconfig.resource.impl.ConfigurationBindingsResourceDetectionStrategyMultiplexerImpl;
+import org.apache.sling.caconfig.resource.spi.ConfigurationBindingsResourceDetectionStrategy;
 import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
 import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
@@ -58,9 +59,9 @@ import com.google.common.collect.ImmutableSortedSet;
 @SuppressWarnings("unchecked")
 public class ConfigurationBindingsValueProviderTest {
 
-    private final static ValueMap VALUEMAP = new ValueMapDecorator(
+    private static final ValueMap VALUEMAP = new ValueMapDecorator(
             ImmutableMap.<String, Object> of("param1", "value1"));
-    
+
     private static final SortedSet<String> CONFIG_NAMES = ImmutableSortedSet.of("name1", "name.2");
 
     @Rule
@@ -76,6 +77,8 @@ public class ConfigurationBindingsValueProviderTest {
     private ConfigurationBuilder configBuilder;
     @Mock
     private ConfigurationMetadataProvider configMetadataProvider;
+    @Mock
+    private ConfigurationBindingsResourceDetectionStrategy configurationBindingsResourceDetectionStrategy;
 
     private ConfigurationBindingsValueProvider underTest;
 
@@ -83,16 +86,15 @@ public class ConfigurationBindingsValueProviderTest {
     public void setUp() {
         context.registerInjectActivateService(new ConfigurationMetadataProviderMultiplexerImpl());
         context.registerService(ConfigurationMetadataProvider.class, configMetadataProvider);
+        context.registerInjectActivateService(new ConfigurationBindingsResourceDetectionStrategyMultiplexerImpl());
+        context.registerService(ConfigurationBindingsResourceDetectionStrategy.class, configurationBindingsResourceDetectionStrategy);
         when(configMetadataProvider.getConfigurationNames()).thenReturn(CONFIG_NAMES);
-        
-        when(bindings.containsKey(SlingBindings.REQUEST)).thenReturn(true);
-        when(bindings.get(SlingBindings.REQUEST)).thenReturn(request);
-        when(request.getResource()).thenReturn(resource);
+
         when(resource.adaptTo(ConfigurationBuilder.class)).thenReturn(configBuilder);
         when(configBuilder.name(anyString())).thenReturn(configBuilder);
         when(configBuilder.asValueMap()).thenReturn(VALUEMAP);
         when(configBuilder.asValueMapCollection()).thenReturn(ImmutableList.of(VALUEMAP));
-        
+
         when(configMetadataProvider.getConfigurationMetadata("name1")).thenReturn(
                 new ConfigurationMetadata("name1", ImmutableList.<PropertyMetadata<?>>of(), false));
         when(configMetadataProvider.getConfigurationMetadata("name.2")).thenReturn(
@@ -100,33 +102,29 @@ public class ConfigurationBindingsValueProviderTest {
     }
 
     @Test
+    public void testWithNoResourceFound() {
+        when(configurationBindingsResourceDetectionStrategy.detectResource(bindings)).thenReturn(null);
+
+        underTest = context.registerInjectActivateService(new ConfigurationBindingsValueProvider(), "enabled", true);
+        underTest.addBindings(bindings);
+
+        verify(bindings, never()).put(anyString(), any(Object.class));
+    }
+
+    @Test
     public void testWithConfig() {
+        when(configurationBindingsResourceDetectionStrategy.detectResource(bindings)).thenReturn(resource);
+
         underTest = context.registerInjectActivateService(new ConfigurationBindingsValueProvider(), "enabled", true);
         underTest.addBindings(bindings);
 
         ArgumentCaptor<Map<String, ValueMap>> configMapCaptor = ArgumentCaptor.forClass(Map.class);
         verify(bindings).put(eq(ConfigurationBindingsValueProvider.BINDING_VARIABLE), configMapCaptor.capture());
-        
+
         Map<String, ValueMap> configMap = configMapCaptor.getValue();
         assertEquals(CONFIG_NAMES, configMap.keySet());
         assertEquals(VALUEMAP, configMap.get("name1"));
         assertEquals(ImmutableList.of(VALUEMAP), configMap.get("name.2"));
-    }
-
-    @Test
-    public void testNoResource() {
-        when(request.getResource()).thenReturn(null);
-        underTest = context.registerInjectActivateService(new ConfigurationBindingsValueProvider(), "enabled", true);
-        underTest.addBindings(bindings);
-        verify(bindings, never()).put(anyString(), any(Object.class));
-    }
-
-    @Test
-    public void testNoRequest() {
-        underTest = context.registerInjectActivateService(new ConfigurationBindingsValueProvider(), "enabled", true);
-        when(bindings.containsKey(SlingBindings.REQUEST)).thenReturn(false);
-        underTest.addBindings(bindings);
-        verify(bindings, never()).put(anyString(), any(Object.class));
     }
 
     @Test

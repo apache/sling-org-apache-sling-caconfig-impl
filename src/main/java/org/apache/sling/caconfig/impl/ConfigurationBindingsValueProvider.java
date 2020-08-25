@@ -22,13 +22,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import javax.script.Bindings;
-
-import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.caconfig.ConfigurationBuilder;
+import org.apache.sling.caconfig.management.multiplexer.ConfigurationBindingsResourceDetectionStrategyMultiplexer;
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationMetadataProviderMultiplexer;
 import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
@@ -47,7 +44,8 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
  */
 @Component(immediate = true, service = BindingsValuesProvider.class, property = {
         "javax.script.name=sightly",
-        Constants.SERVICE_RANKING + "=100" })
+        Constants.SERVICE_RANKING + "=100"
+})
 @Designate(ocd = ConfigurationBindingsValueProvider.Config.class)
 public class ConfigurationBindingsValueProvider implements BindingsValuesProvider {
 
@@ -57,7 +55,7 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
      */
     public static final String BINDING_VARIABLE = "caconfig";
 
-    @ObjectClassDefinition(name = "Apache Sling Context-Aware Configuration HTL Binding Values Provider", 
+    @ObjectClassDefinition(name = "Apache Sling Context-Aware Configuration HTL Binding Values Provider",
             description = "Binds a script variable '" + BINDING_VARIABLE + "' to the HTL/Sightly scripting context.")
     static @interface Config {
 
@@ -69,20 +67,23 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
     @Reference
     private ConfigurationMetadataProviderMultiplexer configMetadataProvider;
 
+    @Reference
+    private ConfigurationBindingsResourceDetectionStrategyMultiplexer configurationBindingsResourceDetectionStrategy;
+
     private boolean enabled;
 
     @Override
     @SuppressWarnings("unused")
     public void addBindings(Bindings bindings) {
-        if (!enabled || !bindings.containsKey(SlingBindings.REQUEST)) {
+        if (!enabled) {
             return;
         }
-        SlingHttpServletRequest request = (SlingHttpServletRequest)bindings.get(SlingBindings.REQUEST);
-        Resource resource = request.getResource();
+
+        Resource resource = configurationBindingsResourceDetectionStrategy.detectResource(bindings);
         if (resource == null) {
             return;
         }
-        Map<String,Object> configMap = new ConfigMap(resource, configMetadataProvider);
+        Map<String, Object> configMap = new ConfigMap(resource, configMetadataProvider);
         bindings.put(BINDING_VARIABLE, configMap);
     }
 
@@ -91,23 +92,22 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
         this.enabled = config.enabled();
     }
 
-    
     /**
      * This is a "virtual" containing configuration names as keys, and the underlying value maps/value map collections as values.
      * The map accesses only the data that is really required in a lazy fashion.
      */
     private static class ConfigMap implements Map<String, Object> {
-        
+
         private final Resource resource;
         private final ConfigurationMetadataProvider configMetadataProvider;
         private Set<String> configNamesCache;
         private Map<String,Object> valuesCache = new HashMap<>();
-        
+
         ConfigMap(Resource resource, ConfigurationMetadataProvider configMetadataProvider) {
             this.resource = resource;
             this.configMetadataProvider = configMetadataProvider;
         }
-        
+
         private Set<String> getConfigNames() {
             if (configNamesCache == null) {
                 configNamesCache = configMetadataProvider.getConfigurationNames();
@@ -141,7 +141,7 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
             }
             return value;
         }
-        
+
         private Object getConfigValue(String configName) {
             @SuppressWarnings("null")
             ConfigurationBuilder configBuilder = resource.adaptTo(ConfigurationBuilder.class).name(configName);
@@ -152,7 +152,7 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
                 return configBuilder.asValueMap();
             }
         }
-        
+
         private boolean isCollection(String configName) {
             ConfigurationMetadata configMetadata = configMetadataProvider.getConfigurationMetadata(configName);
             if (configMetadata != null) {
@@ -172,7 +172,7 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
         public boolean containsValue(Object value) {
             throw new UnsupportedOperationException();
         }
-        
+
         @Override
         public Object put(String key, Object value) {
             throw new UnsupportedOperationException();
