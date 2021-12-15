@@ -20,9 +20,9 @@ package org.apache.sling.caconfig.resource.impl.def;
 
 import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_COLLECTION_INHERIT;
 import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -46,7 +46,7 @@ import com.google.common.collect.ImmutableList;
  */
 @SuppressWarnings("null")
 public class DefaultConfigurationResourceResolvingStrategyHierarchyTest {
-    
+
     private static final String BUCKET = "sling:test";
     private static final Collection<String> BUCKETS = Collections.singleton(BUCKET);
     private static final String PROPERTY_CONFIG_COLLECTION_INHERIT_CUSTOM = "custom:configCollectionInherit";
@@ -118,7 +118,7 @@ public class DefaultConfigurationResourceResolvingStrategyHierarchyTest {
             .resource("/conf/global/sling:test/test")
             .resource("/apps/conf/sling:test/test")
             .resource("/libs/conf/sling:test/test");
-        
+
         assertThat(underTest.getResourceInheritanceChain(site1Page1, BUCKETS, "test"), ResourceIteratorMatchers.paths(
                 "/conf/brand1/tenant1/region1/site1/sling:test/test",
                 "/conf/brand1/tenant1/sling:test/test",
@@ -147,21 +147,21 @@ public class DefaultConfigurationResourceResolvingStrategyHierarchyTest {
 
         assertThat(underTest.getResourceCollection(site1Page1, BUCKETS, "cfgCol"), ResourceCollectionMatchers.paths(
                 "/conf/brand1/tenant1/region1/site1/sling:test/cfgCol/site1",
-                "/conf/brand1/tenant1/region1/sling:test/cfgCol/region1", 
-                "/conf/brand1/tenant1/sling:test/cfgCol/tenant1", 
-                "/conf/brand1/sling:test/cfgCol/brand1", 
-                "/conf/global/sling:test/cfgCol/confGlobal", 
-                "/apps/conf/sling:test/cfgCol/appsGlobal", 
-                "/libs/conf/sling:test/cfgCol/libsGlobal1", 
+                "/conf/brand1/tenant1/region1/sling:test/cfgCol/region1",
+                "/conf/brand1/tenant1/sling:test/cfgCol/tenant1",
+                "/conf/brand1/sling:test/cfgCol/brand1",
+                "/conf/global/sling:test/cfgCol/confGlobal",
+                "/apps/conf/sling:test/cfgCol/appsGlobal",
+                "/libs/conf/sling:test/cfgCol/libsGlobal1",
                 "/libs/conf/sling:test/cfgCol/libsGlobal2"));
 
-        assertThat(underTest.getResourceCollection(site2Page1, BUCKETS, "cfgCol"), ResourceCollectionMatchers.paths( 
-                "/conf/brand1/tenant1/region1/sling:test/cfgCol/region1", 
-                "/conf/brand1/tenant1/sling:test/cfgCol/tenant1", 
-                "/conf/brand1/sling:test/cfgCol/brand1", 
-                "/conf/global/sling:test/cfgCol/confGlobal", 
-                "/apps/conf/sling:test/cfgCol/appsGlobal", 
-                "/libs/conf/sling:test/cfgCol/libsGlobal1", 
+        assertThat(underTest.getResourceCollection(site2Page1, BUCKETS, "cfgCol"), ResourceCollectionMatchers.paths(
+                "/conf/brand1/tenant1/region1/sling:test/cfgCol/region1",
+                "/conf/brand1/tenant1/sling:test/cfgCol/tenant1",
+                "/conf/brand1/sling:test/cfgCol/brand1",
+                "/conf/global/sling:test/cfgCol/confGlobal",
+                "/apps/conf/sling:test/cfgCol/appsGlobal",
+                "/libs/conf/sling:test/cfgCol/libsGlobal1",
                 "/libs/conf/sling:test/cfgCol/libsGlobal2"));
     }
 
@@ -186,10 +186,10 @@ public class DefaultConfigurationResourceResolvingStrategyHierarchyTest {
                 .siblingsMode()
                 .resource("item2")
                 .resource("item3");
-        
+
         List<Iterator<Resource>> resources = ImmutableList.copyOf(underTest.getResourceCollectionInheritanceChain(site1Page1, BUCKETS, "cfgCol"));
         assertEquals(4, resources.size());
-        
+
         assertThat(resources.get(0), ResourceIteratorMatchers.paths(
                 "/conf/brand1/tenant1/region1/site1/sling:test/cfgCol/item1",
                 "/conf/brand1/tenant1/region1/sling:test/cfgCol/item1",
@@ -216,17 +216,17 @@ public class DefaultConfigurationResourceResolvingStrategyHierarchyTest {
             .resource("/conf/global/sling:test/cfgCol", PROPERTY_CONFIG_COLLECTION_INHERIT, true).resource("confGlobal")
             .resource("/apps/conf/sling:test/cfgCol", PROPERTY_CONFIG_COLLECTION_INHERIT, true).resource("appsGlobal")
             .resource("/libs/conf/sling:test/cfgCol/libsGlobal");
-        
+
         Resource level1_2 = context.resourceResolver().getResource("/content/level1/level2");
 
-        assertThat(underTest.getResourceCollection(level1_2, BUCKETS, "cfgCol"), ResourceCollectionMatchers.paths( 
-                "/conf/b1/b2/sling:test/cfgCol/b1_b2", 
-                "/conf/b1/sling:test/cfgCol/b1", 
-                "/conf/a1/a2/sling:test/cfgCol/a1_a2", 
-                "/conf/a1/sling:test/cfgCol/a1", 
-                "/conf/global/sling:test/cfgCol/confGlobal", 
-                "/apps/conf/sling:test/cfgCol/appsGlobal", 
+        assertThat(underTest.getResourceCollection(level1_2, BUCKETS, "cfgCol"), ResourceCollectionMatchers.paths(
+                "/conf/b1/b2/sling:test/cfgCol/b1_b2",
+                "/conf/b1/sling:test/cfgCol/b1",
+                "/conf/a1/a2/sling:test/cfgCol/a1_a2",
+                "/conf/a1/sling:test/cfgCol/a1",
+                "/conf/global/sling:test/cfgCol/confGlobal",
+                "/apps/conf/sling:test/cfgCol/appsGlobal",
                 "/libs/conf/sling:test/cfgCol/libsGlobal"));
     }
-    
+
 }

@@ -38,14 +38,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.ImmutableList;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigurationInheritanceStrategyMultiplexerImplTest {
-    
+
     @Rule
     public SlingContext context = new SlingContext();
 
@@ -53,10 +53,10 @@ public class ConfigurationInheritanceStrategyMultiplexerImplTest {
     private Resource resource1;
     @Mock
     private Resource resource2;
-    
+
     private Iterator<Resource> resources;
     private ConfigurationInheritanceStrategy underTest;
-    
+
     @Before
     public void setUp() {
         resources = ImmutableList.of(resource1, resource2).iterator();
@@ -67,12 +67,12 @@ public class ConfigurationInheritanceStrategyMultiplexerImplTest {
     public void testWithNoStrategies() {
         assertNull(underTest.getResource(resources));
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void testWithOneStrategy() {
         ConfigurationInheritanceStrategy strategy = mock(ConfigurationInheritanceStrategy.class);
-        
+
         when(strategy.getResource((Iterator<Resource>)any())).thenAnswer(new Answer<Resource>() {
             @Override
             public Resource answer(InvocationOnMock invocation) throws Throwable {
@@ -80,9 +80,9 @@ public class ConfigurationInheritanceStrategyMultiplexerImplTest {
                 return items.next();
             }
         });
-        
+
         context.registerService(ConfigurationInheritanceStrategy.class, strategy);
-        
+
         assertSame(resource1, underTest.getResource(resources));
     }
 
@@ -92,7 +92,7 @@ public class ConfigurationInheritanceStrategyMultiplexerImplTest {
         ConfigurationInheritanceStrategy strategy1 = mock(ConfigurationInheritanceStrategy.class);
         ConfigurationInheritanceStrategy strategy2 = mock(ConfigurationInheritanceStrategy.class);
         ConfigurationInheritanceStrategy strategy3 = mock(ConfigurationInheritanceStrategy.class);
-        
+
         when(strategy1.getResource((Iterator<Resource>)any())).thenAnswer(new Answer<Resource>() {
             @Override
             public Resource answer(InvocationOnMock invocation) throws Throwable {
@@ -110,13 +110,13 @@ public class ConfigurationInheritanceStrategyMultiplexerImplTest {
                 return items.next();
             }
         });
-        
+
         context.registerService(ConfigurationInheritanceStrategy.class, strategy1);
         context.registerService(ConfigurationInheritanceStrategy.class, strategy2);
         context.registerService(ConfigurationInheritanceStrategy.class, strategy3);
-        
+
         assertSame(resource1, underTest.getResource(resources));
-        
+
         verify(strategy1, times(1)).getResource((Iterator<Resource>)any());
         verify(strategy2, times(1)).getResource((Iterator<Resource>)any());
         verifyNoMoreInteractions(strategy3);

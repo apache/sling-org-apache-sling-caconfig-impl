@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.sling.caconfig.impl;
+package org.apache.sling.caconfig.management.impl;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -54,12 +54,12 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 })
 @SuppressWarnings("deprecation")
 public final class ConfigurationPersistenceStrategyBridge {
-    
+
     private volatile BundleContext bundleContext;
     private final ConcurrentMap<Comparable<Object>, ServiceRegistration<ConfigurationPersistenceStrategy2>> services = new ConcurrentHashMap<>();
     private final ConcurrentMap<Comparable<Object>, ServiceInfo> preActivateServices = new ConcurrentHashMap<>();
-    
-    protected void bindConfigurationPersistenceStrategy(ConfigurationPersistenceStrategy item, Map<String, Object> props) {
+
+    void bindConfigurationPersistenceStrategy(ConfigurationPersistenceStrategy item, Map<String, Object> props) {
         ServiceInfo serviceInfo = new ServiceInfo(item, props);
         Comparable<Object> key = ServiceUtil.getComparableForServiceRanking(props, Order.ASCENDING);
         if (bundleContext != null) {
@@ -69,12 +69,12 @@ public final class ConfigurationPersistenceStrategyBridge {
             preActivateServices.put(key, serviceInfo);
         }
     }
-    
+
     protected void unbindConfigurationPersistenceStrategy(ConfigurationPersistenceStrategy item, Map<String, Object> props) {
         Comparable<Object> key = ServiceUtil.getComparableForServiceRanking(props, Order.ASCENDING);
         unregisterBridgeService(services.remove(key));
     }
-    
+
     /**
      * Register {@link ConfigurationPersistenceStrategy2} bridge service for {@link ConfigurationPersistenceStrategy} service.
      * @param serviceInfo Service information
@@ -84,7 +84,7 @@ public final class ConfigurationPersistenceStrategyBridge {
         return bundleContext.registerService(ConfigurationPersistenceStrategy2.class,
                 new Adapter(serviceInfo.getService()), new Hashtable<>(serviceInfo.getProps()));
     }
-    
+
     /**
      * Unregister {@link ConfigurationPersistenceStrategy2} bridge service.
      * @param service Service registration
@@ -94,7 +94,7 @@ public final class ConfigurationPersistenceStrategyBridge {
             service.unregister();
         }
     }
-    
+
     @Activate
     private void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
@@ -102,12 +102,12 @@ public final class ConfigurationPersistenceStrategyBridge {
             services.put(entry.getKey(), registerBridgeService(entry.getValue()));
         }
     }
-   
-    
+
+
     private static class ServiceInfo {
         private final ConfigurationPersistenceStrategy service;
         private final Map<String,Object> props;
-        
+
         public ServiceInfo(ConfigurationPersistenceStrategy service, Map<String, Object> props) {
             this.service = service;
             this.props = props;
@@ -119,8 +119,8 @@ public final class ConfigurationPersistenceStrategyBridge {
             return props;
         }
     }
-    
-    
+
+
     /**
      * Adapter which delegates {@link ConfigurationPersistenceStrategy2} methods to a {@link ConfigurationPersistenceStrategy} service.
      */
@@ -130,7 +130,7 @@ public final class ConfigurationPersistenceStrategyBridge {
         public Adapter(ConfigurationPersistenceStrategy delegate) {
             this.delegate = delegate;
         }
-        
+
         /**
          * @return Implementation class of the original service.
          */
@@ -202,7 +202,7 @@ public final class ConfigurationPersistenceStrategyBridge {
         public boolean deleteConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath) {
             return delegate.deleteConfiguration(resourceResolver, configResourcePath);
         }
-        
+
     }
-    
+
 }

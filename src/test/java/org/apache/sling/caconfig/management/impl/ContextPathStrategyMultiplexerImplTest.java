@@ -21,8 +21,8 @@ package org.apache.sling.caconfig.management.impl;
 import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
 import static org.apache.sling.caconfig.resource.impl.util.ContextResourceTestUtil.toContextResourceIterator;
 import static org.apache.sling.caconfig.resource.impl.util.ContextResourceTestUtil.toResourceIterator;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -43,9 +43,9 @@ public class ContextPathStrategyMultiplexerImplTest {
 
     @Rule
     public SlingContext context = new SlingContext();
-    
+
     private ContextPathStrategyMultiplexerImpl underTest;
-    
+
     private Resource site1Page1;
     private Resource site2Page1;
 
@@ -62,7 +62,7 @@ public class ContextPathStrategyMultiplexerImplTest {
         site1Page1 = context.create().resource("/content/tenant1/region1/site1/page1");
         site2Page1 = context.create().resource("/content/tenant1/region1/site2/page1");
     }
-    
+
     @Test
     public void testWithNoStrategies() {
         assertFalse(underTest.findContextResources(site1Page1).hasNext());
@@ -72,39 +72,39 @@ public class ContextPathStrategyMultiplexerImplTest {
     public void testWithDefaultStrategy() {
         context.registerInjectActivateService(new DefaultContextPathStrategy());
 
-        assertThat(toResourceIterator(underTest.findContextResources(site1Page1)), ResourceIteratorMatchers.paths( 
+        assertThat(toResourceIterator(underTest.findContextResources(site1Page1)), ResourceIteratorMatchers.paths(
                 "/content/tenant1/region1/site1",
                 "/content/tenant1/region1",
                 "/content/tenant1"));
 
-        assertThat(toResourceIterator(underTest.findContextResources(site2Page1)), ResourceIteratorMatchers.paths( 
+        assertThat(toResourceIterator(underTest.findContextResources(site2Page1)), ResourceIteratorMatchers.paths(
                 "/content/tenant1/region1/site2",
                 "/content/tenant1/region1",
                 "/content/tenant1"));
     }
-    
+
     @Test
     public void testWithNonoverlappingStrategies() {
         registerContextPathStrategy("/content/tenant1");
         registerContextPathStrategy("/content/tenant1/region1/site1", "/content/tenant1/region1");
-        
+
         assertThat(toResourceIterator(underTest.findContextResources(site1Page1)), ResourceIteratorMatchers.paths(
                 "/content/tenant1/region1/site1",
                 "/content/tenant1/region1",
                 "/content/tenant1"));
     }
-    
+
     @Test
     public void testWithOverlappingStrategies() {
         registerContextPathStrategy("/content/tenant1", "/content/tenant1/region1");
         registerContextPathStrategy("/content/tenant1/region1/site1", "/content/tenant1/region1");
-        
-        assertThat(toResourceIterator(underTest.findContextResources(site1Page1)), ResourceIteratorMatchers.paths( 
+
+        assertThat(toResourceIterator(underTest.findContextResources(site1Page1)), ResourceIteratorMatchers.paths(
                 "/content/tenant1/region1/site1",
                 "/content/tenant1/region1",
                 "/content/tenant1"));
     }
-    
+
     private void registerContextPathStrategy(String... paths) {
         final List<Resource> resources = new ArrayList<>();
         for (String path : paths) {

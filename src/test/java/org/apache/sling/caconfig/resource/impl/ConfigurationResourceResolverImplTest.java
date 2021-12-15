@@ -20,8 +20,8 @@ package org.apache.sling.caconfig.resource.impl;
 
 import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_COLLECTION_INHERIT;
 import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.resource.ConfigurationResourceResolver;
@@ -35,7 +35,7 @@ import com.google.common.collect.ImmutableList;
 
 @SuppressWarnings("null")
 public class ConfigurationResourceResolverImplTest {
-    
+
     private static final String BUCKET = "sling:test";
 
     @Rule
@@ -56,7 +56,7 @@ public class ConfigurationResourceResolverImplTest {
             .resource("/content/site2", PROPERTY_CONFIG_REF, "/conf/site2");
         site1Page1 = context.create().resource("/content/site1/page1");
         site2Page1 = context.create().resource("/content/site2/page1");
-        
+
         // configuration
         context.build()
             .resource("/conf/site1/sling:test/test")
@@ -81,12 +81,12 @@ public class ConfigurationResourceResolverImplTest {
 
     @Test
     public void testGetResourceCollection() {
-        assertThat(underTest.getResourceCollection(site1Page1, BUCKET, "feature"), ResourceCollectionMatchers.paths( 
+        assertThat(underTest.getResourceCollection(site1Page1, BUCKET, "feature"), ResourceCollectionMatchers.paths(
                 "/conf/site1/sling:test/feature/c",
-                "/apps/conf/sling:test/feature/a", 
+                "/apps/conf/sling:test/feature/a",
                 "/libs/conf/sling:test/feature/b"));
-        
-        assertThat(underTest.getResourceCollection(site2Page1, BUCKET, "feature"), ResourceCollectionMatchers.paths( 
+
+        assertThat(underTest.getResourceCollection(site2Page1, BUCKET, "feature"), ResourceCollectionMatchers.paths(
                 "/conf/site2/sling:test/feature/c",
                 "/conf/site2/sling:test/feature/d",
                 "/apps/conf/sling:test/feature/a",
@@ -104,5 +104,5 @@ public class ConfigurationResourceResolverImplTest {
         assertEquals(ImmutableList.of("/content/site1"), underTest.getAllContextPaths(site1Page1));
         assertEquals(ImmutableList.of("/content/site2"), underTest.getAllContextPaths(site2Page1));
     }
-    
+
 }

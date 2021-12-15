@@ -48,7 +48,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -60,7 +60,7 @@ public class ConfigurationBindingsValueProviderTest {
 
     private final static ValueMap VALUEMAP = new ValueMapDecorator(
             ImmutableMap.<String, Object> of("param1", "value1"));
-    
+
     private static final SortedSet<String> CONFIG_NAMES = ImmutableSortedSet.of("name1", "name.2");
 
     @Rule
@@ -84,7 +84,7 @@ public class ConfigurationBindingsValueProviderTest {
         context.registerInjectActivateService(new ConfigurationMetadataProviderMultiplexerImpl());
         context.registerService(ConfigurationMetadataProvider.class, configMetadataProvider);
         when(configMetadataProvider.getConfigurationNames()).thenReturn(CONFIG_NAMES);
-        
+
         when(bindings.containsKey(SlingBindings.REQUEST)).thenReturn(true);
         when(bindings.get(SlingBindings.REQUEST)).thenReturn(request);
         when(request.getResource()).thenReturn(resource);
@@ -92,7 +92,7 @@ public class ConfigurationBindingsValueProviderTest {
         when(configBuilder.name(anyString())).thenReturn(configBuilder);
         when(configBuilder.asValueMap()).thenReturn(VALUEMAP);
         when(configBuilder.asValueMapCollection()).thenReturn(ImmutableList.of(VALUEMAP));
-        
+
         when(configMetadataProvider.getConfigurationMetadata("name1")).thenReturn(
                 new ConfigurationMetadata("name1", ImmutableList.<PropertyMetadata<?>>of(), false));
         when(configMetadataProvider.getConfigurationMetadata("name.2")).thenReturn(
@@ -106,7 +106,7 @@ public class ConfigurationBindingsValueProviderTest {
 
         ArgumentCaptor<Map<String, ValueMap>> configMapCaptor = ArgumentCaptor.forClass(Map.class);
         verify(bindings).put(eq(ConfigurationBindingsValueProvider.BINDING_VARIABLE), configMapCaptor.capture());
-        
+
         Map<String, ValueMap> configMap = configMapCaptor.getValue();
         assertEquals(CONFIG_NAMES, configMap.keySet());
         assertEquals(VALUEMAP, configMap.get("name1"));

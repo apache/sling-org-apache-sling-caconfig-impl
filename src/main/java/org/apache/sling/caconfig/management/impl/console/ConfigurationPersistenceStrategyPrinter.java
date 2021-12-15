@@ -20,7 +20,7 @@ package org.apache.sling.caconfig.management.impl.console;
 
 import java.io.PrintWriter;
 
-import org.apache.sling.caconfig.impl.ConfigurationPersistenceStrategyBridge;
+import org.apache.sling.caconfig.management.impl.ConfigurationPersistenceStrategyBridge;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy2;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;

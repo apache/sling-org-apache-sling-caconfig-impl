@@ -40,7 +40,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -51,30 +51,30 @@ import com.google.common.collect.ImmutableSet;
 @RunWith(MockitoJUnitRunner.class)
 @SuppressWarnings("null")
 public class ConfigurationManagerImplNoDefaultTest {
-    
+
     @Rule
     public SlingContext context = new SlingContext();
 
     @Mock
     private ConfigurationMetadataProvider configurationMetadataProvider;
-    
+
     private ConfigurationManager underTest;
-    
+
     private Resource contextResourceNoConfig;
     private ConfigurationMetadata configMetadata;
-    
+
     private static final String CONFIG_NAME = "testConfig";
     private static final String CONFIG_COL_NAME = "testConfigCol";
-   
+
     @Before
     public void setUp() {
         context.registerService(ConfigurationMetadataProvider.class, configurationMetadataProvider);
         ConfigurationTestUtils.registerConfigurationResolverWithoutDefaultImpl(context);
         underTest = context.registerInjectActivateService(new ConfigurationManagerImpl());
-        
+
         contextResourceNoConfig = context.create().resource("/content/testNoConfig",
                 PROPERTY_CONFIG_REF, "/conf/testNoConfig");
-        
+
         configMetadata = new ConfigurationMetadata(CONFIG_NAME, ImmutableList.<PropertyMetadata<?>>of(
                 new PropertyMetadata<>("prop1", "defValue"),
                 new PropertyMetadata<>("prop2", String.class),
@@ -89,11 +89,11 @@ public class ConfigurationManagerImplNoDefaultTest {
                 true);
         when(configurationMetadataProvider.getConfigurationMetadata(CONFIG_COL_NAME)).thenReturn(configMetadata);
     }
-    
+
     protected String getConfigPropertiesPath(String path) {
         return path;
     }
-    
+
     @Test
     public void testGet_NoConfigResource() {
         ConfigurationData configData = underTest.getConfiguration(contextResourceNoConfig, CONFIG_NAME);

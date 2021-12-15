@@ -40,7 +40,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -48,7 +48,7 @@ import com.google.common.collect.ImmutableSet;
 @RunWith(MockitoJUnitRunner.class)
 @SuppressWarnings("null")
 public class ConfigurationDataImplTest {
-    
+
     @Rule
     public SlingContext context = new SlingContext();
     @Mock
@@ -59,15 +59,15 @@ public class ConfigurationDataImplTest {
     private ConfigurationManager configurationManager;
     private ConfigurationManagementSettings configurationManagementSettings;
     private ConfigurationPersistenceStrategy2 configurationPersistenceStrategy;
-    
+
     private Resource configResource;
     private ConfigurationMetadata configMetadata;
-    
+
     @Before
     public void setUp() {
         configurationManagementSettings = context.registerInjectActivateService(new ConfigurationManagementSettingsImpl());
         configurationPersistenceStrategy = context.registerInjectActivateService(new DefaultConfigurationPersistenceStrategy());
-        
+
         configResource = context.create().resource("/conf/test",
                 "prop1", "value1",
                 "prop4", true);
@@ -85,13 +85,13 @@ public class ConfigurationDataImplTest {
                 contextResource, "test", configurationManager, configurationManagementSettings,
                 configurationOverrideMultiplexer, configurationPersistenceStrategy,
                 true, "item1");
-        
+
         assertEquals("test", underTest.getConfigName());
         assertEquals("item1", underTest.getCollectionItemName());
-        
+
         assertEquals(configResource.getPath(), underTest.getResourcePath());
         assertEquals(ImmutableSet.of("prop1", "prop2", "prop3", "prop4", "propIntArray"), underTest.getPropertyNames());
-        
+
         ValueMap values = underTest.getValues();
         assertEquals("value1", values.get("prop1", String.class));
         assertNull(values.get("prop2", String.class));
@@ -103,7 +103,7 @@ public class ConfigurationDataImplTest {
         assertNull(effectiveValues.get("prop2", String.class));
         assertEquals((Integer)5, effectiveValues.get("prop3", Integer.class));
         assertEquals(true, effectiveValues.get("prop4", Boolean.class));
-        
+
         ValueInfo<?> prop1 = underTest.getValueInfo("prop1");
         assertEquals("prop1", prop1.getPropertyMetadata().getName());
         assertEquals("value1", prop1.getValue());
@@ -112,7 +112,7 @@ public class ConfigurationDataImplTest {
         ValueInfo<?> prop3 = underTest.getValueInfo("prop3");
         assertEquals("prop3", prop3.getPropertyMetadata().getName());
         assertNull(prop3.getValue());
-        assertEquals((Integer)5, prop3.getEffectiveValue());
+        assertEquals(5, prop3.getEffectiveValue());
 
         ValueInfo<?> prop4 = underTest.getValueInfo("prop4");
         assertNull("prop4", prop4.getPropertyMetadata());
@@ -130,12 +130,12 @@ public class ConfigurationDataImplTest {
                 contextResource, "test", configurationManager, configurationManagementSettings,
                 configurationOverrideMultiplexer, configurationPersistenceStrategy,
                 false, null);
-        
+
         assertEquals("test", underTest.getConfigName());
         assertNull(underTest.getCollectionItemName());
-        
+
         assertEquals(ImmutableSet.of("prop1", "prop4"), underTest.getPropertyNames());
-        
+
         ValueMap values = underTest.getValues();
         assertEquals("value1", values.get("prop1", String.class));
         assertEquals(true, values.get("prop4", Boolean.class));
@@ -143,7 +143,7 @@ public class ConfigurationDataImplTest {
         ValueMap effectiveValues = underTest.getEffectiveValues();
         assertEquals("value1", effectiveValues.get("prop1", String.class));
         assertEquals(true, effectiveValues.get("prop4", Boolean.class));
-        
+
         ValueInfo<?> prop1 = underTest.getValueInfo("prop1");
         assertNull(prop1.getPropertyMetadata());
         assertEquals("value1", prop1.getValue());
@@ -161,19 +161,19 @@ public class ConfigurationDataImplTest {
                 contextResource, "test", configurationManager, configurationManagementSettings,
                 configurationOverrideMultiplexer, configurationPersistenceStrategy,
                 false);
-        
+
         assertEquals("test", underTest.getConfigName());
         assertNull(underTest.getCollectionItemName());
-        
+
         assertEquals(ImmutableSet.of("prop1", "prop2", "prop3", "propIntArray"), underTest.getPropertyNames());
-        
+
         ValueMap values = underTest.getValues();
         assertTrue(values.isEmpty());
 
         ValueMap effectiveValues = underTest.getEffectiveValues();
         assertEquals("defValue", effectiveValues.get("prop1", String.class));
         assertEquals((Integer)5, effectiveValues.get("prop3", Integer.class));
-        
+
         ValueInfo<?> prop1 = underTest.getValueInfo("prop1");
         assertEquals("prop1", prop1.getPropertyMetadata().getName());
         assertNull(prop1.getValue());
@@ -182,7 +182,7 @@ public class ConfigurationDataImplTest {
         ValueInfo<?> prop3 = underTest.getValueInfo("prop3");
         assertEquals("prop3", prop3.getPropertyMetadata().getName());
         assertNull(prop3.getValue());
-        assertEquals((Integer)5, prop3.getEffectiveValue());
+        assertEquals(5, prop3.getEffectiveValue());
     }
 
     @Test
@@ -196,9 +196,9 @@ public class ConfigurationDataImplTest {
                 contextResource, "test", configurationManager, configurationManagementSettings,
                 configurationOverrideMultiplexer, configurationPersistenceStrategy,
                 false, null);
-        
+
         assertEquals(ImmutableSet.of("prop1", "prop4"), underTest.getPropertyNames());
-        
+
         assertNull(underTest.getValues().get("jcr:primaryType"));
         assertNull(underTest.getEffectiveValues().get("jcr:primaryType"));
     }

@@ -18,11 +18,11 @@
  */
 package org.apache.sling.caconfig.impl.def;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.sling.api.resource.Resource;
@@ -46,16 +46,16 @@ public class DefaultConfigurationPersistenceStrategyTest {
 
     @Rule
     public SlingContext context = new SlingContext(ResourceResolverType.JCR_MOCK);
-    
+
     @Before
     public void setUp() {
         context.registerInjectActivateService(new ConfigurationManagementSettingsImpl());
     }
-    
+
     @Test
     public void testGetResource() {
         ConfigurationPersistenceStrategy2 underTest = context.registerInjectActivateService(new DefaultConfigurationPersistenceStrategy());
-        
+
         Resource resource = context.create().resource("/conf/test");
         assertSame(resource, underTest.getResource(resource));
         assertSame(resource, underTest.getCollectionParentResource(resource));
@@ -65,17 +65,17 @@ public class DefaultConfigurationPersistenceStrategyTest {
     @Test
     public void testGetResourcePath() {
         ConfigurationPersistenceStrategy2 underTest = context.registerInjectActivateService(new DefaultConfigurationPersistenceStrategy());
-        
+
         String path = "/conf/test";
         assertEquals(path, underTest.getResourcePath(path));
         assertEquals(path, underTest.getCollectionParentResourcePath(path));
         assertEquals(path, underTest.getCollectionItemResourcePath(path));
     }
-    
+
     @Test
     public void testGetConfigName() throws Exception {
         ConfigurationPersistenceStrategy2 underTest = context.registerInjectActivateService(new DefaultConfigurationPersistenceStrategy());
-        
+
         String path = "test";
         assertEquals(path, underTest.getConfigName(path, null));
         assertEquals(path, underTest.getCollectionParentConfigName(path, null));
@@ -85,12 +85,12 @@ public class DefaultConfigurationPersistenceStrategyTest {
     @Test
     public void testPersistConfiguration() throws Exception {
         ConfigurationPersistenceStrategy2 underTest = context.registerInjectActivateService(new DefaultConfigurationPersistenceStrategy());
-        
+
         // store config data
         assertTrue(underTest.persistConfiguration(context.resourceResolver(), "/conf/test",
                 new ConfigurationPersistData(ImmutableMap.<String,Object>of("prop1", "value1", "prop2", 5))));
         context.resourceResolver().commit();
-        
+
         ValueMap props = context.resourceResolver().getResource("/conf/test").getValueMap();
         assertEquals("value1", props.get("prop1", String.class));
         assertEquals((Integer)5, props.get("prop2", Integer.class));
@@ -103,7 +103,7 @@ public class DefaultConfigurationPersistenceStrategyTest {
         props = context.resourceResolver().getResource("/conf/test").getValueMap();
         assertNull(props.get("prop1", String.class));
         assertNull(props.get("prop2", Integer.class));
-        
+
         underTest.deleteConfiguration(context.resourceResolver(), "/conf/test");
         assertNull(context.resourceResolver().getResource("/conf/test"));
     }
@@ -111,7 +111,7 @@ public class DefaultConfigurationPersistenceStrategyTest {
     @Test
     public void testPersistConfigurationCollection() throws Exception {
         ConfigurationPersistenceStrategy2 underTest = context.registerInjectActivateService(new DefaultConfigurationPersistenceStrategy());
-        
+
         // store new config collection items
         assertTrue(underTest.persistConfigurationCollection(context.resourceResolver(), "/conf/test",
                 new ConfigurationCollectionPersistData(ImmutableList.of(
@@ -120,13 +120,13 @@ public class DefaultConfigurationPersistenceStrategyTest {
                 ).properties(ImmutableMap.<String, Object>of("prop1", "abc", "sling:resourceType", "/a/b/c"))
         ));
         context.resourceResolver().commit();
-        
+
         Resource resource = context.resourceResolver().getResource("/conf/test");
         assertThat(resource, ResourceMatchers.props("prop1", "abc", "sling:resourceType", "/a/b/c"));
         assertThat(resource, ResourceMatchers.containsChildren("item1", "item2"));
 
         assertThat(resource.getChild("item1"), ResourceMatchers.props("prop1", "value1"));
-        assertThat(resource.getChild("item2"), ResourceMatchers.props("prop2", 5L));        
+        assertThat(resource.getChild("item2"), ResourceMatchers.props("prop2", 5L));
 
         // remove config collection items
         assertTrue(underTest.persistConfigurationCollection(context.resourceResolver(), "/conf/test",
@@ -143,7 +143,7 @@ public class DefaultConfigurationPersistenceStrategyTest {
     @Test
     public void testPersistConfigurationCollection_Nested() throws Exception {
         ConfigurationPersistenceStrategy2 underTest = context.registerInjectActivateService(new DefaultConfigurationPersistenceStrategy());
-        
+
         // store new config collection items
         assertTrue(underTest.persistConfigurationCollection(context.resourceResolver(), "/conf/test",
                 new ConfigurationCollectionPersistData(ImmutableList.of(
@@ -164,10 +164,10 @@ public class DefaultConfigurationPersistenceStrategyTest {
                         new ConfigurationPersistData(ImmutableMap.<String,Object>of("prop1", "value21")).collectionItemName("sub1")
                 ))
         ));
-        
+
         context.resourceResolver().commit();
 
-        
+
         Resource resource = context.resourceResolver().getResource("/conf/test");
         assertThat(resource, ResourceMatchers.containsChildren("item1", "item2"));
 
@@ -175,7 +175,7 @@ public class DefaultConfigurationPersistenceStrategyTest {
         assertThat(resource.getChild("item1/subList"), ResourceMatchers.containsChildren("sub1", "sub2"));
         assertThat(resource.getChild("item1/subList/sub1"), ResourceMatchers.props("prop1", "value11"));
         assertThat(resource.getChild("item1/subList/sub2"), ResourceMatchers.props("prop1", "value12"));
-        
+
         assertThat(resource.getChild("item2"), ResourceMatchers.props("prop1", "value2"));
         assertThat(resource.getChild("item2/subList"), ResourceMatchers.containsChildren("sub1"));
         assertThat(resource.getChild("item2/subList/sub1"), ResourceMatchers.props("prop1", "value21"));
@@ -190,7 +190,7 @@ public class DefaultConfigurationPersistenceStrategyTest {
                 ))
         ));
         context.resourceResolver().commit();
-        
+
         resource = context.resourceResolver().getResource("/conf/test");
         assertThat(resource, ResourceMatchers.containsChildren("item1", "item2", "item3"));
 
@@ -198,7 +198,7 @@ public class DefaultConfigurationPersistenceStrategyTest {
         assertThat(resource.getChild("item1/subList"), ResourceMatchers.containsChildren("sub1", "sub2"));
         assertThat(resource.getChild("item1/subList/sub1"), ResourceMatchers.props("prop1", "value11"));
         assertThat(resource.getChild("item1/subList/sub2"), ResourceMatchers.props("prop1", "value12"));
-        
+
         assertThat(resource.getChild("item2"), ResourceMatchers.props("prop1", "value2-new"));
         assertThat(resource.getChild("item2/subList"), ResourceMatchers.containsChildren("sub1"));
         assertThat(resource.getChild("item2/subList/sub1"), ResourceMatchers.props("prop1", "value21"));
@@ -223,7 +223,7 @@ public class DefaultConfigurationPersistenceStrategyTest {
     public void testDisabled() {
         ConfigurationPersistenceStrategy2 underTest = context.registerInjectActivateService(new DefaultConfigurationPersistenceStrategy(),
                 "enabled", false);
-        
+
         Resource resource = context.create().resource("/conf/test");
         assertNull(underTest.getResource(resource));
         assertNull(underTest.getResourcePath(resource.getPath()));

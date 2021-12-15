@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy2;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.osgi.framework.Constants;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -36,7 +36,7 @@ import org.osgi.service.cm.ConfigurationAdmin;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigurationManagerImplCustomPersistence2Test extends ConfigurationManagerImplTest {
-    
+
     @Override
     protected void provideCustomOsgiConfig() throws Exception {
         // provide custom lookup resource name for collection properties
@@ -63,7 +63,7 @@ public class ConfigurationManagerImplCustomPersistence2Test extends Configuratio
             return replaceBucketName(path) + "/jcr:content";
         }
     }
-    
+
     @Override
     protected String getConfigPersistPath(String path) {
         if (containsJcrContent(path)) {
@@ -73,7 +73,7 @@ public class ConfigurationManagerImplCustomPersistence2Test extends Configuratio
             return path + "/jcr:content";
         }
     }
-    
+
     @Override
     protected String getConfigCollectionParentResolvePath(String path) {
         if (containsJcrContent(path)) {
@@ -83,7 +83,7 @@ public class ConfigurationManagerImplCustomPersistence2Test extends Configuratio
             return replaceBucketName(path) + "/jcr:content";
         }
     }
-    
+
     @Override
     protected String getConfigCollectionParentPersistPath(String path) {
         if (containsJcrContent(path)) {
@@ -93,17 +93,17 @@ public class ConfigurationManagerImplCustomPersistence2Test extends Configuratio
             return path + "/jcr:content";
         }
     }
-    
+
     @Override
     protected String getConfigCollectionItemResolvePath(String path) {
         return path;
     }
-    
+
     @Override
     protected String getConfigCollectionItemPersistPath(String path) {
         return path;
     }
-    
+
     private String replaceBucketName(String path) {
         return StringUtils.replace(path, "/sling:configs/", "/settings/");
     }
