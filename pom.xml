@@ -62,8 +62,6 @@
                               org.apache.felix.webconsole;resolution:=optional,\
                               <!-- Support XSS API 1.x and 2.x - we use only classes from the API with same signature in both versions -->\
                               org.apache.sling.xss;version="[1.0.0,3)",\
-                              <!-- Remove those package imports because embedded and relocated via shade plugin (see below) -->\
-                              !org.apache.sling.commons.osgi,\
                               *
                             </bnd>
                         </configuration>
@@ -73,42 +71,6 @@
             <plugin>
                 <groupId>biz.aQute.bnd</groupId>
                 <artifactId>bnd-baseline-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <createSourcesJar>true</createSourcesJar>
-                            <shadeSourcesContent>true</shadeSourcesContent>
-                            <artifactSet>
-                                <includes>
-                                    <include>org.apache.sling:org.apache.sling.commons.osgi</include>
-                                </includes>
-                            </artifactSet>
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.apache.sling.commons.osgi</pattern>
-                                    <shadedPattern>caconfigimpl.org.apache.sling.commons.osgi</shadedPattern>
-                                </relocation>
-                            </relocations>
-                            <filters>
-                                <filter>
-                                    <artifact>org.apache.sling:org.apache.sling.commons.osgi</artifact>
-                                    <includes>
-                                        <include>org/apache/sling/commons/osgi/**</include>
-                                    </includes>
-                                </filter>
-                            </filters>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.rat</groupId>
@@ -128,7 +90,6 @@
             <artifactId>org.osgi.annotation.versioning</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- Artifact is shaded and inlined -->
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.commons.osgi</artifactId>
