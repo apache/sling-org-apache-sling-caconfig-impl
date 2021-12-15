@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.sling</groupId>
         <artifactId>sling-bundle-parent</artifactId>
-        <version>36</version>
+        <version>46</version>
         <relativePath />
     </parent>
 
@@ -33,12 +33,16 @@
     <name>Apache Sling Context-Aware Configuration Implementation</name>
     <description>Apache Sling Context-Aware Configuration Implementation</description>
 
+    <properties>
+        <project.build.outputTimestamp>2021-12-15T00:00:00Z</project.build.outputTimestamp>
+    </properties>
+
     <scm>
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-caconfig-impl.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-caconfig-impl.git</developerConnection>
         <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-caconfig-impl.git</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <build>
         <plugins>
