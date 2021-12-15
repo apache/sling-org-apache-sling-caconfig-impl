@@ -30,7 +30,6 @@ import org.apache.sling.caconfig.impl.def.DefaultConfigurationPersistenceStrateg
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationPersistenceStrategyMultiplexer;
 import org.apache.sling.caconfig.spi.ConfigurationCollectionPersistData;
 import org.apache.sling.caconfig.spi.ConfigurationPersistData;
-import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy2;
 import org.apache.sling.testing.mock.osgi.MapUtil;
 import org.apache.sling.testing.mock.osgi.MockOsgi;
@@ -97,7 +96,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImplTest {
     public void testMultipleStrategies() {
 
         // strategy 1 (using old ConfigurationPersistenceStrategy with bridge to ConfigurationPersistenceStrategy2)
-        ConfigurationPersistenceStrategy oldStrategy = context.registerService(org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy.class,
+        org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy oldStrategy = context.registerService(org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy.class,
                 new org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy() {
             @Override
             public Resource getResource(@NotNull Resource resource) {

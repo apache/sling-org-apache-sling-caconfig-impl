@@ -38,6 +38,7 @@ import org.osgi.service.cm.ConfigurationAdmin;
 public class ConfigurationManagerImplCustomPersistence2Test extends ConfigurationManagerImplTest {
 
     @Override
+    @SuppressWarnings("null")
     protected void provideCustomOsgiConfig() throws Exception {
         // provide custom lookup resource name for collection properties
         ConfigurationAdmin configAdmin = context.getService(ConfigurationAdmin.class);

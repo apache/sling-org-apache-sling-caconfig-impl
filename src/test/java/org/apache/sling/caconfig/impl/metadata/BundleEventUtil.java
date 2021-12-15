@@ -46,15 +46,15 @@ import org.osgi.framework.Version;
  * Helper methods for simulating events when deploying bundles with configuration annotation classes.
  */
 final class BundleEventUtil {
-    
-    private static final AtomicLong BUNDLE_COUNTER = new AtomicLong(); 
-    
+
+    private static final AtomicLong BUNDLE_COUNTER = new AtomicLong();
+
     private BundleEventUtil() {
         // static methods only
     }
 
     /**
-     * Simulate a bundle STARTED event with a given set of classes simulated to be found in the bundle's classpath. 
+     * Simulate a bundle STARTED event with a given set of classes simulated to be found in the bundle's classpath.
      */
     public static Bundle startDummyBundle(BundleContext bundleContext, Class... classes) {
         DummyBundle bundle = new DummyBundle(bundleContext, classes);
@@ -65,7 +65,7 @@ final class BundleEventUtil {
     }
 
     /**
-     * Simulate a bundle STARTED event with a given set of classes simulated to be found in the bundle's classpath. 
+     * Simulate a bundle STARTED event with a given set of classes simulated to be found in the bundle's classpath.
      */
     public static void stopDummyBundle(Bundle bundle) {
         ((DummyBundle)bundle).setState(Bundle.RESOLVED);
@@ -85,7 +85,7 @@ final class BundleEventUtil {
             this.bundleContext = bundleContext;
             this.classes = classes;
             this.bundleId = BUNDLE_COUNTER.incrementAndGet();
-            
+
             StringBuilder sb = new StringBuilder();
             for (Class clazz : classes) {
                 sb.append(clazz.getName()).append(",");
@@ -97,7 +97,7 @@ final class BundleEventUtil {
         public int getState() {
             return this.state;
         }
-        
+
         public void setState(int state) {
             this.state = state;
         }
@@ -247,6 +247,7 @@ final class BundleEventUtil {
         }
 
         @Override
+        @SuppressWarnings("null")
         public <A> A adapt(Class<A> type) {
             return null;
         }

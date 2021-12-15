@@ -58,14 +58,14 @@ public class CAConfigInventoryPrinter implements InventoryPrinter {
 
     public static final String NAME = "slingcaconfig";
     public static final String TITLE = "Sling Context-Aware Configuration";
-    
+
     private BundleContext bundleContext;
-    
+
     @Activate
     private void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }
-    
+
     @Override
     public void print(PrintWriter pw, Format format, boolean isZip) {
         if (format != Format.TEXT) {
@@ -83,20 +83,20 @@ public class CAConfigInventoryPrinter implements InventoryPrinter {
         printSPISection(pw, ConfigurationOverrideProvider.class, "Configuration Override Providers",
                 new ConfigurationOverridePrinter());
     }
-    
+
     @SafeVarargs
     private final <T> void printSPISection(PrintWriter pw, Class<T> clazz, String title, ServiceConfigurationPrinter<T>... serviceConfigPrinters) {
         Collection<ServiceReference<T>> serviceReferences = getServiceReferences(clazz);
 
         pw.println(title);
         pw.println(StringUtils.repeat('-', title.length()));
-        
+
         if (serviceReferences.isEmpty()) {
             pw.println("(none)");
         }
         else {
             for (ServiceReference<T> serviceReference : serviceReferences) {
-                pw.print(ServiceConfigurationPrinter.BULLET); 
+                pw.print(ServiceConfigurationPrinter.BULLET);
                 pw.print(getServiceClassName(serviceReference));
                 pw.print(" [");
                 pw.print(getServiceRanking(serviceReference));
@@ -112,7 +112,7 @@ public class CAConfigInventoryPrinter implements InventoryPrinter {
         }
         pw.println();
     }
-    
+
     private <T> Collection<ServiceReference<T>> getServiceReferences(Class<T> clazz) {
         try {
             SortedMap<Comparable<Object>,ServiceReference<T>> sortedServices = new TreeMap<>();
@@ -121,7 +121,7 @@ public class CAConfigInventoryPrinter implements InventoryPrinter {
                 Map<String,Object> props = new HashMap<>();
                 for (String property : serviceReference.getPropertyKeys()) {
                     props.put(property, serviceReference.getProperty(property));
-                } 
+                }
                 sortedServices.put(
                         ServiceUtil.getComparableForServiceRanking(props, Order.DESCENDING),
                         serviceReference
@@ -133,14 +133,15 @@ public class CAConfigInventoryPrinter implements InventoryPrinter {
             throw new RuntimeException(ex);
         }
     }
-    
+
+    @SuppressWarnings("null")
     private <T> String getServiceClassName(ServiceReference<T> serviceReference) {
         Object service = bundleContext.getService(serviceReference);
         String serviceClassName = service.getClass().getName();
         bundleContext.ungetService(serviceReference);
         return serviceClassName;
     }
-    
+
     private <T> int getServiceRanking(ServiceReference<T> serviceReference) {
         Object serviceRanking = serviceReference.getProperty(Constants.SERVICE_RANKING);
         if (serviceRanking == null) {
@@ -157,10 +158,10 @@ public class CAConfigInventoryPrinter implements InventoryPrinter {
     }
 
     private <T> boolean isEnabled(ServiceReference<T> serviceReference) {
-        Object enabledObject = (Object)serviceReference.getProperty("enabled");
+        Object enabledObject = serviceReference.getProperty("enabled");
         if (enabledObject != null) {
             if (enabledObject instanceof Boolean) {
-                return ((Boolean)enabledObject).booleanValue();            
+                return ((Boolean)enabledObject).booleanValue();
             }
             else {
                 return BooleanUtils.toBoolean(enabledObject.toString());

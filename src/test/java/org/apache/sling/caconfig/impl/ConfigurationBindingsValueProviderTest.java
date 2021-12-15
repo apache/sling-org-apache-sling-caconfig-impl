@@ -80,6 +80,7 @@ public class ConfigurationBindingsValueProviderTest {
     private ConfigurationBindingsValueProvider underTest;
 
     @Before
+    @SuppressWarnings("null")
     public void setUp() {
         context.registerInjectActivateService(new ConfigurationMetadataProviderMultiplexerImpl());
         context.registerService(ConfigurationMetadataProvider.class, configMetadataProvider);
@@ -114,6 +115,7 @@ public class ConfigurationBindingsValueProviderTest {
     }
 
     @Test
+    @SuppressWarnings("null")
     public void testNoResource() {
         when(request.getResource()).thenReturn(null);
         underTest = context.registerInjectActivateService(new ConfigurationBindingsValueProvider(), "enabled", true);
