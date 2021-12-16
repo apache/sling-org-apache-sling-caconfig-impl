@@ -78,7 +78,7 @@ public class ConfigurationResolverAnnotationClassTest {
         assertNull(cfg.stringParam());
         assertEquals(5, cfg.intParam());
         assertEquals(false, cfg.boolParam());
-        
+
         assertFalse(underTest.get(site1Page1).has(SimpleConfig.class));
     }
 
@@ -192,13 +192,13 @@ public class ConfigurationResolverAnnotationClassTest {
         List<ListNestedConfig> cfgList = ImmutableList.copyOf(underTest.get(site1Page1).asCollection(ListNestedConfig.class));
 
         assertEquals(3, cfgList.size());
-        
+
         ListNestedConfig config1 = cfgList.get(0);
         assertEquals("value1", config1.stringParam());
         assertEquals(2, config1.subListConfig().length);
         assertEquals("value11", config1.subListConfig()[0].stringParam());
         assertEquals("value12", config1.subListConfig()[1].stringParam());
-        
+
         ListNestedConfig config2 = cfgList.get(1);
         assertEquals("value2", config2.stringParam());
         assertEquals(1, config2.subListConfig().length);
@@ -236,7 +236,7 @@ public class ConfigurationResolverAnnotationClassTest {
         List<ListDoubleNestedConfig> cfgList = ImmutableList.copyOf(underTest.get(site1Page1).asCollection(ListDoubleNestedConfig.class));
 
         assertEquals(3, cfgList.size());
-        
+
         ListDoubleNestedConfig config1 = cfgList.get(0);
         assertEquals("value1", config1.stringParam());
         assertEquals(2, config1.subListNestedConfig().length);
@@ -247,7 +247,7 @@ public class ConfigurationResolverAnnotationClassTest {
         assertEquals("value12", config1.subListNestedConfig()[1].stringParam());
         assertEquals(1, config1.subListNestedConfig()[1].subListConfig().length);
         assertEquals("value121", config1.subListNestedConfig()[1].subListConfig()[0].stringParam());
-        
+
         ListDoubleNestedConfig config2 = cfgList.get(1);
         assertEquals("value2", config2.stringParam());
         assertEquals(1, config2.subListNestedConfig().length);
@@ -268,7 +268,7 @@ public class ConfigurationResolverAnnotationClassTest {
                 .siblingsMode()
                 .resource("1", "stringParam", "configValue1.1", "intParam", "111")
                 .resource("2", "stringParam", "configValue1.2", "intParam", "222")
-            .resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListConfig",                    
+            .resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListConfig",
                     PROPERTY_CONFIG_COLLECTION_INHERIT, true)
                 .siblingsMode()
                 .resource("2", "stringParam", "configValue2.2", PROPERTY_CONFIG_PROPERTY_INHERIT, true)
@@ -303,12 +303,12 @@ public class ConfigurationResolverAnnotationClassTest {
         NestedConfig cfg = underTest.get(site1Page1).as(NestedConfig.class);
 
         assertEquals("configValue3", cfg.stringParam());
-        
+
         SimpleConfig subConfig = cfg.subConfig();
         assertEquals("configValue4", subConfig.stringParam());
         assertEquals(444, subConfig.intParam());
         assertEquals(true, subConfig.boolParam());
-        
+
         ListConfig[] listConfig = cfg.subListConfig();
         assertEquals(3, listConfig.length);
         assertEquals("configValue2.1", listConfig[0].stringParam());
@@ -330,7 +330,7 @@ public class ConfigurationResolverAnnotationClassTest {
         NestedConfig cfg = underTest.get(site1Page1).as(NestedConfig.class);
 
         assertEquals("configValue3", cfg.stringParam());
-        
+
         SimpleConfig subConfig = cfg.subConfig();
         assertEquals("configValue4", subConfig.stringParam());
         assertEquals(111, subConfig.intParam());

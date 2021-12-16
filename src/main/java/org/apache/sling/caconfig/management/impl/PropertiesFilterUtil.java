@@ -42,5 +42,5 @@ public final class PropertiesFilterUtil {
             props.remove(propertyName);
         }
     }
-    
+
 }

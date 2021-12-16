@@ -35,28 +35,28 @@ public interface ValueInfo<T> {
      * @return Property name.
      */
     @NotNull String getName();
-    
+
     /**
      * Property metadata.
      * @return Property metadata. Null if no metadata exists.
      */
     @Nullable PropertyMetadata<T> getPropertyMetadata();
-    
+
     /**
      * Get value stored for the current context path. No inherited value. No default value.
      * @return Value
      */
     @Nullable T getValue();
-    
+
     /**
      * Get value storedf or the current context path, or inherited from upper levels, or the default value.
      * @return Value
      */
     @Nullable T getEffectiveValue();
-    
+
     /**
      * Get the path of the configuration resource the value is stored in.
-     * @return Resource path or null if no resource associated. 
+     * @return Resource path or null if no resource associated.
      */
     @Nullable String getConfigSourcePath();
 
@@ -64,15 +64,15 @@ public interface ValueInfo<T> {
      * @return true if no value is defined but a default value is returned.
      */
     boolean isDefault();
-    
+
     /**
      * @return true if the value is not defined for the current context path but inherited from upper levels.
      */
     boolean isInherited();
-    
+
     /**
      * @return true if the value is overridden by an configuration override provider.
      */
     boolean isOverridden();
-    
+
 }

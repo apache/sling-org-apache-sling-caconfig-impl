@@ -24,9 +24,9 @@ import org.apache.sling.caconfig.annotation.Configuration;
 public @interface SpecialNamesConfig {
 
     String $stringParam();
-    
+
     int int__Param() default 5;
-    
+
     boolean bool_Param();
-    
+
 }

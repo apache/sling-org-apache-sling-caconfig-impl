@@ -42,5 +42,5 @@ class ConfigurationPersistenceStrategyPrinter implements ServiceConfigurationPri
         }
         bundleContext.ungetService(serviceReference);
     }
-    
+
 }

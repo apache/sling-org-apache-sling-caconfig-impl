@@ -183,7 +183,7 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
                                 val = null;
                             }
                         }
-                        
+
                         if (val != null) {
                             log.trace("+ Found reference for context path {}: {}", contextResource.getResource().getPath(), val);
                         }
@@ -232,7 +232,7 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
                 ref = null;
             }
         }
-        
+
         if (ref != null && !isAllowedConfigPath(ref)) {
             log.debug("Ignoring reference to {} from {} - not in allowed paths.",
                     contextResource.getConfigRef(), contextResource.getResource().getPath());
@@ -355,7 +355,7 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
         boolean inherit = false;
         while (paths.hasNext()) {
             final String path = paths.next();
-            
+
             Resource item = null;
             String bucketNameUsed = null;
             for (String bucketName : bucketNames) {
@@ -421,10 +421,10 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
         }
         final ResourceResolver resourceResolver = contentResource.getResourceResolver();
         final List<String> paths = IteratorUtils.toList(getResolvePaths(contentResource, bucketNames));
-        
+
         // get resource collection with respect to collection inheritance
         Collection<Resource> resourceCollection = getResourceCollectionInternal(bucketNames, configName, paths.iterator(), resourceResolver);
-        
+
         // get inheritance chain for each item found
         // yes, this resolves the closest item twice, but is the easiest solution to combine both logic aspects
         Iterator<Iterator<Resource>> result = IteratorUtils.transformedIterator(resourceCollection.iterator(), new Transformer() {

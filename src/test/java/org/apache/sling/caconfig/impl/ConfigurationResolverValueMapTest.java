@@ -86,7 +86,7 @@ public class ConfigurationResolverValueMapTest {
 
     @Test
     public void testConfig() {
-        context.build().resource("/conf/content/site1/sling:configs/sampleName", 
+        context.build().resource("/conf/content/site1/sling:configs/sampleName",
                 "stringParam", "configValue1",
                 "intParam", 111,
                 "boolParam", true);
@@ -120,10 +120,10 @@ public class ConfigurationResolverValueMapTest {
 
     @Test
     public void testConfigWithDefaultValues() {
-        context.registerService(ConfigurationMetadataProvider.class, new DummyConfigurationMetadataProvider("sampleName", 
+        context.registerService(ConfigurationMetadataProvider.class, new DummyConfigurationMetadataProvider("sampleName",
                 ImmutableMap.<String, Object>of("stringParam", "defValue1", "intParam", 999), false));
-        
-        context.build().resource("/conf/content/site1/sling:configs/sampleName", 
+
+        context.build().resource("/conf/content/site1/sling:configs/sampleName",
                 "boolParam", true);
 
         ValueMap props = underTest.get(site1Page1).name("sampleName").asValueMap();
@@ -137,7 +137,7 @@ public class ConfigurationResolverValueMapTest {
 
     @Test
     public void testConfigCollectionWithDefaultValues() {
-        context.registerService(ConfigurationMetadataProvider.class, new DummyConfigurationMetadataProvider("sampleList", 
+        context.registerService(ConfigurationMetadataProvider.class, new DummyConfigurationMetadataProvider("sampleList",
                 ImmutableMap.<String, Object>of("intParam", 999), true));
 
         context.build().resource("/conf/content/site1/sling:configs/sampleList")
@@ -163,7 +163,7 @@ public class ConfigurationResolverValueMapTest {
         context.registerService(ConfigurationOverrideProvider.class, new DummyConfigurationOverrideProvider(
                 "[/content]sampleName={\"stringParam\":\"override1\",\"intParam\":222}"));
 
-        context.build().resource("/conf/content/site1/sling:configs/sampleName", 
+        context.build().resource("/conf/content/site1/sling:configs/sampleName",
                 "stringParam", "configValue1",
                 "intParam", 111,
                 "boolParam", true);

@@ -41,15 +41,15 @@ public interface ConfigurationCollectionData {
      * @return Configuration collection items
      */
     @NotNull Collection<ConfigurationData> getItems();
-    
+
     /**
      * @return Path of the configuration collection resource parent path or null if it cannot be determined.
      */
     @Nullable String getResourcePath();
-    
+
     /**
      * @return Properties for the configuration collection itself. Does not contain configuration data, but control data e.g. for enabling collection inheritance.
      */
     @NotNull Map<String, Object> getProperties();
-    
+
 }

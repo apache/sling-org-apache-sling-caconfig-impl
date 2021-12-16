@@ -57,7 +57,7 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
      */
     public static final String BINDING_VARIABLE = "caconfig";
 
-    @ObjectClassDefinition(name = "Apache Sling Context-Aware Configuration HTL Binding Values Provider", 
+    @ObjectClassDefinition(name = "Apache Sling Context-Aware Configuration HTL Binding Values Provider",
             description = "Binds a script variable '" + BINDING_VARIABLE + "' to the HTL/Sightly scripting context.")
     static @interface Config {
 
@@ -91,23 +91,23 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
         this.enabled = config.enabled();
     }
 
-    
+
     /**
      * This is a "virtual" containing configuration names as keys, and the underlying value maps/value map collections as values.
      * The map accesses only the data that is really required in a lazy fashion.
      */
     private static class ConfigMap implements Map<String, Object> {
-        
+
         private final Resource resource;
         private final ConfigurationMetadataProvider configMetadataProvider;
         private Set<String> configNamesCache;
         private Map<String,Object> valuesCache = new HashMap<>();
-        
+
         ConfigMap(Resource resource, ConfigurationMetadataProvider configMetadataProvider) {
             this.resource = resource;
             this.configMetadataProvider = configMetadataProvider;
         }
-        
+
         private Set<String> getConfigNames() {
             if (configNamesCache == null) {
                 configNamesCache = configMetadataProvider.getConfigurationNames();
@@ -141,7 +141,7 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
             }
             return value;
         }
-        
+
         private Object getConfigValue(String configName) {
             @SuppressWarnings("null")
             ConfigurationBuilder configBuilder = resource.adaptTo(ConfigurationBuilder.class).name(configName);
@@ -152,7 +152,7 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
                 return configBuilder.asValueMap();
             }
         }
-        
+
         private boolean isCollection(String configName) {
             ConfigurationMetadata configMetadata = configMetadataProvider.getConfigurationMetadata(configName);
             if (configMetadata != null) {
@@ -172,7 +172,7 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
         public boolean containsValue(Object value) {
             throw new UnsupportedOperationException();
         }
-        
+
         @Override
         public Object put(String key, Object value) {
             throw new UnsupportedOperationException();

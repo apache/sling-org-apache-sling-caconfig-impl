@@ -33,12 +33,12 @@ public class PathEliminateDuplicatesIterator extends FilterIterator<String> {
     public PathEliminateDuplicatesIterator(Iterator<String> iterator) {
         super(iterator, new Predicate<String>() {
             private final Set<String> resourcePaths = new HashSet<>();
-            
+
             @Override
             public boolean evaluate(String object) {
                 return resourcePaths.add(object);
             }
-            
+
         });
     }
 

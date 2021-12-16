@@ -30,7 +30,7 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ProviderType
 public interface ConfigurationPersistenceStrategyMultiplexer extends ConfigurationPersistenceStrategy2 {
-    
+
     /**
      * Get all configuration names from all configuration persistence strategies. This can be used when no nested parent resources is known.
      * @param configName Configuration name
@@ -51,5 +51,5 @@ public interface ConfigurationPersistenceStrategyMultiplexer extends Configurati
      * @return Possible configuration names in order of persistence strategy service ranking.
      */
     @NotNull Collection<String> getAllCollectionItemConfigNames(@NotNull String configName);
-        
+
 }

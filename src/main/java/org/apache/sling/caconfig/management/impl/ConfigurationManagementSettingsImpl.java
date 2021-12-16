@@ -42,11 +42,11 @@ import org.slf4j.LoggerFactory;
 @Component(service = ConfigurationManagementSettings.class)
 @Designate(ocd=ConfigurationManagementSettingsImpl.Config.class)
 public class ConfigurationManagementSettingsImpl implements ConfigurationManagementSettings {
-    
+
     @ObjectClassDefinition(name="Apache Sling Context-Aware Configuration Management Settings",
             description="Management settings for reading and writing configurations.")
     static @interface Config {
-        
+
         @AttributeDefinition(name="Ignore Property Regex",
                       description = "List of regular expressions with property names that should be ignored when reading or writing configuration data properties.")
         String[] ignorePropertyNameRegex() default {
@@ -58,15 +58,15 @@ public class ConfigurationManagementSettingsImpl implements ConfigurationManagem
                 description = "Names of resource to try to look up configuration collection properties in. If list is empty only the collection parent resource is checked." +
                               " If the list is not empty than only those listed resources are used for look up. If you want to include the collection parent resource you can use a dot for the value.")
         String[] configCollectionPropertiesResourceNames();
-        
+
     }
-    
+
     private static final Logger log = LoggerFactory.getLogger(ConfigurationManagementSettingsImpl.class);
-    
+
     private Pattern[] ignorePropertyNameRegex;
     private Collection<String> configCollectionPropertiesResourceNames;
-    
-    
+
+
     @Activate
     private void activate(Config config) {
         List<Pattern> patterns = new ArrayList<>();
@@ -78,7 +78,7 @@ public class ConfigurationManagementSettingsImpl implements ConfigurationManagem
                log.warn("Ignoring invalid regex pattern: " + patternString, ex);
            }
         }
-        
+
         this.ignorePropertyNameRegex = patterns.toArray(new Pattern[patterns.size()]);
 
         String[] configCollectionPropertiesResourceNames = config.configCollectionPropertiesResourceNames();
@@ -87,7 +87,7 @@ public class ConfigurationManagementSettingsImpl implements ConfigurationManagem
         }
         this.configCollectionPropertiesResourceNames = Collections.unmodifiableList(Arrays.asList(configCollectionPropertiesResourceNames));
     }
-    
+
     @Override
     public Set<String> getIgnoredPropertyNames(Set<String> propertyNames) {
         Set<String> ignoredPropertyNames = new HashSet<>();
@@ -106,5 +106,5 @@ public class ConfigurationManagementSettingsImpl implements ConfigurationManagem
     public Collection<String> getConfigCollectionPropertiesResourceNames() {
         return configCollectionPropertiesResourceNames;
     }
-    
+
 }

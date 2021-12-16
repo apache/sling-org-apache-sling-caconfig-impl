@@ -46,13 +46,13 @@ reference={
                 policy=ReferencePolicy.DYNAMIC, policyOption=ReferencePolicyOption.GREEDY)
 })
 public class ConfigurationResourceResolvingStrategyMultiplexerImpl implements ConfigurationResourceResolvingStrategyMultiplexer {
-    
+
     private RankedServices<ConfigurationResourceResolvingStrategy> items = new RankedServices<>(Order.DESCENDING);
-        
+
     protected void bindConfigurationResourceResolvingStrategy(ConfigurationResourceResolvingStrategy contextPathStrategy, Map<String, Object> props) {
         items.bind(contextPathStrategy, props);
     }
-    
+
     protected void unbindConfigurationResourceResolvingStrategy(ConfigurationResourceResolvingStrategy contextPathStrategy, Map<String, Object> props) {
         items.unbind(contextPathStrategy, props);
     }

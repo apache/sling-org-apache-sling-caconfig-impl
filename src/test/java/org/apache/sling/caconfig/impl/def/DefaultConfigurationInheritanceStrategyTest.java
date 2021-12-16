@@ -35,14 +35,14 @@ import com.google.common.collect.ImmutableList;
 
 @SuppressWarnings("null")
 public class DefaultConfigurationInheritanceStrategyTest {
-    
+
     private static final String PROPERTY_CONFIG_PROPERTY_INHERIT_CUSTOM = "custom:configPropertyInherit";
-    
+
     @Rule
     public SlingContext context = new SlingContext();
-    
+
     private ConfigurationInheritanceStrategy underTest;
-    
+
     @Test
     public void testWithoutPropertyMerging() {
         underTest = context.registerInjectActivateService(new DefaultConfigurationInheritanceStrategy());
@@ -52,14 +52,14 @@ public class DefaultConfigurationInheritanceStrategyTest {
                 context.create().resource("/conf/resource2", "prop2", "value2b", "prop3", "value3b"),
                 context.create().resource("/conf/resource3", "prop4", "value4b")
                 ).iterator();
-        
+
         Resource inherited = underTest.getResource(resources);
         ValueMap props = inherited.getValueMap();
-        
+
         assertEquals("value1a", props.get("prop1", String.class));
         assertEquals("value2a", props.get("prop2", String.class));
         assertNull(props.get("prop3", String.class));
-        assertNull(props.get("prop4", String.class));        
+        assertNull(props.get("prop4", String.class));
     }
 
     @Test
@@ -71,14 +71,14 @@ public class DefaultConfigurationInheritanceStrategyTest {
                 context.create().resource("/conf/resource2", "prop2", "value2b", "prop3", "value3b", PROPERTY_CONFIG_PROPERTY_INHERIT_CUSTOM, true),
                 context.create().resource("/conf/resource3", "prop4", "value4b")
                 ).iterator();
-        
+
         Resource inherited = underTest.getResource(resources);
         ValueMap props = inherited.getValueMap();
-        
+
         assertEquals("value1a", props.get("prop1", String.class));
         assertEquals("value2a", props.get("prop2", String.class));
         assertEquals("value3b", props.get("prop3", String.class));
-        assertEquals("value4b", props.get("prop4", String.class));        
+        assertEquals("value4b", props.get("prop4", String.class));
     }
 
     @Test
@@ -90,14 +90,14 @@ public class DefaultConfigurationInheritanceStrategyTest {
                 context.create().resource("/conf/resource2", "prop2", "value2b", "prop3", "value3b"),
                 context.create().resource("/conf/resource3", "prop4", "value4b")
                 ).iterator();
-        
+
         Resource inherited = underTest.getResource(resources);
         ValueMap props = inherited.getValueMap();
-        
+
         assertEquals("value1a", props.get("prop1", String.class));
         assertEquals("value2a", props.get("prop2", String.class));
         assertEquals("value3b", props.get("prop3", String.class));
-        assertNull(props.get("prop4", String.class));        
+        assertNull(props.get("prop4", String.class));
     }
 
     @Test
@@ -110,7 +110,7 @@ public class DefaultConfigurationInheritanceStrategyTest {
                 context.create().resource("/conf/resource2", "prop2", "value2b", "prop3", "value3b", PROPERTY_CONFIG_PROPERTY_INHERIT, true),
                 context.create().resource("/conf/resource3", "prop4", "value4b")
                 ).iterator();
-        
+
         Resource inherited = underTest.getResource(resources);
         assertNull(inherited);
     }

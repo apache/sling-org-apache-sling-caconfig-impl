@@ -29,14 +29,14 @@ import org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameCons
 import org.jetbrains.annotations.NotNull;
 
 final class ConfigurationCollectionDataImpl implements ConfigurationCollectionData {
-    
+
     private final String configName;
     private final Collection<ConfigurationData> items;
     private final String resourcePath;
     private final Map<String,Object> properties;
     private final ConfigurationManagementSettings configurationManagementSettings;
     private Map<String,Object> filteredPropertiesCache;
-    
+
     public ConfigurationCollectionDataImpl(String configName, Collection<ConfigurationData> items,
             String resourcePath, Map<String, Object> properties,
             ConfigurationManagementSettings configurationManagementSettings) {

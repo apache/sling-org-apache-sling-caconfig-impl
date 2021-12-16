@@ -31,10 +31,10 @@ import org.jetbrains.annotations.NotNull;
  * Wrapper that returns an enhanced value map for the resource
  * providing a merged map with all inherited property values.
  * Unfortunately it's not possible to use {@link org.apache.sling.api.resource.ResourceWrapper} because when adapting
- * to a Sling Model the replace valuemap would not take effect but the original value map. 
+ * to a Sling Model the replace valuemap would not take effect but the original value map.
  */
 public final class ConfigurationResourceWrapper extends AbstractResource {
-    
+
     private final Resource resource;
     private final ValueMap props;
 
@@ -42,7 +42,7 @@ public final class ConfigurationResourceWrapper extends AbstractResource {
         this.resource = unwrap(resource);
         this.props = props;
     }
-    
+
     private static Resource unwrap(Resource resource) {
         if (resource instanceof ConfigurationResourceWrapper) {
             return ((ConfigurationResourceWrapper)resource).resource;
@@ -51,7 +51,8 @@ public final class ConfigurationResourceWrapper extends AbstractResource {
             return resource;
         }
     }
-    
+
+    @Override
     @SuppressWarnings({ "unchecked", "null" })
     public <AdapterType> AdapterType adaptTo(@NotNull Class<AdapterType> type) {
         if (type == ValueMap.class) {
@@ -60,6 +61,7 @@ public final class ConfigurationResourceWrapper extends AbstractResource {
         return super.adaptTo(type);
     }
 
+    @Override
     public ValueMap getValueMap() {
         return props;
     }
@@ -68,22 +70,27 @@ public final class ConfigurationResourceWrapper extends AbstractResource {
         return resource.getPath();
     }
 
+    @Override
     public String getName() {
         return resource.getName();
     }
 
+    @Override
     public Resource getParent() {
         return resource.getParent();
     }
 
+    @Override
     public Iterator<Resource> listChildren() {
         return resource.listChildren();
     }
 
+    @Override
     public Iterable<Resource> getChildren() {
         return resource.getChildren();
     }
 
+    @Override
     public Resource getChild(String relPath) {
         return resource.getChild(relPath);
     }
@@ -96,10 +103,12 @@ public final class ConfigurationResourceWrapper extends AbstractResource {
         return resource.getResourceSuperType();
     }
 
+    @Override
     public boolean hasChildren() {
         return resource.hasChildren();
     }
 
+    @Override
     public boolean isResourceType(String resourceType) {
         return resource.isResourceType(resourceType);
     }
@@ -111,7 +120,7 @@ public final class ConfigurationResourceWrapper extends AbstractResource {
     public @NotNull ResourceResolver getResourceResolver() {
         return resource.getResourceResolver();
     }
-    
+
     /**
      * @return Returns a string representation of this wrapper consisting of the class'
      * simple name, the {@link #getResourceType() resource type} and

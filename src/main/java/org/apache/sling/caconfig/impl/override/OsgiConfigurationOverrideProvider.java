@@ -61,7 +61,7 @@ public final class OsgiConfigurationOverrideProvider implements ConfigurationOve
         @AttributeDefinition(name = "Service Ranking",
                 description = "Priority of configuration override providers (higher = higher priority).")
         int service_ranking() default 100;
-        
+
         String webconsole_configurationFactory_nameHint() default "{description}, enabled={enabled}";
 
     }
@@ -81,5 +81,5 @@ public final class OsgiConfigurationOverrideProvider implements ConfigurationOve
     public @NotNull Collection<String> getOverrideStrings() {
         return overrideStrings;
     }
-    
+
 }

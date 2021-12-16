@@ -65,9 +65,9 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
 
     public static final String LABEL = "slingcaconfig";
     public static final String TITLE = "Context-Aware Configuration";
-    
+
     private static final Logger log = LoggerFactory.getLogger(ConfigurationWebConsolePlugin.class);
-    
+
     @Reference(policyOption = ReferencePolicyOption.GREEDY)
     private ResourceResolverFactory resolverFactory;
 
@@ -136,7 +136,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
             pw.println("<form method='get'>");
 
             tableStart(pw, "Test Configuration Resolution", 2);
-            
+
             String alertMessage = null;
             if (path != null) {
                 if (resolver == null) {
@@ -147,16 +147,16 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
                 }
             }
             textField(pw, "Content Path", "path", path, alertMessage);
-            
+
             tableRows(pw);
             selectField(pw, "Config Name", "configName", configName, configurationManager.getConfigurationNames());
-            
+
             tableRows(pw);
             textField(pw, "Other Config Name", "configNameOther", configNameOther);
-            
+
             tableRows(pw);
             checkboxField(pw, "Resource collection", "resourceCollection", resourceCollection);
-            
+
             tableRows(pw);
             pw.println("<td></td>");
             pw.println("<td><input type='submit' value='Resolve'/></td>");
@@ -167,7 +167,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
             pw.println("<br/>");
 
             if (contentResource != null && configName != null) {
-                
+
                 // context paths
                 Iterator<ContextResource> contextResources = contextPathStrategyMultiplexer.findContextResources(contentResource);
                 tableStart(pw, "Context paths", 3);
@@ -181,10 +181,10 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
                     pw.println("<td>" + xss.encodeForHTML(contextResource.getConfigRef()) + "</td>");
                     pw.println("<td>" + contextResource.getServiceRanking() + "</td>");
                 }
-                tableEnd(pw);                
+                tableEnd(pw);
 
                 pw.println("<br/>");
-                
+
                 // resolve configuration
                 Collection<ConfigurationData> configDatas;
                 if (resourceCollection) {
@@ -199,16 +199,16 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
                         configDatas = Collections.emptyList();
                     }
                 }
-                
+
                 tableStart(pw, "Result", 6);
-                
+
                 if (configDatas.size() == 0) {
                     pw.println("<td colspan='6'>");
                     alertDiv(pw, "No matching item found.");
                     pw.println("<br/>&nbsp;</td>");
                 }
                 else {
-                
+
                     pw.println("<th>Property</th>");
                     pw.println("<th>Effective Value</th>");
                     pw.println("<th>Value</th>");
@@ -221,7 +221,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
                         pw.println("<td colspan='6' style='background-color:#f3f3f3'>");
                         pw.print("Path: " + xss.encodeForHTML(data.getResourcePath()));
                         pw.println("</td>");
-                        
+
                         for (String propertyName : data.getPropertyNames()) {
                             ValueInfo<?> valueInfo = data.getValueInfo(propertyName);
                             if (valueInfo == null) {
@@ -232,7 +232,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
                             td(pw, valueInfo.getEffectiveValue());
                             td(pw, valueInfo.getValue());
                             td(pw, valueInfo.isDefault());
-                            
+
                             String title = null;
                             if (valueInfo.isInherited()) {
                                 title = "Source path: " + valueInfo.getConfigSourcePath();
@@ -241,11 +241,11 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
 
                             td(pw, valueInfo.isOverridden());
                         }
-                        
+
                    }
-                    
+
                 }
-                
+
                 tableEnd(pw);
             }
 
@@ -288,7 +288,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
         pw.println("</tr>");
         pw.println("<tr>");
     }
-    
+
     private void textField(PrintWriter pw, String label, String fieldName, String value, String... alertMessages) {
         pw.print("<td style='width:20%'>");
         pw.print(xss.encodeForHTMLAttr(label));
@@ -303,7 +303,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
         }
         pw.println("</td>");
     }
-    
+
     private void selectField(PrintWriter pw, String label, String fieldName, String value, Collection<String> options) {
         pw.print("<td style='width:20%'>");
         pw.print(xss.encodeForHTMLAttr(label));
@@ -324,7 +324,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
         pw.print("</select>");
         pw.println("</td>");
     }
-    
+
     private void checkboxField(PrintWriter pw, String label, String fieldName, boolean checked) {
         pw.print("<td style='width:20%'>");
         pw.print(xss.encodeForHTMLAttr(label));
@@ -337,7 +337,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
         }
         pw.print("/></td>");
     }
-    
+
     private void alertDiv(PrintWriter pw, String text) {
         if (StringUtils.isBlank(text)) {
             return;
@@ -349,7 +349,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
         pw.println("</span>");
         pw.println("</div>");
     }
-    
+
     private void td(PrintWriter pw, Object value, String... title) {
         pw.print("<td");
         if (title.length > 0 && !StringUtils.isBlank(title[0])) {
@@ -371,7 +371,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
                 pw.print(xss.encodeForHTML(value.toString()));
             }
         }
-        
+
         if (title.length > 0 && !StringUtils.isBlank(title[0])) {
             pw.print("<span class='ui-icon ui-icon-info' style='float:left'></span>");
         }

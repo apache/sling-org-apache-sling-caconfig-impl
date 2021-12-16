@@ -59,7 +59,7 @@ public class ConfigurationResolverAdaptableTest {
         underTest = ConfigurationTestUtils.registerConfigurationResolver(context);
 
         context.addModelsForPackage("org.apache.sling.caconfig.example");
-        
+
         // content resources
         context.build().resource("/content/site1", PROPERTY_CONFIG_REF, "/conf/content/site1");
         site1Page1 = context.create().resource("/content/site1/page1");
@@ -108,7 +108,7 @@ public class ConfigurationResolverAdaptableTest {
 
     @Test
     public void testConfigWithDefaultValues() {
-        context.registerService(ConfigurationMetadataProvider.class, new DummyConfigurationMetadataProvider("sampleName", 
+        context.registerService(ConfigurationMetadataProvider.class, new DummyConfigurationMetadataProvider("sampleName",
                 ImmutableMap.<String, Object>of("stringParam", "defValue1", "intParam", 999), false));
 
         context.build().resource("/conf/content/site1/sling:configs/sampleName",
@@ -122,7 +122,7 @@ public class ConfigurationResolverAdaptableTest {
 
     @Test
     public void testConfigCollectionWithDefaultValues() {
-        context.registerService(ConfigurationMetadataProvider.class, new DummyConfigurationMetadataProvider("sampleList", 
+        context.registerService(ConfigurationMetadataProvider.class, new DummyConfigurationMetadataProvider("sampleList",
                 ImmutableMap.<String, Object>of("intParam", 999), true));
 
         context.build().resource("/conf/content/site1/sling:configs/sampleList")

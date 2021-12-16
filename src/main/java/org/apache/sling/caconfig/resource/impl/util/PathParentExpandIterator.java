@@ -31,11 +31,11 @@ import org.apache.sling.api.resource.ResourceUtil;
  * Duplicates are not eliminated.
  */
 public class PathParentExpandIterator implements Iterator<String> {
-    
+
     private final String rootPath;
     private final Iterator<String> paths;
     private final Queue<String> expandedPaths = new LinkedList<>();
-    
+
     public PathParentExpandIterator(String rootPath, Iterator<String> paths) {
         this.rootPath = rootPath;
         this.paths = paths;
@@ -53,7 +53,7 @@ public class PathParentExpandIterator implements Iterator<String> {
         }
         return expandedPaths.remove();
     }
-    
+
     private void expandPaths(String path) {
         expandedPaths.add(path);
         String parentPath = ResourceUtil.getParent(path);

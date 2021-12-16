@@ -46,13 +46,13 @@ reference={
                 policy=ReferencePolicy.DYNAMIC, policyOption=ReferencePolicyOption.GREEDY)
 })
 public class ConfigurationMetadataProviderMultiplexerImpl implements ConfigurationMetadataProviderMultiplexer {
-    
+
     private RankedServices<ConfigurationMetadataProvider> items = new RankedServices<>(Order.DESCENDING);
-        
+
     protected void bindConfigurationMetadataProvider(ConfigurationMetadataProvider configurationMetadataProvider, Map<String, Object> props) {
         items.bind(configurationMetadataProvider, props);
     }
-    
+
     protected void unbindConfigurationMetadataProvider(ConfigurationMetadataProvider configurationMetadataProvider, Map<String, Object> props) {
         items.unbind(configurationMetadataProvider, props);
     }

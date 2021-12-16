@@ -42,17 +42,17 @@ import org.jetbrains.annotations.Nullable;
 /**
  * This is a variant of {@link org.apache.sling.caconfig.impl.def.DefaultConfigurationPersistenceStrategy}
  * which reads and stores data from a sub-resources named "jcr:content".
- * 
+ *
  * Difference to {@link CustomConfigurationPersistenceStrategy}:
  * - For configuration collections jcr:content is added only for the parent, not for each item
  * - For nested configuration jcr:content is not duplicated in the path
  */
 public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPersistenceStrategy2 {
-    
-    private static final String DEFAULT_RESOURCE_TYPE = JcrConstants.NT_UNSTRUCTURED;    
+
+    private static final String DEFAULT_RESOURCE_TYPE = JcrConstants.NT_UNSTRUCTURED;
     private static final String CHILD_NODE_NAME = JcrConstants.JCR_CONTENT;
     private static final Pattern JCR_CONTENT_PATTERN = Pattern.compile("(.*/)?" + Pattern.quote(CHILD_NODE_NAME) + "(/.*)?");
-    
+
     @Override
     public Resource getResource(@NotNull Resource resource) {
         assertNotNull(resource);
@@ -136,7 +136,7 @@ public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPer
         assertNotNull(configName);
         return configName;
     }
-    
+
     @Override
     public boolean persistConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath,
             @NotNull ConfigurationPersistData data) {
@@ -150,24 +150,24 @@ public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPer
             @NotNull ConfigurationCollectionPersistData data) {
         String parentPath = getCollectionParentResourcePath(configResourceCollectionParentPath);
         Resource configResourceParent = getOrCreateResource(resourceResolver, parentPath, ValueMap.EMPTY);
-        
+
         // delete existing children and create new ones
         deleteChildren(configResourceParent);
         for (ConfigurationPersistData item : data.getItems()) {
             String path = configResourceParent.getPath() + "/" + item.getCollectionItemName();
             getOrCreateResource(resourceResolver, path, item.getProperties());
         }
-        
+
         // if resource collection parent properties are given replace them as well
         if (data.getProperties() != null) {
             Resource propsResource = getOrCreateResource(resourceResolver, parentPath + "/colPropsResource", ValueMap.EMPTY);
             replaceProperties(propsResource, data.getProperties());
         }
-        
+
         commit(resourceResolver);
         return true;
     }
-    
+
     @Override
     public boolean deleteConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath) {
         Resource resource = resourceResolver.getResource(configResourcePath);
@@ -205,7 +205,7 @@ public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPer
             throw new ConfigurationPersistenceException("Unable to remove children from " + resource.getPath(), ex);
         }
     }
-    
+
     @SuppressWarnings("null")
     private void replaceProperties(Resource resource, Map<String,Object> properties) {
         ModifiableValueMap modValueMap = resource.adaptTo(ModifiableValueMap.class);

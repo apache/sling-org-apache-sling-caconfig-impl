@@ -30,7 +30,7 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ProviderType
 public interface ConfigurationData {
-    
+
     /**
      * Get configuration name.
      * @return Configuration name
@@ -79,10 +79,10 @@ public interface ConfigurationData {
      * @return true if the whole configuration is inherited.
      */
     boolean isInherited();
-    
+
     /**
      * @return true if the whole configuration is overridden by an configuration override provider.
      */
     boolean isOverridden();
-    
+
 }

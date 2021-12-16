@@ -78,5 +78,5 @@ public class ConfigurationResourceResolverImpl implements ConfigurationResourceR
         }
         return contextPaths;
     }
-    
+
 }

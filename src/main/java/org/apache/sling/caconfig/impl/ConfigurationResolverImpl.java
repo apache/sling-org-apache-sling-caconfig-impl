@@ -56,22 +56,22 @@ public class ConfigurationResolverImpl implements ConfigurationResolver, Configu
     private ConfigurationOverrideMultiplexer configurationOverrideMultiplexer;
     @Reference
     private ConfigurationMetadataProviderMultiplexer configurationMetadataProvider;
-    
+
     @ObjectClassDefinition(name="Apache Sling Context-Aware Configuration Resolver",
             description="Getting context-aware configurations for a given resource context.")
     static @interface Config {
-    
+
         @AttributeDefinition(name = "Config bucket names",
                 description = "Additional bucket resource names to '" + CONFIGS_BUCKET_NAME + "' to store configuration resources. "
                 + "The names are used in the order defined, always starting with " + CONFIGS_BUCKET_NAME + ". "
                 + "Once a bucket resource with a matching name is found, that bucket is used and the following names are skipped. "
                 + "For writeback via ConfigurationManager always " + CONFIGS_BUCKET_NAME + " is used.")
         String[] configBucketNames();
-    
+
     }
-    
+
     private Collection<String> configBucketNames;
-    
+
     @Activate
     private void activate(Config config) {
         configBucketNames = new ArrayList<>();
@@ -80,7 +80,7 @@ public class ConfigurationResolverImpl implements ConfigurationResolver, Configu
             configBucketNames.addAll(Arrays.asList(config.configBucketNames()));
         }
     }
-    
+
     @Override
     public @NotNull ConfigurationBuilder get(@NotNull Resource resource) {
         return new ConfigurationBuilderImpl(resource, this,

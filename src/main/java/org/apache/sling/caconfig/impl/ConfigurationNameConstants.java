@@ -33,5 +33,5 @@ public final class ConfigurationNameConstants {
      * Bundle header defining list of class names with all configuration annotation classes in this bundle.
      */
     public static final String CONFIGURATION_CLASSES_HEADER = "Sling-ContextAware-Configuration-Classes";
-    
+
 }

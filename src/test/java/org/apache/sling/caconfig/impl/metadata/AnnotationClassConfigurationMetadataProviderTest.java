@@ -34,27 +34,27 @@ import org.junit.Test;
 import org.osgi.framework.Bundle;
 
 public class AnnotationClassConfigurationMetadataProviderTest {
-    
+
     @Rule
     public OsgiContext context = new OsgiContext();
-    
+
     private AnnotationClassConfigurationMetadataProvider underTest;
-    
+
     @Before
     public void setUp() {
-        underTest = context.registerInjectActivateService(new AnnotationClassConfigurationMetadataProvider()); 
+        underTest = context.registerInjectActivateService(new AnnotationClassConfigurationMetadataProvider());
     }
 
     @Test
     public void testGetConfigurationMetadata() {
-        
+
         // no configuration metadata present
         assertTrue(underTest.getConfigurationNames().isEmpty());
-        
+
         // simulate bundle deployment with annotation classes
         Bundle dummyBundle = BundleEventUtil.startDummyBundle(context.bundleContext(),
                 MetadataSimpleConfig.class, AllTypesConfig.class);
-        
+
         // validate config metadata is available
         Set<String> configNames = underTest.getConfigurationNames();
         assertEquals(2, configNames.size());
@@ -62,7 +62,7 @@ public class AnnotationClassConfigurationMetadataProviderTest {
         assertTrue(configNames.contains(AllTypesConfig.class.getName()));
         assertEquals("simpleConfig", underTest.getConfigurationMetadata("simpleConfig").getName());
         assertEquals(AllTypesConfig.class.getName(), underTest.getConfigurationMetadata(AllTypesConfig.class.getName()).getName());
-        
+
         // simulate bundle undeployment
         BundleEventUtil.stopDummyBundle(dummyBundle);
 
@@ -86,17 +86,17 @@ public class AnnotationClassConfigurationMetadataProviderTest {
 
     @Test
     public void testNameConflictSingleBundle() {
-        
+
         // simulate bundle deployment with annotation classes
         Bundle dummyBundle = BundleEventUtil.startDummyBundle(context.bundleContext(),
                 MetadataSimpleConfig.class, NameConflictMetadataSimpleConfig.class);
-        
+
         // validate config metadata is available
         Set<String> configNames = underTest.getConfigurationNames();
         assertEquals(1, configNames.size());  // only 1 - annotation with conflicting name is ignored
         assertTrue(configNames.contains("simpleConfig"));
         assertEquals("simpleConfig", underTest.getConfigurationMapping("simpleConfig").getConfigName());
-        
+
         // simulate bundle undeployment
         BundleEventUtil.stopDummyBundle(dummyBundle);
 
@@ -106,19 +106,19 @@ public class AnnotationClassConfigurationMetadataProviderTest {
 
     @Test
     public void testNameConflictAccrossBundles() {
-        
+
         // simulate bundle deployment with annotation classes
         Bundle dummyBundle1 = BundleEventUtil.startDummyBundle(context.bundleContext(),
                 MetadataSimpleConfig.class);
         Bundle dummyBundle2 = BundleEventUtil.startDummyBundle(context.bundleContext(),
                 NameConflictMetadataSimpleConfig.class);
-        
+
         // validate config metadata is available
         Set<String> configNames = underTest.getConfigurationNames();
         assertEquals(1, configNames.size());  // only 1 - annotation with conflicting name is ignored
         assertTrue(configNames.contains("simpleConfig"));
         assertEquals("simpleConfig", underTest.getConfigurationMapping("simpleConfig").getConfigName());
-        
+
         // simulate bundle undeployment
         BundleEventUtil.stopDummyBundle(dummyBundle1);
         BundleEventUtil.stopDummyBundle(dummyBundle2);
@@ -126,6 +126,6 @@ public class AnnotationClassConfigurationMetadataProviderTest {
         // no configuration metadata present
         assertTrue(underTest.getConfigurationNames().isEmpty());
     }
-   
-    
+
+
 }

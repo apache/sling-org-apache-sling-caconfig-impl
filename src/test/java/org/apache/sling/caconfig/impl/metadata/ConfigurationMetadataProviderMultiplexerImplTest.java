@@ -46,7 +46,7 @@ public class ConfigurationMetadataProviderMultiplexerImplTest {
 
     @Rule
     public SlingContext context = new SlingContext();
-    
+
     private ConfigurationMetadataProviderMultiplexerImpl underTest;
 
     @Before
@@ -56,12 +56,12 @@ public class ConfigurationMetadataProviderMultiplexerImplTest {
         context.registerInjectActivateService(new DefaultConfigurationPersistenceStrategy());
         underTest = context.registerInjectActivateService(new ConfigurationMetadataProviderMultiplexerImpl());
     }
-    
+
     @Test
     public void testWithNoProvider() {
         SortedSet<String> configNames = underTest.getConfigurationNames();
         assertTrue(configNames.isEmpty());
-        
+
         ConfigurationMetadata configMetadata = underTest.getConfigurationMetadata("test1");
         assertNull(configMetadata);
     }
@@ -72,14 +72,14 @@ public class ConfigurationMetadataProviderMultiplexerImplTest {
 
         SortedSet<String> configNames = underTest.getConfigurationNames();
         assertEquals(ImmutableSortedSet.of("test1", "test2"), configNames);
-        
+
         ConfigurationMetadata configMetadata = underTest.getConfigurationMetadata("test1");
         assertEquals("test1", configMetadata.getName());
 
         configMetadata = underTest.getConfigurationMetadata("test2");
         assertEquals("test2", configMetadata.getName());
     }
-    
+
     @Test
     public void testWithTwoProviders() {
         registerConfigurationMetadataProvider("test1");
@@ -87,14 +87,14 @@ public class ConfigurationMetadataProviderMultiplexerImplTest {
 
         SortedSet<String> configNames = underTest.getConfigurationNames();
         assertEquals(ImmutableSortedSet.of("test1", "test2"), configNames);
-        
+
         ConfigurationMetadata configMetadata = underTest.getConfigurationMetadata("test1");
         assertEquals("test1", configMetadata.getName());
 
         configMetadata = underTest.getConfigurationMetadata("test2");
         assertEquals("test2", configMetadata.getName());
     }
-    
+
     private void registerConfigurationMetadataProvider(String... names) {
         final Map<String,ConfigurationMetadata> metadata = new HashMap<>();
         for (String name : names) {

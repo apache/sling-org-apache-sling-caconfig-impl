@@ -30,7 +30,7 @@ public class MapUtilTest {
     @Test
     public void testTraceOutput() {
         assertEquals("{}", traceOutput(ImmutableMap.<String,Object>of()));
-        
+
         assertEquals("{prop1: 'aa', prop2: 5, prop3: true}", traceOutput(ImmutableMap.<String,Object>of(
                 "prop1", "aa",
                 "prop2", 5,

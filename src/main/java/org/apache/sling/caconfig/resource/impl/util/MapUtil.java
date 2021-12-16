@@ -25,11 +25,11 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 public final class MapUtil {
-    
+
     private MapUtil() {
         // static methods only
     }
-    
+
     /**
      * Produce trace output for properties map.
      * @param properties Properties
@@ -51,7 +51,7 @@ public final class MapUtil {
         sb.append("}");
         return sb.toString();
     }
-    
+
     private static void appendValue(StringBuilder sb, Object value) {
         if (value == null) {
             sb.append("null");

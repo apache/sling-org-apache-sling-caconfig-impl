@@ -29,5 +29,5 @@ import org.apache.sling.caconfig.resource.spi.ContextPathStrategy;
 public interface ContextPathStrategyMultiplexer extends ContextPathStrategy {
 
     // inherits all methods from {@link ContextPathStrategy}
-    
+
 }

@@ -35,7 +35,7 @@ class ConfigurationMetadataPrinter implements ServiceConfigurationPrinter<Config
     @Override
     public void printConfiguration(PrintWriter pw, ServiceReference<ConfigurationMetadataProvider> serviceReference, BundleContext bundleContext) {
         ConfigurationMetadataProvider service = bundleContext.getService(serviceReference);
-        
+
         for (String configName : service.getConfigurationNames()) {
             ConfigurationMetadata metadata = service.getConfigurationMetadata(configName);
             if (metadata == null) {
@@ -44,28 +44,28 @@ class ConfigurationMetadataPrinter implements ServiceConfigurationPrinter<Config
             pw.print(INDENT);
             pw.print(BULLET);
             pw.println(metadata.getName());
-            
+
             for (PropertyMetadata<?> property : metadata.getPropertyMetadata().values()) {
                 pw.print(INDENT_2);
                 pw.print(BULLET);
                 pw.print(property.getName());
-                
+
                 pw.print("(");
                 pw.print(property.getType().getSimpleName());
                 pw.print(")");
-                
+
                 if (property.getDefaultValue() != null) {
                     pw.print(" = ");
                     printValue(pw, property.getDefaultValue());
                 }
-                
+
                 pw.println();
             }
         }
-        
+
         bundleContext.ungetService(serviceReference);
     }
-    
+
     private void printValue(PrintWriter pw, Object value) {
         if (value.getClass().isArray()) {
             for (int i=0; i<Array.getLength(value); i++) {

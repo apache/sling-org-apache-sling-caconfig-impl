@@ -36,18 +36,18 @@ class DummyConfigurationMetadataProvider implements ConfigurationMetadataProvide
     private final String configName;
     private final Map<String,Object> defaultValues;
     private final boolean collection;
-    
+
     public DummyConfigurationMetadataProvider(String configName, Map<String, Object> defaultValues, boolean collection) {
         this.configName = configName;
         this.defaultValues = defaultValues;
         this.collection = collection;
     }
-    
+
     @Override
     public @NotNull SortedSet<String> getConfigurationNames() {
         return ImmutableSortedSet.of(configName);
     }
-    
+
     @Override
     public ConfigurationMetadata getConfigurationMetadata(String configName) {
         if (!StringUtils.equals(this.configName, configName)) {

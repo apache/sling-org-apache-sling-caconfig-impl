@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
  * Helper methods for configuration names.
  */
 public final class ConfigNameUtil {
-    
+
     private ConfigNameUtil() {
         // static methods only
     }
@@ -42,7 +42,7 @@ public final class ConfigNameUtil {
                 && !StringUtils.startsWith(configName, "/")
                 && !StringUtils.contains(configName, "../");
     }
-    
+
     /**
      * Check if the config name is valid.
      * @param configNames The names
@@ -59,7 +59,7 @@ public final class ConfigNameUtil {
         }
         return true;
     }
-    
+
     /**
      * Ensure that the config name is valid.
      * @param configName The name
@@ -70,7 +70,7 @@ public final class ConfigNameUtil {
             throw new IllegalArgumentException("Invalid configuration name: " + configName);
         }
     }
-    
+
     /**
      * Returns all partial combinations like: a, a/b, a/b/c from config name a/b/c/d
      * @param configName Config name

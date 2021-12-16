@@ -27,21 +27,21 @@ import org.apache.sling.caconfig.annotation.Configuration;
 public @interface IllegalTypesConfig {
 
     Class clazz();
-    
+
     byte byteSingle();
-    
+
     byte[] byteArray();
-    
+
     short shortSingle();
-    
+
     short[] shortArray();
-    
+
     float floatSingle();
-    
+
     float[] floatArray();
-    
+
     char charSingle();
-    
+
     char[] charArray();
-    
+
 }

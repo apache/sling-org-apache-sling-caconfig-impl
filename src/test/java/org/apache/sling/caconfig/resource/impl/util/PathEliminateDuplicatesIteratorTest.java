@@ -31,11 +31,11 @@ public class PathEliminateDuplicatesIteratorTest {
     @Test
     public void testIterator() {
         List<String> paths = ImmutableList.of(
-                "/conf/a", 
+                "/conf/a",
                 "/conf/a/b",
                 "/conf/a",
                 "/conf/a/b/c");
-        
+
         List<String> result = ImmutableList.copyOf(new PathEliminateDuplicatesIterator(paths.iterator()));
         assertEquals(ImmutableList.of(
                 "/conf/a",

@@ -32,15 +32,15 @@ public class ConfigurationManagementSettingsImplTest {
 
     @Rule
     public SlingContext context = new SlingContext();
-    
+
     @Test
     public void testDefault() {
         ConfigurationManagementSettings underTest = context.registerInjectActivateService(new ConfigurationManagementSettingsImpl());
-        
+
         assertEquals(ImmutableSet.<String>of(), underTest.getIgnoredPropertyNames(ImmutableSet.<String>of()));
         assertEquals(ImmutableSet.<String>of(), underTest.getIgnoredPropertyNames(ImmutableSet.<String>of("abc", "def")));
         assertEquals(ImmutableSet.<String>of("jcr:xyz", "jcr:def"), underTest.getIgnoredPropertyNames(ImmutableSet.<String>of("abc", "jcr:xyz", "jcr:def")));
-        
+
         assertEquals(ImmutableList.of("."), underTest.getConfigCollectionPropertiesResourceNames());
     }
 
@@ -49,7 +49,7 @@ public class ConfigurationManagementSettingsImplTest {
         ConfigurationManagementSettings underTest = context.registerInjectActivateService(new ConfigurationManagementSettingsImpl(),
                 "ignorePropertyNameRegex", new String[] { "^.*e.*$", "^.*b.*$" },
                 "configCollectionPropertiesResourceNames", new String[] { "a", "b" });
-        
+
         assertEquals(ImmutableSet.<String>of(), underTest.getIgnoredPropertyNames(ImmutableSet.<String>of()));
         assertEquals(ImmutableSet.<String>of("abc", "def"), underTest.getIgnoredPropertyNames(ImmutableSet.<String>of("abc", "def")));
         assertEquals(ImmutableSet.<String>of("abc", "jcr:def"), underTest.getIgnoredPropertyNames(ImmutableSet.<String>of("abc", "jcr:xyz", "jcr:def")));

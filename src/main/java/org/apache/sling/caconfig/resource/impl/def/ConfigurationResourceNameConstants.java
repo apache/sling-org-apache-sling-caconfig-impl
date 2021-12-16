@@ -29,7 +29,7 @@ public final class ConfigurationResourceNameConstants {
      * Additionally each resource having this property marks the beginning of a new context sub-tree.
      */
     public static final String PROPERTY_CONFIG_REF = "sling:configRef";
-   
+
     /**
      * Boolean property that controls whether config resource collections should be merged on inheritance or not.
      * Merging means merging the lists, not the list items (properties of the resources) itself.

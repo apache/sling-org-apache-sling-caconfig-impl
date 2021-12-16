@@ -34,5 +34,5 @@ public interface ConfigurationResourceResolverConfig {
      * @return Bucket names
      */
     @NotNull Collection<String> configBucketNames();
-    
+
 }

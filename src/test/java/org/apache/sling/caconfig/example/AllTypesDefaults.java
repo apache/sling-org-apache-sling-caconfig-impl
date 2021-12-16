@@ -19,19 +19,19 @@
 package org.apache.sling.caconfig.example;
 
 public final class AllTypesDefaults {
-    
+
     private AllTypesDefaults() {
         // constants only
     }
-    
+
     public static final String STRING_DEFAULT = "myDefault";
 
     public static final String STRING_DEFAULT_2 = "myDefault2";
 
     public static final int INT_DEFAULT = 12345;
-    
+
     public static final int INT_DEFAULT_2 = 23456;
-    
+
     public static final long LONG_DEFAULT = 1234567890L;
 
     public static final long LONG_DEFAULT_2 = 2345678901L;
