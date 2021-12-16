@@ -44,10 +44,10 @@ import org.jetbrains.annotations.Nullable;
  * which reads and stores data from a sub-resources named "jcr:content".
  *
  * Difference to {@link CustomConfigurationPersistenceStrategy}:
- * - For configuration collections jcr:content is added only for the parent, not for each item
+ * - For configuration collections jcr:content is added for each item, not for the parent
  * - For nested configuration jcr:content is not duplicated in the path
  */
-public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPersistenceStrategy2 {
+public class CustomConfigurationPersistenceStrategy3 implements ConfigurationPersistenceStrategy2 {
 
     private static final String DEFAULT_RESOURCE_TYPE = JcrConstants.NT_UNSTRUCTURED;
     private static final String CHILD_NODE_NAME = JcrConstants.JCR_CONTENT;
@@ -59,26 +59,18 @@ public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPer
         if (containsJcrContent(resource.getPath())) {
             return resource;
         }
-        else {
-            return resource.getChild(CHILD_NODE_NAME);
-        }
+        return resource.getChild(CHILD_NODE_NAME);
     }
 
     @Override
     public Resource getCollectionParentResource(@NotNull Resource resource) {
         assertNotNull(resource);
-        if (containsJcrContent(resource.getPath())) {
-            return resource;
-        }
-        else {
-            return resource.getChild(CHILD_NODE_NAME);
-        }
+        return resource;
     }
 
     @Override
     public Resource getCollectionItemResource(@NotNull Resource resource) {
-        assertNotNull(resource);
-        return resource;
+        return getResource(resource);
     }
 
     @Override
@@ -87,26 +79,18 @@ public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPer
         if (containsJcrContent(resourcePath)) {
             return resourcePath;
         }
-        else {
-            return resourcePath + "/" + CHILD_NODE_NAME;
-        }
+        return resourcePath + "/" + CHILD_NODE_NAME;
     }
 
     @Override
     public String getCollectionParentResourcePath(@NotNull String resourcePath) {
         assertNotNull(resourcePath);
-        if (containsJcrContent(resourcePath)) {
-            return resourcePath;
-        }
-        else {
-            return resourcePath + "/" + CHILD_NODE_NAME;
-        }
+        return resourcePath;
     }
 
     @Override
     public String getCollectionItemResourcePath(@NotNull String resourcePath) {
-        assertNotNull(resourcePath);
-        return resourcePath;
+        return getResourcePath(resourcePath);
     }
 
     @Override
@@ -115,26 +99,18 @@ public class CustomConfigurationPersistenceStrategy2 implements ConfigurationPer
         if (containsJcrContent(configName)) {
             return configName;
         }
-        else {
-            return configName + "/" + CHILD_NODE_NAME;
-        }
+        return configName + "/" + CHILD_NODE_NAME;
     }
 
     @Override
     public String getCollectionParentConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
         assertNotNull(configName);
-        if (containsJcrContent(configName)) {
-            return configName;
-        }
-        else {
-            return configName + "/" + CHILD_NODE_NAME;
-        }
+        return configName;
     }
 
     @Override
     public String getCollectionItemConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
-        assertNotNull(configName);
-        return configName;
+        return getConfigName(configName, relatedConfigPath);
     }
 
     @Override
