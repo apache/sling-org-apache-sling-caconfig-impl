@@ -32,10 +32,10 @@ import org.apache.sling.caconfig.management.multiplexer.ConfigurationMetadataPro
 import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
 import org.apache.sling.scripting.api.BindingsValuesProvider;
-import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.propertytypes.ServiceRanking;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.Designate;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
@@ -45,9 +45,9 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
  * used in HTL (Sightly).
  */
 @Component(immediate = true, service = BindingsValuesProvider.class, property = {
-        "javax.script.name=sightly",
-        Constants.SERVICE_RANKING + "=100"
+        "javax.script.name=sightly"
 })
+@ServiceRanking(100)
 @Designate(ocd = ConfigurationBindingsValueProvider.Config.class)
 public class ConfigurationBindingsValueProvider implements BindingsValuesProvider {
 
@@ -84,7 +84,7 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
         if (resource == null) {
             return;
         }
-        Map<String, Object> configMap = new ConfigMap(resource, configMetadataProvider);
+        Map<String,Object> configMap = new ConfigMap(resource, configMetadataProvider);
         bindings.put(BINDING_VARIABLE, configMap);
     }
 

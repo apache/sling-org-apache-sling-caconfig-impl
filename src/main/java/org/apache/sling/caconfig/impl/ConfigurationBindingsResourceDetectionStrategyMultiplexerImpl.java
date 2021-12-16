@@ -16,13 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.sling.caconfig.resource.impl;
+package org.apache.sling.caconfig.impl;
 
 import java.util.Map;
+
 import javax.script.Bindings;
+
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationBindingsResourceDetectionStrategyMultiplexer;
-import org.apache.sling.caconfig.resource.spi.ConfigurationBindingsResourceDetectionStrategy;
+import org.apache.sling.caconfig.spi.ConfigurationBindingsResourceDetectionStrategy;
 import org.apache.sling.commons.osgi.Order;
 import org.apache.sling.commons.osgi.RankedServices;
 import org.jetbrains.annotations.NotNull;
@@ -69,4 +71,5 @@ public class ConfigurationBindingsResourceDetectionStrategyMultiplexerImpl imple
         }
         return null;
     }
+
 }

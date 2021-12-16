@@ -38,8 +38,7 @@ import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.caconfig.impl.metadata.ConfigurationMetadataProviderMultiplexerImpl;
-import org.apache.sling.caconfig.resource.impl.ConfigurationBindingsResourceDetectionStrategyMultiplexerImpl;
-import org.apache.sling.caconfig.resource.spi.ConfigurationBindingsResourceDetectionStrategy;
+import org.apache.sling.caconfig.spi.ConfigurationBindingsResourceDetectionStrategy;
 import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
 import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
@@ -68,11 +67,11 @@ public class ConfigurationBindingsValueProviderTest {
     @Rule
     public SlingContext context = new SlingContext();
 
-    @Mock
+    @Mock(lenient = true)
     private SlingHttpServletRequest request;
     @Mock
     private Resource resource;
-    @Mock
+    @Mock(lenient = true)
     private Bindings bindings;
     @Mock
     private ConfigurationBuilder configBuilder;

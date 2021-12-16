@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.sling.caconfig.resource.impl;
+package org.apache.sling.caconfig.impl;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 import javax.script.Bindings;
 
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.caconfig.resource.spi.ConfigurationBindingsResourceDetectionStrategy;
+import org.apache.sling.caconfig.spi.ConfigurationBindingsResourceDetectionStrategy;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
 import org.junit.Before;
 import org.junit.Rule;
@@ -64,6 +64,7 @@ public class ConfigurationBindingsResourceDetectionStrategyMultiplexerImplTest {
     }
 
     @Test
+    @SuppressWarnings("null")
     public void testWithOneStrategy() {
         ConfigurationBindingsResourceDetectionStrategy strategy = mock(ConfigurationBindingsResourceDetectionStrategy.class);
         when(strategy.detectResource(bindings)).thenReturn(resource1);
@@ -73,6 +74,7 @@ public class ConfigurationBindingsResourceDetectionStrategyMultiplexerImplTest {
     }
 
     @Test
+    @SuppressWarnings("null")
     public void testWithMultipleStrategies() {
         ConfigurationBindingsResourceDetectionStrategy strategy1 = mock(ConfigurationBindingsResourceDetectionStrategy.class);
         ConfigurationBindingsResourceDetectionStrategy strategy2 = mock(ConfigurationBindingsResourceDetectionStrategy.class);

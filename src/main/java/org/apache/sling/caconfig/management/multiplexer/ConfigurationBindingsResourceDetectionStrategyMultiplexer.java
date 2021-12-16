@@ -18,7 +18,7 @@
  */
 package org.apache.sling.caconfig.management.multiplexer;
 
-import org.apache.sling.caconfig.resource.spi.ConfigurationBindingsResourceDetectionStrategy;
+import org.apache.sling.caconfig.spi.ConfigurationBindingsResourceDetectionStrategy;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -29,4 +29,5 @@ import org.osgi.annotation.versioning.ProviderType;
 public interface ConfigurationBindingsResourceDetectionStrategyMultiplexer extends ConfigurationBindingsResourceDetectionStrategy {
 
     // inherits all methods from {@link ConfigurationBindingsResourceDetectionStrategy}
+
 }

@@ -18,29 +18,30 @@
  */
 package org.apache.sling.caconfig.impl.def;
 
+import javax.script.Bindings;
+
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.scripting.SlingBindings;
-import org.apache.sling.caconfig.resource.spi.ConfigurationBindingsResourceDetectionStrategy;
+import org.apache.sling.caconfig.spi.ConfigurationBindingsResourceDetectionStrategy;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 
-import javax.script.Bindings;
-
-@Component(
-        service = ConfigurationBindingsResourceDetectionStrategy.class,
-        property = {
-                Constants.SERVICE_RANKING + "=100"
-        }
-)
+/**
+ * Default implementation of {@link ConfigurationBindingsResourceDetectionStrategy} which always
+ * uses the resource of the current request.
+ */
+@Component(service = ConfigurationBindingsResourceDetectionStrategy.class)
 public class DefaultConfigurationBindingsResourceDetectionStrategy implements ConfigurationBindingsResourceDetectionStrategy {
+
     @Override
-    public @Nullable Resource detectResource(final Bindings bindings) {
+    public @Nullable Resource detectResource(@NotNull final Bindings bindings) {
         if (bindings.containsKey(SlingBindings.REQUEST)) {
             SlingHttpServletRequest request = (SlingHttpServletRequest) bindings.get(SlingBindings.REQUEST);
             return request.getResource();
         }
         return null;
     }
+
 }

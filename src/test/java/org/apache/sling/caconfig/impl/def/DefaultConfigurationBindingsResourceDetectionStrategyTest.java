@@ -27,7 +27,7 @@ import javax.script.Bindings;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.scripting.SlingBindings;
-import org.apache.sling.caconfig.resource.spi.ConfigurationBindingsResourceDetectionStrategy;
+import org.apache.sling.caconfig.spi.ConfigurationBindingsResourceDetectionStrategy;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
 import org.junit.Before;
 import org.junit.Rule;
@@ -62,6 +62,7 @@ public class DefaultConfigurationBindingsResourceDetectionStrategyTest {
     }
 
     @Test
+    @SuppressWarnings("null")
     public void testNoResource() {
         when(request.getResource()).thenReturn(null);
         assertNull(underTest.detectResource(bindings));
