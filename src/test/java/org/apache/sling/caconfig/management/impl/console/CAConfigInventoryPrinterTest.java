@@ -39,34 +39,34 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CAConfigInventoryPrinterTest {
-    
+
     private static final String SAMPLE_CONFIG_NAME = "sample.config.Name";
     private static final String SAMPLE_OVERRIDE_STRING = "[/sample]override/string='abc'";
-    
+
     @Rule
     public SlingContext context = new SlingContext();
-    
+
     @Mock
     private ConfigurationMetadataProvider configurationMetadataProvider;
     @Mock
     private ConfigurationOverrideProvider configurationOverrideProvider;
-    
+
     private CAConfigInventoryPrinter underTest;
-    
+
     @Before
     public void setUp() {
         context.registerService(ConfigurationMetadataProvider.class, configurationMetadataProvider);
         context.registerService(ConfigurationOverrideProvider.class, configurationOverrideProvider);
         ConfigurationTestUtils.registerConfigurationResolver(context);
         underTest = context.registerInjectActivateService(new CAConfigInventoryPrinter());
-    
+
         ConfigurationMetadata configMetadata = new ConfigurationMetadata(SAMPLE_CONFIG_NAME, ImmutableList.<PropertyMetadata<?>>of(
                 new PropertyMetadata<>("prop1", "defValue"),
                 new PropertyMetadata<>("prop2", String.class),
@@ -74,7 +74,7 @@ public class CAConfigInventoryPrinterTest {
                 false);
         when(configurationMetadataProvider.getConfigurationMetadata(SAMPLE_CONFIG_NAME)).thenReturn(configMetadata);
         when(configurationMetadataProvider.getConfigurationNames()).thenReturn(ImmutableSortedSet.of(SAMPLE_CONFIG_NAME));
-        
+
         when(configurationOverrideProvider.getOverrideStrings()).thenReturn(ImmutableList.of(SAMPLE_OVERRIDE_STRING));
     }
 
@@ -83,14 +83,14 @@ public class CAConfigInventoryPrinterTest {
         StringWriter sw = new StringWriter();
         underTest.print(new PrintWriter(sw), Format.TEXT, false);
         String result = sw.toString();
-        
+
         // test existance of some strategy names
         assertTrue(StringUtils.contains(result, DefaultConfigurationInheritanceStrategy.class.getName()));
         assertTrue(StringUtils.contains(result, DefaultConfigurationPersistenceStrategy.class.getName()));
-        
+
         // ensure config metadata
         assertTrue(StringUtils.contains(result, SAMPLE_CONFIG_NAME));
-        
+
         // ensure overrides strings
         assertTrue(StringUtils.contains(result, SAMPLE_OVERRIDE_STRING));
     }

@@ -50,11 +50,11 @@ reference={
 public class ConfigurationInheritanceStrategyMultiplexerImpl implements ConfigurationInheritanceStrategyMultiplexer {
 
     private RankedServices<ConfigurationInheritanceStrategy> items = new RankedServices<>(Order.DESCENDING);
-    
+
     protected void bindConfigurationInheritanceStrategy(ConfigurationInheritanceStrategy item, Map<String, Object> props) {
         items.bind(item, props);
     }
-    
+
     protected void unbindConfigurationInheritanceStrategy(ConfigurationInheritanceStrategy item, Map<String, Object> props) {
         items.unbind(item, props);
     }

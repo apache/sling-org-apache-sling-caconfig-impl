@@ -46,7 +46,7 @@ import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
 import org.jetbrains.annotations.NotNull;
 
 final class ConfigurationDataImpl implements ConfigurationData {
-    
+
     private final ConfigurationMetadata configMetadata;
     private final Resource resolvedConfigurationResource;
     private final Resource writebackConfigurationResource;
@@ -60,11 +60,11 @@ final class ConfigurationDataImpl implements ConfigurationData {
     private final boolean configResourceCollection;
     private final String collectionItemName;
     private final boolean isAllOverridden;
-    
+
     private Set<String> propertyNamesCache;
     private ValueMap valuesCache;
     private ValueMap effectiveValuesCache;
-    
+
     public ConfigurationDataImpl(ConfigurationMetadata configMetadata,
             Resource resolvedConfigurationResource, Resource writebackConfigurationResource,
             Iterator<Resource> configurationResourceInheritanceChain,
@@ -105,7 +105,7 @@ final class ConfigurationDataImpl implements ConfigurationData {
                 configurationPersistenceStrategy,
                 configResourceCollection, null);
     }
-    
+
     @Override
     public @NotNull String getConfigName() {
         return configName;
@@ -176,7 +176,7 @@ final class ConfigurationDataImpl implements ConfigurationData {
         }
         return effectiveValuesCache;
     }
-        
+
     private void resolveNestedConfigs(Map<String,Object> props) {
         if (configMetadata == null) {
             return;
@@ -187,9 +187,9 @@ final class ConfigurationDataImpl implements ConfigurationData {
                 String relatedConfigPath = resolvedConfigurationResource != null ? resolvedConfigurationResource.getPath() : null;
                 String nestedConfigName;
                 if (configResourceCollection) {
-                    String collectionItemName = StringUtils.defaultString(getCollectionItemName(), "newItem");
-                    nestedConfigName = configurationPersistenceStrategy.getCollectionParentConfigName(configName, relatedConfigPath)
-                            + "/" + configurationPersistenceStrategy.getCollectionItemConfigName(collectionItemName, relatedConfigPath)
+                    String nestedCollectionItemName = StringUtils.defaultString(getCollectionItemName(), "newItem");
+                    nestedConfigName = configurationPersistenceStrategy.getCollectionItemConfigName(
+                            configurationPersistenceStrategy.getCollectionParentConfigName(configName, relatedConfigPath) + "/" + nestedCollectionItemName, relatedConfigPath)
                             + "/" + nestedConfigMetadata.getName();
                 }
                 else {
@@ -240,7 +240,7 @@ final class ConfigurationDataImpl implements ConfigurationData {
                 configurationOverrideMultiplexer,
                 isAllOverridden);
     }
-    
+
     private Class<?> primitiveToWrapper(Class<?> type) {
         if (type.isArray()) {
             return Array.newInstance(ClassUtils.primitiveToWrapper(type.getComponentType()), 0).getClass();
@@ -249,7 +249,7 @@ final class ConfigurationDataImpl implements ConfigurationData {
             return ClassUtils.primitiveToWrapper(type);
         }
     }
-    
+
     private PropertyMetadata<?> getPropertyMetadata(String propertyName) {
         if (configMetadata == null) {
             return null;
@@ -272,7 +272,7 @@ final class ConfigurationDataImpl implements ConfigurationData {
         }
         return false;
     }
-    
+
     @Override
     public boolean isOverridden() {
         return isAllOverridden;

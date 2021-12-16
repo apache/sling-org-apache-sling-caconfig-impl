@@ -79,16 +79,16 @@ public class AnnotationClassParserTest {
     @Test
     public void testBuildConfigurationMetadata_Simple() {
         ConfigurationMetadata metadata = buildConfigurationMetadata(MetadataSimpleConfig.class);
-        
+
         assertEquals("simpleConfig", metadata.getName());
         assertEquals("Simple configuration", metadata.getLabel());
         assertEquals("This is a configuration example with additional metadata.", metadata.getDescription());
         assertEquals(ImmutableMap.of("param1", "value1", "param2", "123"), metadata.getProperties());
         assertFalse(metadata.isCollection());
-        
+
         List<PropertyMetadata<?>> propertyMetadataList = ImmutableList.copyOf(metadata.getPropertyMetadata().values());
         assertEquals(3, propertyMetadataList.size());
-        
+
         PropertyMetadata<?> stringParam = propertyMetadataList.get(0);
         assertEquals("String Param", stringParam.getLabel());
         assertEquals("Enter strings here.", stringParam.getDescription());
@@ -107,42 +107,42 @@ public class AnnotationClassParserTest {
         assertTrue(boolParam.getProperties().isEmpty());
         assertNull(boolParam.getDefaultValue());
     }
-    
+
     @Test
     public void testBuildConfigurationMetadata_List() {
         ConfigurationMetadata metadata = buildConfigurationMetadata(ListConfig.class);
-        
+
         assertEquals(ListConfig.class.getName(), metadata.getName());
         assertTrue(metadata.isCollection());
     }
-    
+
     @Test
     public void testBuildConfigurationMetadata_AllTypes() {
         ConfigurationMetadata metadata = buildConfigurationMetadata(AllTypesConfig.class);
-        
+
         assertEquals(AllTypesConfig.class.getName(), metadata.getName());
         assertNull(metadata.getLabel());
         assertNull(metadata.getDescription());
         assertTrue(metadata.getProperties().isEmpty());
         assertEquals(20, metadata.getPropertyMetadata().size());
     }
-    
+
     @Test
     public void testBuildConfigurationMetadata_Nested() {
         ConfigurationMetadata metadata = buildConfigurationMetadata(NestedConfig.class);
-        
+
         assertEquals(NestedConfig.class.getName(), metadata.getName());
 
         Collection<PropertyMetadata<?>> propertyMetadataList = metadata.getPropertyMetadata().values();
         assertEquals(4, propertyMetadataList.size());
-        
+
         for (PropertyMetadata<?> propertyMetadata : propertyMetadataList) {
             if (StringUtils.equals(propertyMetadata.getName(), "stringParam")) {
                 assertEquals(String.class, propertyMetadata.getType());
             }
             else if (StringUtils.equals(propertyMetadata.getName(), "subConfig")) {
                 assertEquals(ConfigurationMetadata.class, propertyMetadata.getType());
-                
+
                 ConfigurationMetadata subConfigMetadata = propertyMetadata.getConfigurationMetadata();
                 assertEquals("subConfig", subConfigMetadata.getName());
                 assertEquals(3, subConfigMetadata.getPropertyMetadata().size());
@@ -150,14 +150,14 @@ public class AnnotationClassParserTest {
             else if (StringUtils.equals(propertyMetadata.getName(), "subListConfig")) {
                 assertEquals(ConfigurationMetadata[].class, propertyMetadata.getType());
 
-                ConfigurationMetadata subListConfigMetadata = propertyMetadata.getConfigurationMetadata(); 
+                ConfigurationMetadata subListConfigMetadata = propertyMetadata.getConfigurationMetadata();
                 assertEquals("subListConfig", subListConfigMetadata.getName());
                 assertEquals(2, subListConfigMetadata.getPropertyMetadata().size());
             }
             else if (StringUtils.equals(propertyMetadata.getName(), "subConfigWithoutAnnotation")) {
                 assertEquals(ConfigurationMetadata.class, propertyMetadata.getType());
 
-                ConfigurationMetadata subConfigWithoutAnnotationMetadata = propertyMetadata.getConfigurationMetadata(); 
+                ConfigurationMetadata subConfigWithoutAnnotationMetadata = propertyMetadata.getConfigurationMetadata();
                 assertEquals("subConfigWithoutAnnotation", subConfigWithoutAnnotationMetadata.getName());
                 assertEquals(1, subConfigWithoutAnnotationMetadata.getPropertyMetadata().size());
             }
@@ -166,10 +166,10 @@ public class AnnotationClassParserTest {
             }
         }
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void testBuildConfigurationMetadata_IllegalClass() {
         buildConfigurationMetadata(WithoutAnnotationConfig.class);
     }
-    
+
 }

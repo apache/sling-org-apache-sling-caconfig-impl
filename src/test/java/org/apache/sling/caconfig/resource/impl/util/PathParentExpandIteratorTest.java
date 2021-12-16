@@ -31,10 +31,10 @@ public class PathParentExpandIteratorTest {
     @Test
     public void testIterator() {
         List<String> list = ImmutableList.of(
-                "/conf/a/b/c", 
+                "/conf/a/b/c",
                 "/conf/a/b",
                 "/conf/x/y/z");
-        
+
         List<String> result = ImmutableList.copyOf(new PathParentExpandIterator("/conf", list.iterator()));
         assertEquals(ImmutableList.of(
                 "/conf/a/b/c",

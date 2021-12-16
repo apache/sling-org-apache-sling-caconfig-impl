@@ -40,19 +40,19 @@ import org.slf4j.LoggerFactory;
  */
 @Component(immediate = true, service = ConfigurationMetadataProvider.class)
 public class AnnotationClassConfigurationMetadataProvider implements ConfigurationMetadataProvider {
-    
+
     private BundleTracker<BundleConfigurationMapping> bundleTracker;
     private ConcurrentSkipListMap<Bundle,BundleConfigurationMapping> bundleMappings = new ConcurrentSkipListMap<>();
-    
+
     private static final Logger log = LoggerFactory.getLogger(AnnotationClassConfigurationMetadataProvider.class);
-    
+
     @Activate
     private void activate(BundleContext bundleContext) {
         ConfigClassBundleTackerCustomizer bundlerTrackerCustomizer = new ConfigClassBundleTackerCustomizer(this);
         bundleTracker = new BundleTracker<BundleConfigurationMapping>(bundleContext, Bundle.ACTIVE, bundlerTrackerCustomizer);
         bundleTracker.open();
     }
-    
+
     @Deactivate
     private void deactivate() {
         bundleTracker.close();
@@ -78,7 +78,7 @@ public class AnnotationClassConfigurationMetadataProvider implements Configurati
             return null;
         }
     }
-    
+
     /**
      * Get configuration mapping for given config name.
      * On the way check for config name mapping conflicts accross bundles and log a warning if found.
@@ -122,5 +122,5 @@ public class AnnotationClassConfigurationMetadataProvider implements Configurati
         log.debug("Remove bundle mapping: {}", bundleMapping);
         bundleMappings.remove(bundleMapping.getBundle());
     }
-    
+
 }

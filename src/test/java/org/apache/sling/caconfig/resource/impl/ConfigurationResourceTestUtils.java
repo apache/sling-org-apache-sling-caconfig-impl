@@ -25,7 +25,7 @@ import org.apache.sling.caconfig.resource.impl.def.DefaultContextPathStrategy;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
 
 public final class ConfigurationResourceTestUtils {
-    
+
     private ConfigurationResourceTestUtils() {
         // static methods only
     }
@@ -41,7 +41,7 @@ public final class ConfigurationResourceTestUtils {
         context.registerInjectActivateService(new ConfigurationResourceResolvingStrategyMultiplexerImpl());
         return context.registerInjectActivateService(new ConfigurationResourceResolverImpl());
     }
-    
+
     /**
      * Register all services for {@link ConfigurationResourceResolver}
      * without the default implementations of the multiplexed services.
@@ -52,5 +52,5 @@ public final class ConfigurationResourceTestUtils {
         context.registerInjectActivateService(new ConfigurationResourceResolvingStrategyMultiplexerImpl());
         return context.registerInjectActivateService(new ConfigurationResourceResolverImpl());
     }
-    
+
 }

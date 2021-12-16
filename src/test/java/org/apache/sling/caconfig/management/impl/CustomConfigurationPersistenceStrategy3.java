@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -41,15 +42,23 @@ import org.jetbrains.annotations.Nullable;
 /**
  * This is a variant of {@link org.apache.sling.caconfig.impl.def.DefaultConfigurationPersistenceStrategy}
  * which reads and stores data from a sub-resources named "jcr:content".
+ *
+ * Difference to {@link CustomConfigurationPersistenceStrategy}:
+ * - For configuration collections jcr:content is added for each item, not for the parent
+ * - For nested configuration jcr:content is not duplicated in the path
  */
-public class CustomConfigurationPersistenceStrategy implements ConfigurationPersistenceStrategy2 {
+public class CustomConfigurationPersistenceStrategy3 implements ConfigurationPersistenceStrategy2 {
 
     private static final String DEFAULT_RESOURCE_TYPE = JcrConstants.NT_UNSTRUCTURED;
     private static final String CHILD_NODE_NAME = JcrConstants.JCR_CONTENT;
+    private static final Pattern JCR_CONTENT_PATTERN = Pattern.compile("(.*/)?" + Pattern.quote(CHILD_NODE_NAME) + "(/.*)?");
 
     @Override
     public Resource getResource(@NotNull Resource resource) {
         assertNotNull(resource);
+        if (containsJcrContent(resource.getPath())) {
+            return resource;
+        }
         return resource.getChild(CHILD_NODE_NAME);
     }
 
@@ -61,13 +70,15 @@ public class CustomConfigurationPersistenceStrategy implements ConfigurationPers
 
     @Override
     public Resource getCollectionItemResource(@NotNull Resource resource) {
-        assertNotNull(resource);
-        return resource.getChild(CHILD_NODE_NAME);
+        return getResource(resource);
     }
 
     @Override
     public String getResourcePath(@NotNull String resourcePath) {
         assertNotNull(resourcePath);
+        if (containsJcrContent(resourcePath)) {
+            return resourcePath;
+        }
         return resourcePath + "/" + CHILD_NODE_NAME;
     }
 
@@ -79,13 +90,15 @@ public class CustomConfigurationPersistenceStrategy implements ConfigurationPers
 
     @Override
     public String getCollectionItemResourcePath(@NotNull String resourcePath) {
-        assertNotNull(resourcePath);
-        return resourcePath + "/" + CHILD_NODE_NAME;
+        return getResourcePath(resourcePath);
     }
 
     @Override
     public String getConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
         assertNotNull(configName);
+        if (containsJcrContent(configName)) {
+            return configName;
+        }
         return configName + "/" + CHILD_NODE_NAME;
     }
 
@@ -97,14 +110,13 @@ public class CustomConfigurationPersistenceStrategy implements ConfigurationPers
 
     @Override
     public String getCollectionItemConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
-        assertNotNull(configName);
-        return configName + "/" + CHILD_NODE_NAME;
+        return getConfigName(configName, relatedConfigPath);
     }
 
     @Override
     public boolean persistConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath,
             @NotNull ConfigurationPersistData data) {
-        getOrCreateResource(resourceResolver, configResourcePath + "/" + CHILD_NODE_NAME, data.getProperties());
+        getOrCreateResource(resourceResolver, getResourcePath(configResourcePath), data.getProperties());
         commit(resourceResolver);
         return true;
     }
@@ -112,18 +124,20 @@ public class CustomConfigurationPersistenceStrategy implements ConfigurationPers
     @Override
     public boolean persistConfigurationCollection(@NotNull ResourceResolver resourceResolver, @NotNull String configResourceCollectionParentPath,
             @NotNull ConfigurationCollectionPersistData data) {
-        Resource configResourceParent = getOrCreateResource(resourceResolver, configResourceCollectionParentPath, ValueMap.EMPTY);
+        String parentPath = getCollectionParentResourcePath(configResourceCollectionParentPath);
+        Resource configResourceParent = getOrCreateResource(resourceResolver, parentPath, ValueMap.EMPTY);
 
         // delete existing children and create new ones
         deleteChildren(configResourceParent);
         for (ConfigurationPersistData item : data.getItems()) {
-            String path = configResourceParent.getPath() + "/" + item.getCollectionItemName() + "/" + CHILD_NODE_NAME;
+            String path = getCollectionItemResourcePath(configResourceParent.getPath() + "/" + item.getCollectionItemName());
             getOrCreateResource(resourceResolver, path, item.getProperties());
         }
 
         // if resource collection parent properties are given replace them as well
         if (data.getProperties() != null) {
-            replaceProperties(configResourceParent, data.getProperties());
+            Resource propsResource = getOrCreateResource(resourceResolver, parentPath + "/colPropsResource", ValueMap.EMPTY);
+            replaceProperties(propsResource, data.getProperties());
         }
 
         commit(resourceResolver);
@@ -188,6 +202,10 @@ public class CustomConfigurationPersistenceStrategy implements ConfigurationPers
         catch (PersistenceException ex) {
             throw new ConfigurationPersistenceException("Unable to save configuration: " + ex.getMessage(), ex);
         }
+    }
+
+    static boolean containsJcrContent(String path) {
+        return JCR_CONTENT_PATTERN.matcher(path).matches();
     }
 
 }

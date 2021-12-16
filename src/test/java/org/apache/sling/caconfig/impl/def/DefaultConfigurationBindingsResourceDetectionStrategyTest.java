@@ -18,6 +18,12 @@
  */
 package org.apache.sling.caconfig.impl.def;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.when;
+
+import javax.script.Bindings;
+
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.scripting.SlingBindings;
@@ -28,12 +34,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import javax.script.Bindings;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultConfigurationBindingsResourceDetectionStrategyTest {
@@ -77,4 +78,5 @@ public class DefaultConfigurationBindingsResourceDetectionStrategyTest {
         when(bindings.containsKey(SlingBindings.REQUEST)).thenReturn(true);
         assertSame(resource, underTest.detectResource(bindings));
     }
+
 }

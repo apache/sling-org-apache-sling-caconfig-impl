@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy2;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.osgi.framework.Constants;
 
 /**
@@ -30,7 +30,7 @@ import org.osgi.framework.Constants;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigurationManagerImplCustomPersistenceTest extends ConfigurationManagerImplTest {
-    
+
     @Before
     public void setUpCustomPersistence() {
         // custom strategy which redirects all config resources to a jcr:content subnode
@@ -42,27 +42,27 @@ public class ConfigurationManagerImplCustomPersistenceTest extends Configuration
     protected String getConfigResolvePath(String path) {
         return replaceBucketName(path) + "/jcr:content";
     }
-    
+
     @Override
     protected String getConfigPersistPath(String path) {
         return path + "/jcr:content";
     }
-    
+
     @Override
     protected String getConfigCollectionParentResolvePath(String path) {
         return replaceBucketName(path);
     }
-    
+
     @Override
     protected String getConfigCollectionParentPersistPath(String path) {
         return path;
     }
-    
+
     @Override
     protected String getConfigCollectionItemResolvePath(String path) {
         return replaceBucketName(path) + "/jcr:content";
     }
-    
+
     @Override
     protected String getConfigCollectionItemPersistPath(String path) {
         return path + "/jcr:content";

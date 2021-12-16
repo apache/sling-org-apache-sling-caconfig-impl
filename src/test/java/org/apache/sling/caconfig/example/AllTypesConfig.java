@@ -35,43 +35,43 @@ import org.apache.sling.caconfig.annotation.Configuration;
 public @interface AllTypesConfig {
 
     String stringParam();
-    
+
     String stringParamWithDefault() default STRING_DEFAULT;
 
     int intParam();
-    
+
     int intParamWithDefault() default INT_DEFAULT;
-    
+
     long longParam();
-    
+
     long longParamWithDefault() default LONG_DEFAULT;
-    
+
     double doubleParam();
-    
+
     double doubleParamWithDefault() default DOUBLE_DEFAULT;
-    
+
     boolean boolParam();
-    
+
     boolean boolParamWithDefault() default BOOL_DEFAULT;
-    
+
     String[] stringArrayParam();
-    
+
     String[] stringArrayParamWithDefault() default { STRING_DEFAULT, STRING_DEFAULT_2 };
 
     int[] intArrayParam();
-    
+
     int[] intArrayParamWithDefault() default { INT_DEFAULT, INT_DEFAULT_2 };
-    
+
     long[] longArrayParam();
-    
+
     long[] longArrayParamWithDefault() default { LONG_DEFAULT, LONG_DEFAULT_2 };
-    
+
     double[] doubleArrayParam();
-    
+
     double[] doubleArrayParamWithDefault() default { DOUBLE_DEFAULT, DOUBLE_DEFAULT_2 };
-    
+
     boolean[] boolArrayParam();
-    
+
     boolean[] boolArrayParamWithDefault() default { BOOL_DEFAULT, BOOL_DEFAULT_2 };
-    
+
 }

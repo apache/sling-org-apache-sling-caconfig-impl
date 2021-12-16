@@ -29,7 +29,7 @@ import org.apache.sling.caconfig.resource.impl.ConfigurationResourceTestUtils;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
 
 public final class ConfigurationTestUtils {
-    
+
     private ConfigurationTestUtils() {
         // static methods only
     }
@@ -49,7 +49,7 @@ public final class ConfigurationTestUtils {
         context.registerInjectActivateService(new ConfigurationMetadataProviderMultiplexerImpl());
         return context.registerInjectActivateService(new ConfigurationResolverImpl(), properties);
     }
-    
+
     /**
      * Register all services for {@link ConfigurationResolver}
      * without the default implementations of the multiplexed services.
@@ -64,5 +64,5 @@ public final class ConfigurationTestUtils {
         context.registerInjectActivateService(new ConfigurationMetadataProviderMultiplexerImpl());
         return context.registerInjectActivateService(new ConfigurationResolverImpl(), properties);
     }
-    
+
 }

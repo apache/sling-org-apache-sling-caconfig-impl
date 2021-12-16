@@ -29,5 +29,5 @@ import org.osgi.annotation.versioning.ProviderType;
 public interface ContextPathStrategyMultiplexer extends ContextPathStrategy {
 
     // inherits all methods from {@link ContextPathStrategy}
-    
+
 }

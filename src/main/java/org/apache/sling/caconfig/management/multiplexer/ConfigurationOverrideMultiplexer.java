@@ -49,7 +49,7 @@ public interface ConfigurationOverrideMultiplexer {
      * @return Overwritten or replaced properties - or null if no override took place
      */
     @Nullable Map<String,Object> overrideProperties(@NotNull String contextPath, @NotNull String configName, @NotNull Map<String,Object> properties);
-    
+
     /**
      * Override properties in given configuration resource (if any overrides are defined).
      * @param contextPath Context path

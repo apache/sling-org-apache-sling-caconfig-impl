@@ -33,7 +33,7 @@ class ConfigurationOverridePrinter implements ServiceConfigurationPrinter<Config
     @Override
     public void printConfiguration(PrintWriter pw, ServiceReference<ConfigurationOverrideProvider> serviceReference, BundleContext bundleContext) {
         ConfigurationOverrideProvider service = bundleContext.getService(serviceReference);
-        
+
         for (String overrideString : service.getOverrideStrings()) {
             if (StringUtils.isBlank(overrideString)) {
                 continue;
@@ -42,8 +42,8 @@ class ConfigurationOverridePrinter implements ServiceConfigurationPrinter<Config
             pw.print(BULLET);
             pw.println(overrideString);
         }
-        
+
         bundleContext.ungetService(serviceReference);
     }
-    
+
 }

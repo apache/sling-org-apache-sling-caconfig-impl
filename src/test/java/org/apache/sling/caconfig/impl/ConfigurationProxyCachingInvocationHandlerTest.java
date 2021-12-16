@@ -32,18 +32,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigurationProxyCachingInvocationHandlerTest {
-    
+
     private InvocationHandler underTest;
-    
+
     @Mock
     private InvocationHandler invocationHandler;
     private Object testObject;
     private Method testMethod;
-    
+
     @Before
     public void setUp() throws Exception {
         underTest = new CachingInvocationHandler(invocationHandler);

@@ -41,7 +41,7 @@ public class OverrideStringParserTest {
             .put("param4", 1.23d)
             .put("param5", true)
             .build();
-    
+
     private static final Map<String,Object> BASICTYPES_ARRAY_MAP = ImmutableMap.<String,Object>builder()
             .put("param1", new String[] { "v1a", "v1b" })
             .put("param2", new String[] { "v2a", "v2b" })
@@ -50,13 +50,13 @@ public class OverrideStringParserTest {
             .put("param5", new Boolean[] { true, false })
             .put("param6", new String[0])
             .build();
-    
+
     @Test
     public void testEmptyList() {
         List<OverrideItem> result = parse();
         assertTrue(result.isEmpty());
     }
-    
+
     @Test
     public void testBasicTypes() {
         List<OverrideItem> result = parse(
@@ -65,7 +65,7 @@ public class OverrideStringParserTest {
                 "configName/param3=555",
                 "configName/param4=1.23",
                 "configName/param5=true");
-        
+
         assertEquals(1, result.size());
         OverrideItem item = result.get(0);
         assertNull(item.getPath());
@@ -83,7 +83,7 @@ public class OverrideStringParserTest {
                 "config.name/param4=[1.23,2.34]",
                 "config.name/param5=[true,false]",
                 "config.name/param6=[]");
-        
+
         assertEquals(1, result.size());
         OverrideItem item = result.get(0);
         assertNull(item.getPath());
@@ -136,9 +136,9 @@ public class OverrideStringParserTest {
         List<OverrideItem> result = parse(
                 "[/a/b]configName/sub1/param1=\"value1\"",
                 "configName/sub2/param2=\"value2\"");
-        
+
         assertEquals(2, result.size());
-        
+
         OverrideItem item1 = result.get(0);
         assertEquals("/a/b", item1.getPath());
         assertEquals("configName/sub1", item1.getConfigName());
@@ -162,9 +162,9 @@ public class OverrideStringParserTest {
                         + "\"param3\":555,"
                         + "\"param4\":1.23,"
                         + "\"param5\":true}");
-        
+
         assertEquals(3, result.size());
-        
+
         OverrideItem item1 = result.get(0);
         assertEquals("/a/b", item1.getPath());
         assertEquals("configName", item1.getConfigName());
@@ -199,7 +199,7 @@ public class OverrideStringParserTest {
                 "[[/a/b]]configName/param4=1.23",
                 "[a/b]configName/param5=true",
                 "configName/param1=null");
-        
+
         // all ignored
         assertEquals(0, result.size());
     }

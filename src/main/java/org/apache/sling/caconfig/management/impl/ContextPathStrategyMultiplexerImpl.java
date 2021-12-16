@@ -52,13 +52,13 @@ reference={
                 policy=ReferencePolicy.DYNAMIC, policyOption=ReferencePolicyOption.GREEDY)
 })
 public class ContextPathStrategyMultiplexerImpl implements ContextPathStrategyMultiplexer, org.apache.sling.caconfig.management.ContextPathStrategyMultiplexer {
-    
+
     private RankedServices<ContextPathStrategy> items = new RankedServices<>(Order.DESCENDING);
-        
+
     protected void bindContextPathStrategy(ContextPathStrategy contextPathStrategy, Map<String, Object> props) {
         items.bind(contextPathStrategy, props);
     }
-    
+
     protected void unbindContextPathStrategy(ContextPathStrategy contextPathStrategy, Map<String, Object> props) {
         items.unbind(contextPathStrategy, props);
     }
@@ -77,7 +77,7 @@ public class ContextPathStrategyMultiplexerImpl implements ContextPathStrategyMu
         }
         return mergeResults(allResults);
     }
-    
+
     /**
      * Get all results from all registered context path strategies.
      * @param resource Start resource
@@ -93,7 +93,7 @@ public class ContextPathStrategyMultiplexerImpl implements ContextPathStrategyMu
         }
         return results;
     }
-    
+
     /**
      * Merges results from different context path strategy implementations.
      * Eliminating of duplicates and sorting is done solely based on path length.
@@ -107,5 +107,5 @@ public class ContextPathStrategyMultiplexerImpl implements ContextPathStrategyMu
                 new ResourcePathCollatingIterator(allResults)
         );
     }
-    
+
 }

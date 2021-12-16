@@ -31,7 +31,7 @@ import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
 import org.jetbrains.annotations.NotNull;
 
 final class ValueInfoImpl<T> implements ValueInfo<T> {
-    
+
     private final String name;
     private final T value;
     private final T effectiveValue;
@@ -44,7 +44,8 @@ final class ValueInfoImpl<T> implements ValueInfo<T> {
     private final String configName;
     private final ConfigurationOverrideMultiplexer configurationOverrideMultiplexer;
     private final boolean isAllOverridden;
-    
+
+    @SuppressWarnings("null")
     public ValueInfoImpl(String name, T value, T effectiveValue, PropertyMetadata<T> propertyMetadata,
             Resource resolvedConfigurationResource, Resource writebackConfigurationResource,
             List<Resource> configurationResourceInheritanceChain,
@@ -63,12 +64,12 @@ final class ValueInfoImpl<T> implements ValueInfo<T> {
         this.configurationOverrideMultiplexer = configurationOverrideMultiplexer;
         this.isAllOverridden = isAllOverridden;
     }
-    
+
     @Override
     public @NotNull String getName() {
         return name;
     }
- 
+
     @Override
     public PropertyMetadata<T> getPropertyMetadata() {
         return propertyMetadata;
@@ -132,7 +133,7 @@ final class ValueInfoImpl<T> implements ValueInfo<T> {
             }
         }
     }
-    
+
     private Resource getResourceFromInheritanceChain() {
         if (configurationResourceInheritanceChain == null) {
             return null;
@@ -140,6 +141,7 @@ final class ValueInfoImpl<T> implements ValueInfo<T> {
         return getResourceFromInheritanceChain(configurationResourceInheritanceChain.iterator());
     }
 
+    @SuppressWarnings("null")
     private Resource getResourceFromInheritanceChain(Iterator<Resource> inheritanceChain) {
         if (!inheritanceChain.hasNext()) {
             return null;

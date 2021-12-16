@@ -32,11 +32,11 @@ public @interface MetadataSimpleConfig {
 
     @Property(label = "String Param", description = "Enter strings here.", property = "p1=v1", order = 1)
     String stringParam();
-    
+
     @Property(label = "Integer Param", order = 2)
     int intParam() default 5;
-    
+
     @Property(order = 3)
     boolean boolParam();
-    
+
 }

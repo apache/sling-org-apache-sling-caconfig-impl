@@ -35,7 +35,7 @@ class OverrideItem {
     private final String configName;
     private final Map<String,Object> properties;
     private final boolean allProperties;
-    
+
     public OverrideItem(String path, String configName,
             Map<String, Object> properties, boolean allProperties) {
         this.path = path;
@@ -44,7 +44,7 @@ class OverrideItem {
         this.properties = properties;
         this.allProperties = allProperties;
     }
-    
+
     private static Pattern toPathPattern(String path) {
         if (StringUtils.isBlank(path)) {
             return null;
@@ -58,7 +58,7 @@ class OverrideItem {
     public String getPath() {
         return path;
     }
-    
+
     /**
      * @param path Path to check
      * @return true if path matches
@@ -98,5 +98,5 @@ class OverrideItem {
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
-    
+
 }

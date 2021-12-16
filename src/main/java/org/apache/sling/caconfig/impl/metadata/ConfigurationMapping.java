@@ -27,16 +27,16 @@ class ConfigurationMapping {
 
     private final Class<?> configClass;
     private final ConfigurationMetadata configMetadata;
-    
+
     public ConfigurationMapping(Class<?> configClass) {
         this.configClass = configClass;
         this.configMetadata = AnnotationClassParser.buildConfigurationMetadata(configClass);
     }
-    
+
     public Class<?> getConfigClass() {
         return configClass;
     }
-    
+
     public String getConfigName() {
         return configMetadata.getName();
     }
@@ -44,5 +44,5 @@ class ConfigurationMapping {
     public ConfigurationMetadata getConfigMetadata() {
         return configMetadata;
     }
-    
+
 }

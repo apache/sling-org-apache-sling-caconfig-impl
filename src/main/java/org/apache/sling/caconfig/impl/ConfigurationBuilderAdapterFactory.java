@@ -38,7 +38,7 @@ public class ConfigurationBuilderAdapterFactory implements AdapterFactory {
     private ConfigurationResolver resolver;
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "null" })
     public <AdapterType> AdapterType getAdapter(@NotNull final Object adaptable, @NotNull final Class<AdapterType> type) {
         if (adaptable instanceof Resource && type == ConfigurationBuilder.class) {
             return (AdapterType) resolver.get((Resource) adaptable);

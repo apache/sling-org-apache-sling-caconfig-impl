@@ -33,13 +33,13 @@ import org.slf4j.LoggerFactory;
  * The configuration class metadata is not parsed on initialization, but lazily on first access.
  */
 class BundleConfigurationMapping {
-    
+
     private final Bundle bundle;
     private final String classNamesList;
     private final AtomicReference<Map<String,ConfigurationMapping>> configMappingsRef = new AtomicReference<>(null);
-    
+
     private static final Logger log = LoggerFactory.getLogger(BundleConfigurationMapping.class);
-    
+
     public BundleConfigurationMapping(Bundle bundle, String classNamesList) {
         this.bundle = bundle;
         this.classNamesList = classNamesList;
@@ -48,7 +48,7 @@ class BundleConfigurationMapping {
     public Bundle getBundle() {
         return bundle;
     }
-    
+
     /**
      * Thread-safe lazy initialization of configuration mappings.
      * @return Configuration mappings
@@ -60,7 +60,7 @@ class BundleConfigurationMapping {
             if (configMappingsRef.compareAndSet(null, configMappings)) {
                 return configMappings;
             }
-            else { 
+            else {
                 return configMappingsRef.get();
             }
         }
@@ -68,21 +68,21 @@ class BundleConfigurationMapping {
             return configMappings;
         }
     }
-    
+
     /**
      * Parse all annotation classes
      * @return
      */
     private Map<String,ConfigurationMapping> initializeConfigMappings() {
         Map<String,ConfigurationMapping> configMappings = new HashMap<>();
-        
+
         String[] classNames = StringUtils.split(StringUtils.deleteWhitespace(classNamesList), ",");
         for (String className : classNames) {
             try {
                 Class<?> configClass = bundle.loadClass(className);
                 if (AnnotationClassParser.isContextAwareConfig(configClass)) {
                     log.debug("{}: Add configuration class {}", bundle.getSymbolicName(), className);
-                    
+
                     ConfigurationMapping configMapping = new ConfigurationMapping(configClass);
                     if (!hasMappingConflict(configMapping, configMappings)) {
                         configMappings.put(configMapping.getConfigName(), configMapping);
@@ -96,10 +96,10 @@ class BundleConfigurationMapping {
                 log.warn("Unable to load class: " + className, ex);
             }
         }
-        
+
         return configMappings;
     }
-    
+
     private boolean hasMappingConflict(ConfigurationMapping newConfigMapping,
             Map<String,ConfigurationMapping> configMappings) {
         ConfigurationMapping conflictingConfigMapping = configMappings.get(newConfigMapping.getConfigName());
@@ -115,11 +115,11 @@ class BundleConfigurationMapping {
             return false;
         }
     }
-    
+
     public Set<String> getConfigurationNames() {
         return getConfigMappings().keySet();
     }
-    
+
     public ConfigurationMapping getConfigurationMapping(String configName) {
         return getConfigMappings().get(configName);
     }
@@ -128,5 +128,5 @@ class BundleConfigurationMapping {
     public String toString() {
         return "Classes from bundle '" + bundle.getSymbolicName() + "': " + classNamesList;
     }
-    
+
 }

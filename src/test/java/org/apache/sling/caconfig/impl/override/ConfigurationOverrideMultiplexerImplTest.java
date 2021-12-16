@@ -33,12 +33,12 @@ import org.osgi.framework.Constants;
 import com.google.common.collect.ImmutableMap;
 
 public class ConfigurationOverrideMultiplexerImplTest {
-    
+
     @Rule
     public SlingContext context = new SlingContext();
-    
+
     private ConfigurationOverrideMultiplexerImpl underTest;
-    
+
     @Before
     public void setUp() {
         underTest = context.registerInjectActivateService(new ConfigurationOverrideMultiplexerImpl());
@@ -84,7 +84,7 @@ public class ConfigurationOverrideMultiplexerImplTest {
                 ImmutableMap.<String,Object>of("param1", "initialValue"),
                 null);
     }
-    
+
     private void assertOverride(String path, String configName, Map<String,Object> input, Map<String,Object> output) {
         if (output == null) {
             assertNull(underTest.overrideProperties(path, configName, input));

@@ -28,10 +28,10 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ProviderType
 public interface ConfigurationManagementSettings {
-    
+
     /**
      * Detects property names that should be ignored/filtered out when reading or writing configuration data properties.
-     * @param propertyNames Existing property names to evaluate. 
+     * @param propertyNames Existing property names to evaluate.
      * @return Property names that should be ignored/filtered out from the given set of property names.
      */
     Set<String> getIgnoredPropertyNames(Set<String> propertyNames);
@@ -40,5 +40,5 @@ public interface ConfigurationManagementSettings {
      * @return Config collection parent properties resource names.
      */
     Collection<String> getConfigCollectionPropertiesResourceNames();
-    
+
 }

@@ -32,7 +32,7 @@ import org.osgi.util.tracker.BundleTrackerCustomizer;
 class ConfigClassBundleTackerCustomizer implements BundleTrackerCustomizer<BundleConfigurationMapping> {
 
     private final AnnotationClassConfigurationMetadataProvider metadataProvider;
-    
+
     public ConfigClassBundleTackerCustomizer(AnnotationClassConfigurationMetadataProvider metadataProvider) {
         this.metadataProvider = metadataProvider;
     }
@@ -51,7 +51,7 @@ class ConfigClassBundleTackerCustomizer implements BundleTrackerCustomizer<Bundl
 
     @Override
     public void modifiedBundle(Bundle bundle, BundleEvent event, BundleConfigurationMapping bundleMapping) {
-        // nothing to do   
+        // nothing to do
     }
 
     @Override

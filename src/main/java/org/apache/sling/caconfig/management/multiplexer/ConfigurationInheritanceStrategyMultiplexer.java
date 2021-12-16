@@ -29,5 +29,5 @@ import org.osgi.annotation.versioning.ProviderType;
 public interface ConfigurationInheritanceStrategyMultiplexer extends ConfigurationInheritanceStrategy {
 
     // inherits all methods from {@link ConfigurationInheritanceStrategy}
-    
+
 }

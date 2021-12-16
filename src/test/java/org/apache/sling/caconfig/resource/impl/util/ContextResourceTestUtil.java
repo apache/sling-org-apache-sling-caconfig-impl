@@ -26,11 +26,11 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.resource.spi.ContextResource;
 
 public final class ContextResourceTestUtil {
-    
+
     private ContextResourceTestUtil() {
         // static methods only
     }
-    
+
     @SuppressWarnings("unchecked")
     public static Iterator<Resource> toResourceIterator(Iterator<ContextResource> contextResources) {
         return IteratorUtils.transformedIterator(contextResources, new Transformer() {

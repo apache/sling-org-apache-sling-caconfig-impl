@@ -69,7 +69,7 @@ public class ConfigurationResolverCustomPersistenceTest {
         // custom strategy which redirects all config resources to a jcr:content subnode
         context.registerService(ConfigurationPersistenceStrategy2.class,
                 new CustomConfigurationPersistenceStrategy(), Constants.SERVICE_RANKING, 2000);
-        
+
         // content resources
         context.build().resource("/content/site1", PROPERTY_CONFIG_REF, "/conf/content/site1");
         site1Page1 = context.create().resource("/content/site1/page1");
@@ -163,13 +163,13 @@ public class ConfigurationResolverCustomPersistenceTest {
         List<ListNestedConfig> cfgList = ImmutableList.copyOf(underTest.get(site1Page1).asCollection(ListNestedConfig.class));
 
         assertEquals(3, cfgList.size());
-        
+
         ListNestedConfig config1 = cfgList.get(0);
         assertEquals("value1", config1.stringParam());
         assertEquals(2, config1.subListConfig().length);
         assertEquals("value11", config1.subListConfig()[0].stringParam());
         assertEquals("value12", config1.subListConfig()[1].stringParam());
-        
+
         ListNestedConfig config2 = cfgList.get(1);
         assertEquals("value2", config2.stringParam());
         assertEquals(1, config2.subListConfig().length);
@@ -205,7 +205,7 @@ public class ConfigurationResolverCustomPersistenceTest {
         List<ListDoubleNestedConfig> cfgList = ImmutableList.copyOf(underTest.get(site1Page1).asCollection(ListDoubleNestedConfig.class));
 
         assertEquals(3, cfgList.size());
-        
+
         ListDoubleNestedConfig config1 = cfgList.get(0);
         assertEquals("value1", config1.stringParam());
         assertEquals(2, config1.subListNestedConfig().length);
@@ -216,7 +216,7 @@ public class ConfigurationResolverCustomPersistenceTest {
         assertEquals("value12", config1.subListNestedConfig()[1].stringParam());
         assertEquals(1, config1.subListNestedConfig()[1].subListConfig().length);
         assertEquals("value121", config1.subListNestedConfig()[1].subListConfig()[0].stringParam());
-        
+
         ListDoubleNestedConfig config2 = cfgList.get(1);
         assertEquals("value2", config2.stringParam());
         assertEquals(1, config2.subListNestedConfig().length);
@@ -244,12 +244,12 @@ public class ConfigurationResolverCustomPersistenceTest {
         NestedConfig cfg = underTest.get(site1Page1).as(NestedConfig.class);
 
         assertEquals("configValue3", cfg.stringParam());
-        
+
         SimpleConfig subConfig = cfg.subConfig();
         assertEquals("configValue4", subConfig.stringParam());
         assertEquals(444, subConfig.intParam());
         assertEquals(true, subConfig.boolParam());
-        
+
         ListConfig[] listConfig = cfg.subListConfig();
         assertEquals(3, listConfig.length);
         assertEquals("configValue2.1", listConfig[0].stringParam());

@@ -53,10 +53,10 @@ import org.junit.Rule;
 import org.junit.Test;
 
 public class ConfigurationProxyTest {
-    
+
     @Rule
     public SlingContext context = new SlingContext();
-    
+
     @Test
     public void testNonExistingConfig_AllTypes() {
         AllTypesConfig cfg = get(null, AllTypesConfig.class);
@@ -89,12 +89,12 @@ public class ConfigurationProxyTest {
         NestedConfig cfg = get(null, NestedConfig.class);
 
         assertNull(cfg.stringParam());
-        
+
         SimpleConfig subConfig = cfg.subConfig();
         assertNull(subConfig.stringParam());
         assertEquals(5, subConfig.intParam());
         assertFalse(subConfig.boolParam());
-        
+
         assertArrayEquals(new ListConfig[0], cfg.subListConfig());
     }
 
@@ -159,16 +159,16 @@ public class ConfigurationProxyTest {
             .resource("/test/subConfigWithoutAnnotation", "stringParam", "v4");
 
         Resource resource = context.resourceResolver().getResource("/test");
-        
+
         NestedConfig cfg = get(resource, NestedConfig.class);
 
         assertEquals("v1", cfg.stringParam());
-        
+
         SimpleConfig subConfig = cfg.subConfig();
         assertEquals("v2", subConfig.stringParam());
         assertEquals(444, subConfig.intParam());
         assertEquals(true, subConfig.boolParam());
-        
+
         ListConfig[] listConfig = cfg.subListConfig();
         assertEquals(3, listConfig.length);
         assertEquals("v3.1", listConfig[0].stringParam());
@@ -190,59 +190,59 @@ public class ConfigurationProxyTest {
         IllegalTypesConfig cfg = get(null, IllegalTypesConfig.class);
         cfg.clazz();
     }
-    
+
     @Test(expected=ConfigurationResolveException.class)
     public void testIllegalTypes_Byte() {
         IllegalTypesConfig cfg = get(null, IllegalTypesConfig.class);
         cfg.byteSingle();
     }
-    
+
     @Test(expected=ConfigurationResolveException.class)
     public void testIllegalTypes_ByteArray() {
         IllegalTypesConfig cfg = get(null, IllegalTypesConfig.class);
         cfg.byteArray();
     }
-    
+
     @Test(expected=ConfigurationResolveException.class)
     public void testIllegalTypes_Short() {
         IllegalTypesConfig cfg = get(null, IllegalTypesConfig.class);
         cfg.shortSingle();
     }
-    
+
     @Test(expected=ConfigurationResolveException.class)
     public void testIllegalTypes_ShortArray() {
         IllegalTypesConfig cfg = get(null, IllegalTypesConfig.class);
         cfg.shortArray();
     }
-    
+
     @Test(expected=ConfigurationResolveException.class)
     public void testIllegalTypes_Float() {
         IllegalTypesConfig cfg = get(null, IllegalTypesConfig.class);
         cfg.floatSingle();
     }
-    
+
     @Test(expected=ConfigurationResolveException.class)
     public void testIllegalTypes_FloatArray() {
         IllegalTypesConfig cfg = get(null, IllegalTypesConfig.class);
         cfg.floatArray();
     }
-    
+
     @Test(expected=ConfigurationResolveException.class)
     public void testIllegalTypes_Char() {
         IllegalTypesConfig cfg = get(null, IllegalTypesConfig.class);
         cfg.charSingle();
     }
-    
+
     @Test(expected=ConfigurationResolveException.class)
     public void testIllegalTypes_CharArray() {
         IllegalTypesConfig cfg = get(null, IllegalTypesConfig.class);
         cfg.charArray();
     }
-    
+
     private <T> T get(Resource resource, Class<T> clazz) {
         return ConfigurationProxy.get(resource, clazz, childResolver(resource));
     }
-    
+
     // simulate simple child resolver without involving ConfigurationResolver implementation
     private ChildResolver childResolver(final Resource resource) {
         return new ChildResolver() {
@@ -267,5 +267,5 @@ public class ConfigurationProxyTest {
             }
         };
     }
-    
+
 }

@@ -39,9 +39,9 @@ import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
  * Helper methods for parsing metadata from configuration annotation classes.
  */
 public final class AnnotationClassParser {
-    
+
     private static final Pattern METHOD_NAME_MAPPING = Pattern.compile("(\\$\\$)|(\\$)|(__)|(_)");
-    
+
     private AnnotationClassParser() {
         // static methods only
     }
@@ -55,12 +55,13 @@ public final class AnnotationClassParser {
     public static boolean isContextAwareConfig(Class<?> clazz) {
         return clazz.isAnnotation() && clazz.isAnnotationPresent(Configuration.class);
     }
-    
+
     /**
      * Get configuration name for given configuration annotation class.
      * @param clazz Annotation class
      * @return Configuration name
      */
+    @SuppressWarnings("unused")
     public static String getConfigurationName(Class<?> clazz) {
         Configuration configAnnotation = clazz.getAnnotation(Configuration.class);
         if (configAnnotation == null) {
@@ -111,18 +112,19 @@ public final class AnnotationClassParser {
         matcher.appendTail(mappedName);
         return mappedName.toString();
     }
-    
+
     /**
      * Build configuration metadata by parsing the given annotation interface class and it's configuration annotations.
      * @param clazz Configuration annotation class
      * @return Configuration metadata
      */
+    @SuppressWarnings("unused")
     public static ConfigurationMetadata buildConfigurationMetadata(Class<?> clazz) {
         Configuration configAnnotation = clazz.getAnnotation(Configuration.class);
         if (configAnnotation == null) {
             throw new IllegalArgumentException("Class has not @Configuration annotation: " + clazz.getName());
         }
-        
+
         // configuration metadata and property metadata
         String configName = getConfigurationName(clazz, configAnnotation);
         ConfigurationMetadata configMetadata = new ConfigurationMetadata(configName,
@@ -131,10 +133,10 @@ public final class AnnotationClassParser {
                 .label(emptyToNull(configAnnotation.label()))
                 .description(emptyToNull(configAnnotation.description()))
                 .properties(propsArrayToMap(configAnnotation.property()));
-        
+
         return configMetadata;
     }
-    
+
     /**
      * Build configuration metadata by parsing the given annotation interface class which is used for nested configurations.
      * @param clazz Configuration annotation class
@@ -145,7 +147,7 @@ public final class AnnotationClassParser {
                 buildConfigurationMetadata_PropertyMetadata(clazz),
                 collection);
     }
-    
+
     private static Collection<PropertyMetadata<?>> buildConfigurationMetadata_PropertyMetadata(Class<?> clazz) {
         // sort properties by order number, or alternatively by label, name
         SortedSet<PropertyMetadata<?>> propertyMetadataSet = new TreeSet<>(new Comparator<PropertyMetadata<?>>() {
@@ -167,11 +169,11 @@ public final class AnnotationClassParser {
         }
         return propertyMetadataSet;
     }
-    
-    @SuppressWarnings("unchecked")
+
+    @SuppressWarnings({ "unchecked", "unused" })
     private static <T> PropertyMetadata<T> buildPropertyMetadata(Method propertyMethod, Class<T> type) {
         String propertyName = getPropertyName(propertyMethod.getName());
-        
+
         PropertyMetadata<?> propertyMetadata;
         if (type.isArray() && type.getComponentType().isAnnotation()) {
             ConfigurationMetadata nestedConfigMetadata = buildConfigurationMetadata_Nested(type.getComponentType(), propertyName, true);
@@ -184,12 +186,12 @@ public final class AnnotationClassParser {
                     .configurationMetadata(nestedConfigMetadata);
         }
         else {
-            propertyMetadata = new PropertyMetadata<>(propertyName, type)            
+            propertyMetadata = new PropertyMetadata<>(propertyName, type)
                     .defaultValue((T)propertyMethod.getDefaultValue());
         }
-        
+
         Property propertyAnnotation = propertyMethod.getAnnotation(Property.class);
-        if (propertyAnnotation != null) {            
+        if (propertyAnnotation != null) {
             propertyMetadata.label(emptyToNull(propertyAnnotation.label()))
                 .description(emptyToNull(propertyAnnotation.description()))
                 .properties(propsArrayToMap(propertyAnnotation.property()))
@@ -199,10 +201,10 @@ public final class AnnotationClassParser {
             Map<String,String> emptyMap = Collections.emptyMap();
             propertyMetadata.properties(emptyMap);
         }
-        
+
         return (PropertyMetadata)propertyMetadata;
     }
-    
+
     private static String emptyToNull(String value) {
         if (StringUtils.isEmpty(value)) {
             return null;
@@ -211,7 +213,7 @@ public final class AnnotationClassParser {
             return value;
         }
     }
-    
+
     private static Map<String,String> propsArrayToMap(String[] properties) {
         Map<String,String> props = new HashMap<>();
         for (String property : properties) {
@@ -224,5 +226,5 @@ public final class AnnotationClassParser {
         }
         return props;
     }
-    
+
 }

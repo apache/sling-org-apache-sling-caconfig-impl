@@ -58,17 +58,17 @@ import org.slf4j.LoggerFactory;
  * </ul>
  */
 class OverrideStringParser {
-    
+
     private static final Logger log = LoggerFactory.getLogger(OverrideStringParser.class);
-    
+
     private static final Pattern OVERRIDE_PATTERN = Pattern.compile("^(\\[([^\\[\\]=]+)\\])?([^\\[\\]=]+)=(.*)$");
-    
+
     private static final JsonReaderFactory JSON_READER_FACTORY = Json.createReaderFactory(Collections.<String,Object>emptyMap());
-    
+
     private OverrideStringParser() {
         // static method sonly
     }
-    
+
     /**
      * Parses a list of override strings from a override provider.
      * @param overrideStrings Override strings
@@ -76,21 +76,21 @@ class OverrideStringParser {
      */
     public static Collection<OverrideItem> parse(Collection<String> overrideStrings) {
         List<OverrideItem> result = new ArrayList<>();
-        
+
         for (String overrideString : overrideStrings) {
-            
+
             // check if override generic pattern is matched
             Matcher matcher = OVERRIDE_PATTERN.matcher(StringUtils.defaultString(overrideString));
             if (!matcher.matches()) {
                 log.warn("Ignore config override string - invalid syntax: {}", overrideString);
                 continue;
             }
-            
+
             // get single parts
             String path = StringUtils.trim(matcher.group(2));
             String configName = StringUtils.trim(matcher.group(3));
             String value = StringUtils.trim(StringUtils.defaultString(matcher.group(4)));
-            
+
             OverrideItem item;
             try {
                 // check if value is JSON = defines whole parameter map for a config name
@@ -115,12 +115,12 @@ class OverrideStringParser {
                 log.warn("Ignore config override string - invalid JSON syntax ({}): {}", ex.getMessage(), overrideString);
                 continue;
             }
-            
+
             // validate item
             if (!isValid(item, overrideString)) {
                 continue;
             }
-            
+
             // if item does not contain a full property set try to merge with existing one
             if (!item.isAllProperties()) {
                 boolean foundMatchingItem = false;
@@ -137,14 +137,14 @@ class OverrideStringParser {
                     continue;
                 }
             }
-            
+
             // add item to result
             result.add(item);
         }
-        
+
         return result;
     }
-    
+
     /**
      * Try to convert value to JSON object
      * @param value Value string
@@ -163,7 +163,7 @@ class OverrideStringParser {
             return null;
         }
     }
-    
+
     /**
      * Convert JSON object to map.
      * @param json JSON object
@@ -178,7 +178,7 @@ class OverrideStringParser {
         }
         return props;
     }
-    
+
     /**
      * Convert single JSON-conformant value object
      * @param jsonValue JSON value
@@ -190,7 +190,7 @@ class OverrideStringParser {
         JsonObject json = toJson(jsonString);
         return convertJsonValue(json.get("value"));
     }
-    
+
     private static Object convertJsonValue(JsonValue jsonValue) {
         switch (jsonValue.getValueType()) {
         case STRING:
@@ -215,9 +215,9 @@ class OverrideStringParser {
             throw new RuntimeException("Unexpected JSON value type: " + jsonValue.getValueType() + ": " + jsonValue);
         }
     }
-    
+
     private static Object convertJsonArray(JsonArray jsonArray) {
-        if (jsonArray.size() > 0) {             
+        if (jsonArray.size() > 0) {
             Object firstValue = convertJsonValue(jsonArray.get(0));
             if (firstValue != null) {
                 Class firstType = firstValue.getClass();
@@ -230,7 +230,7 @@ class OverrideStringParser {
         }
         return new String[0];
     }
-    
+
     /**
      * Validate override item and it's properties map.
      * @param item Override item
@@ -260,7 +260,7 @@ class OverrideStringParser {
         }
         return true;
     }
-    
+
     /**
      * Validate if the given object is not null, and the type is supported for configuration values.
      * @param value Value

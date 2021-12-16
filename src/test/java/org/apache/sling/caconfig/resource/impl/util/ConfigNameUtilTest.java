@@ -40,7 +40,7 @@ public class ConfigNameUtilTest {
         assertTrue(ConfigNameUtil.isValid(ImmutableList.<String>of()));
         assertTrue(ConfigNameUtil.isValid(ImmutableList.of("a")));
         assertTrue(ConfigNameUtil.isValid(ImmutableList.of("a", "a/b", "a/b/c")));
-        
+
         assertFalse(ConfigNameUtil.isValid((String)null));
         assertFalse(ConfigNameUtil.isValid(""));
         assertFalse(ConfigNameUtil.isValid("/a"));

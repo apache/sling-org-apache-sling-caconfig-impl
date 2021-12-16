@@ -51,20 +51,20 @@ reference={
                 policy=ReferencePolicy.DYNAMIC, policyOption=ReferencePolicyOption.GREEDY)
 })
 public class ConfigurationPersistenceStrategyMultiplexerImpl implements ConfigurationPersistenceStrategyMultiplexer {
-    
+
     private RankedServices<ConfigurationPersistenceStrategy2> items = new RankedServices<>(Order.DESCENDING);
-        
+
     protected void bindConfigurationPersistenceStrategy(ConfigurationPersistenceStrategy2 configurationPersistenceStrategy, Map<String, Object> props) {
         items.bind(configurationPersistenceStrategy, props);
     }
-    
+
     protected void unbindConfigurationPersistenceStrategy(ConfigurationPersistenceStrategy2 configurationPersistenceStrategy, Map<String, Object> props) {
         items.unbind(configurationPersistenceStrategy, props);
     }
 
     /**
      * Transform the configuration resource by the first implementation that has an answer.
-     */    
+     */
     @Override
     public Resource getResource(@NotNull Resource resource) {
         for (ConfigurationPersistenceStrategy2 item : items) {
@@ -96,8 +96,8 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
             }
         }
         return null;
-    }    
-        
+    }
+
     @Override
     public String getResourcePath(@NotNull String resourcePath) {
         for (ConfigurationPersistenceStrategy2 item : items) {
@@ -163,7 +163,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
         }
         return null;
     }
-    
+
     @Override
     public @NotNull Collection<String> getAllConfigNames(@NotNull String configName) {
         Set<String> configNames = new LinkedHashSet<>();
@@ -199,7 +199,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
         }
         return configNames;
     }
-        
+
     /**
      * Persist configuration data with the first implementation that accepts it.
      */

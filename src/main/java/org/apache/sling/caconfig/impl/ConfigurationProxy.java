@@ -67,13 +67,13 @@ final class ConfigurationProxy {
         return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] { clazz },
                 new CachingInvocationHandler(new DynamicProxyInvocationHandler(resource, childResolver)));
     }
-    
+
     /**
      * Resolves nested configurations.
      */
     public static interface ChildResolver {
         <T> T getChild(String configName, Class<T> clazz);
-        <T> Collection<T> getChildren(String configName, Class<T> clazz);        
+        <T> Collection<T> getChildren(String configName, Class<T> clazz);
     }
 
     /**
@@ -149,7 +149,7 @@ final class ConfigurationProxy {
         private boolean isValidType(Class<?> type) {
             return PropertyMetadata.SUPPORTED_TYPES.contains(type);
         }
-        
+
     }
 
     /**

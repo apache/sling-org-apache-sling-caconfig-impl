@@ -33,7 +33,7 @@ public class SystemPropertyConfigurationOverrideProviderTest {
 
     @Rule
     public SlingContext context = new SlingContext();
-    
+
     @Before
     public void setUp() {
         System.setProperty(SYSTEM_PROPERTY_PREFIX + "test/param1", "value1");

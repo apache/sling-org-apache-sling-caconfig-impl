@@ -27,6 +27,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import javax.script.Bindings;
+
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.resource.spi.ConfigurationBindingsResourceDetectionStrategy;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
@@ -35,7 +36,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigurationBindingsResourceDetectionStrategyMultiplexerImplTest {
@@ -62,7 +63,6 @@ public class ConfigurationBindingsResourceDetectionStrategyMultiplexerImplTest {
         assertNull(underTest.detectResource(bindings));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testWithOneStrategy() {
         ConfigurationBindingsResourceDetectionStrategy strategy = mock(ConfigurationBindingsResourceDetectionStrategy.class);
@@ -72,7 +72,6 @@ public class ConfigurationBindingsResourceDetectionStrategyMultiplexerImplTest {
         assertSame(resource1, underTest.detectResource(bindings));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testWithMultipleStrategies() {
         ConfigurationBindingsResourceDetectionStrategy strategy1 = mock(ConfigurationBindingsResourceDetectionStrategy.class);

@@ -22,7 +22,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.sling.api.resource.ValueMap;
 
 public final class PropertyUtil {
-    
+
     private PropertyUtil() {
         // static methods only
     }

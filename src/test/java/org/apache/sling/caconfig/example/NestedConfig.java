@@ -24,11 +24,11 @@ import org.apache.sling.caconfig.annotation.Configuration;
 public @interface NestedConfig {
 
     String stringParam();
-    
+
     SimpleConfig subConfig();
-    
+
     ListConfig[] subListConfig();
 
-    WithoutAnnotationConfig subConfigWithoutAnnotation();    
-    
+    WithoutAnnotationConfig subConfigWithoutAnnotation();
+
 }

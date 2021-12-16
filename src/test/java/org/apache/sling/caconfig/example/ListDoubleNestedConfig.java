@@ -24,9 +24,9 @@ import org.apache.sling.caconfig.annotation.Configuration;
 public @interface ListDoubleNestedConfig {
 
     String stringParam();
-    
+
     int intParam();
 
     ListNestedConfig[] subListNestedConfig();
-    
+
 }

@@ -35,7 +35,7 @@ import org.osgi.service.cm.ConfigurationAdmin;
  * Test {@link ConfigurationManagerImpl} with custom persistence.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ConfigurationManagerImplCustomPersistence2Test extends ConfigurationManagerImplTest {
+public class ConfigurationManagerImplCustomPersistence3Test extends ConfigurationManagerImplTest {
 
     @Override
     @SuppressWarnings("null")
@@ -52,7 +52,7 @@ public class ConfigurationManagerImplCustomPersistence2Test extends Configuratio
     public void setUpCustomPersistence() {
         // custom strategy which redirects all config resources to a jcr:content subnode
         context.registerService(ConfigurationPersistenceStrategy2.class,
-                new CustomConfigurationPersistenceStrategy2(), Constants.SERVICE_RANKING, 2000);
+                new CustomConfigurationPersistenceStrategy3(), Constants.SERVICE_RANKING, 2000);
     }
 
     @Override
@@ -77,16 +77,16 @@ public class ConfigurationManagerImplCustomPersistence2Test extends Configuratio
 
     @Override
     protected String getConfigCollectionParentResolvePath(String path) {
-        if (containsJcrContent(path)) {
-            return replaceBucketName(path);
-        }
-        else {
-            return replaceBucketName(path) + "/jcr:content";
-        }
+        return path;
     }
 
     @Override
     protected String getConfigCollectionParentPersistPath(String path) {
+        return path;
+    }
+
+    @Override
+    protected String getConfigCollectionItemResolvePath(String path) {
         if (containsJcrContent(path)) {
             return path;
         }
@@ -96,13 +96,13 @@ public class ConfigurationManagerImplCustomPersistence2Test extends Configuratio
     }
 
     @Override
-    protected String getConfigCollectionItemResolvePath(String path) {
-        return path;
-    }
-
-    @Override
     protected String getConfigCollectionItemPersistPath(String path) {
-        return path;
+        if (containsJcrContent(path)) {
+            return path;
+        }
+        else {
+            return path + "/jcr:content";
+        }
     }
 
     private String replaceBucketName(String path) {

@@ -35,13 +35,13 @@ public class ResourceEliminateDuplicatesIterator extends FilterIterator<ContextR
     public ResourceEliminateDuplicatesIterator(Iterator<ContextResource> iterator) {
         super(iterator, new Predicate<ContextResource>() {
             private final Set<String> keys = new HashSet<>();
-            
+
             @Override
             public boolean evaluate(ContextResource contextResource) {
                 String key = contextResource.getResource().getPath() + "#" + StringUtils.defaultString(contextResource.getConfigRef());
                 return keys.add(key);
             }
-            
+
         });
     }
 

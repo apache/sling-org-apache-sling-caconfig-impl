@@ -63,17 +63,17 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
 
     private RankedServices<ConfigurationOverrideProvider> items = new RankedServices<>(Order.DESCENDING, this);
     private volatile Collection<OverrideItem> allOverrides = Collections.emptyList();
-    
+
     private static final Logger log = LoggerFactory.getLogger(ConfigurationOverrideMultiplexerImpl.class);
-    
+
     protected void bindConfigurationOverrideProvider(ConfigurationOverrideProvider item, Map<String, Object> props) {
         items.bind(item, props);
     }
-    
+
     protected void unbindConfigurationOverrideProvider(ConfigurationOverrideProvider item, Map<String, Object> props) {
         items.unbind(item, props);
     }
-    
+
     @Override
     public boolean isAllOverridden(@NotNull String contextPath, @NotNull String configName) {
         for (OverrideItem override : allOverrides) {
@@ -93,7 +93,7 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
         }
         boolean anyMatch = false;
         Map<String,Object> overrideProperties = new HashMap<>(properties);
-        
+
         for (OverrideItem override : allOverrides) {
             if (StringUtils.equals(configName, override.getConfigName()) && override.matchesPath(contextPath)) {
                 if (override.isAllProperties()) {
@@ -103,7 +103,7 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
                 anyMatch = true;
             }
         }
-        
+
         if (anyMatch) {
             return overrideProperties;
         }
@@ -111,7 +111,7 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
             return null;
         }
     }
-    
+
     @Override
     public Resource overrideProperties(@NotNull String contextPath, @NotNull String configName, @Nullable Resource configResource) {
         if (configResource == null) {
@@ -119,7 +119,7 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
         }
         return overrideProperties(contextPath, configName, configResource, configResource.getResourceResolver());
     }
-    
+
     @Override
     public Resource overrideProperties(@NotNull String contextPath, @NotNull String configName, @Nullable Resource configResource, @NotNull ResourceResolver resourceResolver) {
         Map<String,Object> overrideProperties = overrideProperties(contextPath, configName, configResource != null ?  configResource.getValueMap() : ValueMap.EMPTY);

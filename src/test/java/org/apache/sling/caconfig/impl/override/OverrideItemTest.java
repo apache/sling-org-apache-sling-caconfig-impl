@@ -30,10 +30,10 @@ import org.junit.Test;
 import com.google.common.collect.ImmutableMap;
 
 public class OverrideItemTest {
-    
+
     private Map<String,Object> props;
     private OverrideItem underTest;
-    
+
     @Before
     public void setUp() {
         props = ImmutableMap.<String,Object>of("p1", "abc", "p2", 55);

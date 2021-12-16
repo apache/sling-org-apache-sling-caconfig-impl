@@ -22,7 +22,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 import javax.script.Bindings;
+
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationBindingsResourceDetectionStrategyMultiplexer;
@@ -73,7 +75,6 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
     private boolean enabled;
 
     @Override
-    @SuppressWarnings("unused")
     public void addBindings(Bindings bindings) {
         if (!enabled) {
             return;

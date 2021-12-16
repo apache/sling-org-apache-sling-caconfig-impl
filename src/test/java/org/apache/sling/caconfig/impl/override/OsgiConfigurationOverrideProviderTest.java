@@ -30,7 +30,7 @@ public class OsgiConfigurationOverrideProviderTest {
 
     @Rule
     public SlingContext context = new SlingContext();
-    
+
     @Test
     public void testEnabled() {
         OsgiConfigurationOverrideProvider provider = context.registerInjectActivateService(

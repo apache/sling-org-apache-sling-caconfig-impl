@@ -28,7 +28,7 @@ import org.osgi.framework.ServiceReference;
  * @param <T> Service type
  */
 interface ServiceConfigurationPrinter<T> {
-    
+
     /**
      * Bullet character
      */
@@ -48,7 +48,7 @@ interface ServiceConfigurationPrinter<T> {
      * Indentation 3 steps
      */
     String INDENT_3 = INDENT_2 + INDENT;
-    
+
     /**
      * Print configuration
      * @param printWriter Print writer
@@ -56,5 +56,5 @@ interface ServiceConfigurationPrinter<T> {
      * @param bundleContext Bundle context
      */
     void printConfiguration(PrintWriter printWriter, ServiceReference<T> serviceReference, BundleContext bundleContext);
-    
+
 }

@@ -27,9 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import com.google.common.collect.ImmutableList;
 
 public class DummyConfigurationOverrideProvider implements ConfigurationOverrideProvider {
-    
+
     private final List<String> overrideStrings;
-    
+
     public DummyConfigurationOverrideProvider(String... overrideStrings) {
         this.overrideStrings = ImmutableList.copyOf(overrideStrings);
     }

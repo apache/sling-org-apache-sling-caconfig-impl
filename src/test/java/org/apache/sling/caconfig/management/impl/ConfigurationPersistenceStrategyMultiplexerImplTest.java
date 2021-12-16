@@ -26,12 +26,13 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.caconfig.impl.ConfigurationPersistenceStrategyBridge;
 import org.apache.sling.caconfig.impl.def.DefaultConfigurationPersistenceStrategy;
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationPersistenceStrategyMultiplexer;
 import org.apache.sling.caconfig.spi.ConfigurationCollectionPersistData;
 import org.apache.sling.caconfig.spi.ConfigurationPersistData;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy2;
+import org.apache.sling.testing.mock.osgi.MapUtil;
+import org.apache.sling.testing.mock.osgi.MockOsgi;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,21 +47,24 @@ public class ConfigurationPersistenceStrategyMultiplexerImplTest {
 
     @Rule
     public SlingContext context = new SlingContext();
-    
+
     private ConfigurationPersistenceStrategyMultiplexer underTest;
-    
+    private ConfigurationPersistenceStrategyBridge bridge;
+
     private Resource resource1;
     private Resource resource2;
-    
+
     @Before
     public void setUp() {
-        context.registerInjectActivateService(new ConfigurationManagementSettingsImpl());
-        underTest = context.registerInjectActivateService(new ConfigurationPersistenceStrategyMultiplexerImpl());
-        context.registerInjectActivateService(new ConfigurationPersistenceStrategyBridge());
+        context.registerInjectActivateService(ConfigurationManagementSettingsImpl.class);
+        underTest = context.registerInjectActivateService(ConfigurationPersistenceStrategyMultiplexerImpl.class);
+
+        bridge = MockOsgi.activateInjectServices(ConfigurationPersistenceStrategyBridge.class, context.bundleContext());
+
         resource1 = context.create().resource("/conf/test1");
         resource2 = context.create().resource("/conf/test2");
     }
-    
+
     @Test
     public void testWithNoStrategies() {
         assertNull(underTest.getResource(resource1));
@@ -86,13 +90,13 @@ public class ConfigurationPersistenceStrategyMultiplexerImplTest {
                         new ConfigurationPersistData(resource2.getValueMap()).collectionItemName(resource2.getName())))));
         assertTrue(underTest.deleteConfiguration(context.resourceResolver(), "/conf/test1"));
     }
-    
-    @SuppressWarnings("deprecation")
+
     @Test
+    @SuppressWarnings({ "deprecation", "null" })
     public void testMultipleStrategies() {
-        
-        // strategy 1 (using old ConfigurationPersistenceStrategy with bridge to  ConfigurationPersistenceStrategy2)
-        context.registerService(org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy.class,
+
+        // strategy 1 (using old ConfigurationPersistenceStrategy with bridge to ConfigurationPersistenceStrategy2)
+        org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy oldStrategy = context.registerService(org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy.class,
                 new org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy() {
             @Override
             public Resource getResource(@NotNull Resource resource) {
@@ -117,7 +121,10 @@ public class ConfigurationPersistenceStrategyMultiplexerImplTest {
                 return false;
             }
         }, Constants.SERVICE_RANKING, 2000);
-        
+
+        // bind manually as mock-osgi currently does not support tracking references to OSGi components which are not OSGi services
+        bridge.bindConfigurationPersistenceStrategy(oldStrategy, MapUtil.toMap(Constants.SERVICE_RANKING, 2000));
+
         // strategy 2
         context.registerService(ConfigurationPersistenceStrategy2.class, new ConfigurationPersistenceStrategy2() {
             @Override
@@ -171,10 +178,10 @@ public class ConfigurationPersistenceStrategyMultiplexerImplTest {
                 return true;
             }
         }, Constants.SERVICE_RANKING, 1000);
-        
-        assertSame(resource2, underTest.getResource(resource1));
-        assertSame(resource1, underTest.getCollectionParentResource(resource1));
-        assertSame(resource2, underTest.getCollectionItemResource(resource1));
+
+        assertEquals(resource2.getPath(), underTest.getResource(resource1).getPath());
+        assertEquals(resource1.getPath(), underTest.getCollectionParentResource(resource1).getPath());
+        assertEquals(resource2.getPath(), underTest.getCollectionItemResource(resource1).getPath());
         assertEquals(resource2.getPath(), underTest.getResourcePath(resource1.getPath()));
         assertEquals(resource1.getPath(), underTest.getCollectionParentResourcePath(resource1.getPath()));
         assertEquals(resource2.getPath(), underTest.getCollectionItemResourcePath(resource1.getPath()));

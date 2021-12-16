@@ -31,19 +31,19 @@ import org.junit.Test;
 
 @SuppressWarnings("null")
 public class ConfigurationBuilderAdapterFactoryTest {
-    
+
     @Rule
     public SlingContext context = new SlingContext();
-    
+
     private Resource site1Page1;
-    
+
     @Before
     public void setUp() {
         ConfigurationTestUtils.registerConfigurationResolver(context);
         context.registerInjectActivateService(new ConfigurationBuilderAdapterFactory());
 
         // config resource
-        context.build().resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.SimpleConfig", 
+        context.build().resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.SimpleConfig",
                 "stringParam", "configValue1",
                 "intParam", 111,
                 "boolParam", true);

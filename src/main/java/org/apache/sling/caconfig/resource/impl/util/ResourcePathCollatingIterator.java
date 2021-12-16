@@ -30,7 +30,7 @@ import org.apache.sling.caconfig.resource.spi.ContextResource;
 /**
  * Expected a list of iterators containing paths, where each path is a direct or indirect parent of the previous one
  * (= sorted by path hierarchy starting with the deepest path).
- * Result is a new iterator with all resources combined from all iterators in the same order, duplicates not eliminated. 
+ * Result is a new iterator with all resources combined from all iterators in the same order, duplicates not eliminated.
  */
 public class ResourcePathCollatingIterator extends CollatingIterator<ContextResource> {
 
@@ -56,5 +56,5 @@ public class ResourcePathCollatingIterator extends CollatingIterator<ContextReso
     public ResourcePathCollatingIterator(List<Iterator<ContextResource>> iterator) {
         super(PATH_LENGTH_COMPARATOR, (Collection)iterator);
     }
-    
+
 }

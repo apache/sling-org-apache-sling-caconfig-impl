@@ -51,7 +51,7 @@ public interface ConfigurationManager {
      * @return Configuration data collection. Is empty when no configuration resources found.
      */
     @NotNull ConfigurationCollectionData getConfigurationCollection(@NotNull Resource resource, @NotNull String configName);
-    
+
     /**
      * Write configuration data to repository using the inner-most context path as reference.
      * @param resource Context resource
@@ -69,7 +69,7 @@ public interface ConfigurationManager {
      */
     void persistConfigurationCollection(@NotNull Resource resource, @NotNull String configName,
             @NotNull ConfigurationCollectionPersistData data);
-    
+
     /**
      * Creates a new empty configuration data item for a configuration data collection for the given configuration name.
      * @param resource Context resource
@@ -84,7 +84,7 @@ public interface ConfigurationManager {
      * @param configName Configuration name
      */
     void deleteConfiguration(@NotNull Resource resource, @NotNull String configName);
-    
+
     /**
      * Get all configuration names.
      * The results of all configuration metadata provider implementations are merged.
@@ -98,7 +98,7 @@ public interface ConfigurationManager {
      * @return Configuration metadata or null if none exists for the given name.
      */
     @Nullable ConfigurationMetadata getConfigurationMetadata(@NotNull String configName);
-    
+
     /**
      * Rewrite given resource path or configuration name according to current persistence strategies.
      * @param configResourcePath Resource path or config name
@@ -107,5 +107,5 @@ public interface ConfigurationManager {
      */
     @Deprecated
     @Nullable String getPersistenceResourcePath(@NotNull String configResourcePath);
-    
+
 }
