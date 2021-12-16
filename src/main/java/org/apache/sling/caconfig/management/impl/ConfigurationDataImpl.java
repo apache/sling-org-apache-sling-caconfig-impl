@@ -187,9 +187,9 @@ final class ConfigurationDataImpl implements ConfigurationData {
                 String relatedConfigPath = resolvedConfigurationResource != null ? resolvedConfigurationResource.getPath() : null;
                 String nestedConfigName;
                 if (configResourceCollection) {
-                    String collectionItemName = StringUtils.defaultString(getCollectionItemName(), "newItem");
-                    nestedConfigName = configurationPersistenceStrategy.getCollectionParentConfigName(configName, relatedConfigPath)
-                            + "/" + configurationPersistenceStrategy.getCollectionItemConfigName(collectionItemName, relatedConfigPath)
+                    String nestedCollectionItemName = StringUtils.defaultString(getCollectionItemName(), "newItem");
+                    nestedConfigName = configurationPersistenceStrategy.getCollectionItemConfigName(
+                            configurationPersistenceStrategy.getCollectionParentConfigName(configName, relatedConfigPath) + "/" + nestedCollectionItemName, relatedConfigPath)
                             + "/" + nestedConfigMetadata.getName();
                 }
                 else {
