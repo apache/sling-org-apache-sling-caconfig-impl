@@ -33,10 +33,10 @@ import org.apache.sling.caconfig.management.multiplexer.ConfigurationMetadataPro
 import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
 import org.apache.sling.scripting.api.BindingsValuesProvider;
-import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.propertytypes.ServiceRanking;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.Designate;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
@@ -45,9 +45,8 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
  * Binds a script variable "caconfig" to the current configuration value map to be
  * used in HTL (Sightly).
  */
-@Component(immediate = true, service = BindingsValuesProvider.class, property = {
-        "javax.script.name=sightly",
-        Constants.SERVICE_RANKING + "=100" })
+@Component(immediate = true, service = BindingsValuesProvider.class)
+@ServiceRanking(100)
 @Designate(ocd = ConfigurationBindingsValueProvider.Config.class)
 public class ConfigurationBindingsValueProvider implements BindingsValuesProvider {
 
@@ -57,12 +56,15 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
      */
     public static final String BINDING_VARIABLE = "caconfig";
 
-    @ObjectClassDefinition(name = "Apache Sling Context-Aware Configuration HTL Binding Values Provider",
-            description = "Binds a script variable '" + BINDING_VARIABLE + "' to the HTL/Sightly scripting context.")
+    @ObjectClassDefinition(name = "Apache Sling Context-Aware Configuration Bindings Value Provider",
+            description = "Binds a script variable '" + BINDING_VARIABLE + "' to the scripting context.")
     static @interface Config {
 
         @AttributeDefinition(name = "Enabled", description = "Enable provider.")
         boolean enabled() default true;
+
+        @AttributeDefinition(name = "Scripting Engines", description = "Enable bindings value provider for the given scripting engines.")
+        String[] javax_script_name() default { "sightly" };
 
     }
 
