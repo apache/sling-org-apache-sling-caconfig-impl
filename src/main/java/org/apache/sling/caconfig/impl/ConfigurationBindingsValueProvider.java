@@ -44,9 +44,7 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
  * Binds a script variable "caconfig" to the current configuration value map to be
  * used in HTL (Sightly).
  */
-@Component(immediate = true, service = BindingsValuesProvider.class, property = {
-        "javax.script.name=sightly"
-})
+@Component(immediate = true, service = BindingsValuesProvider.class)
 @ServiceRanking(100)
 @Designate(ocd = ConfigurationBindingsValueProvider.Config.class)
 public class ConfigurationBindingsValueProvider implements BindingsValuesProvider {
@@ -57,12 +55,15 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
      */
     public static final String BINDING_VARIABLE = "caconfig";
 
-    @ObjectClassDefinition(name = "Apache Sling Context-Aware Configuration HTL Binding Values Provider",
-            description = "Binds a script variable '" + BINDING_VARIABLE + "' to the HTL/Sightly scripting context.")
+    @ObjectClassDefinition(name = "Apache Sling Context-Aware Configuration Bindings Value Provider",
+            description = "Binds a script variable '" + BINDING_VARIABLE + "' to the scripting context.")
     static @interface Config {
 
         @AttributeDefinition(name = "Enabled", description = "Enable provider.")
         boolean enabled() default true;
+
+        @AttributeDefinition(name = "Scripting Engines", description = "Enable bindings value provider for the given scripting engines.")
+        String[] javax_script_name() default { "sightly" };
 
     }
 
