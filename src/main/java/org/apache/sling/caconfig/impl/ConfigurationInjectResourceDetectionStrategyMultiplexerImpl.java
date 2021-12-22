@@ -20,11 +20,10 @@ package org.apache.sling.caconfig.impl;
 
 import java.util.Map;
 
-import javax.script.Bindings;
-
+import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.caconfig.management.multiplexer.ConfigurationBindingsResourceDetectionStrategyMultiplexer;
-import org.apache.sling.caconfig.spi.ConfigurationBindingsResourceDetectionStrategy;
+import org.apache.sling.caconfig.management.multiplexer.ConfigurationInjectResourceDetectionStrategyMultiplexer;
+import org.apache.sling.caconfig.spi.ConfigurationInjectResourceDetectionStrategy;
 import org.apache.sling.commons.osgi.Order;
 import org.apache.sling.commons.osgi.RankedServices;
 import org.jetbrains.annotations.NotNull;
@@ -36,25 +35,25 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
- * Detects all {@link ConfigurationBindingsResourceDetectionStrategy} implementations in the container
+ * Detects all {@link ConfigurationInjectResourceDetectionStrategy} implementations in the container
  * and consolidates their result based on service ranking.
  */
-@Component(service = ConfigurationBindingsResourceDetectionStrategyMultiplexer.class,
+@Component(service = ConfigurationInjectResourceDetectionStrategyMultiplexer.class,
     reference={
-        @Reference(name="configurationBindingsResourceDetectionStrategy", service= ConfigurationBindingsResourceDetectionStrategy.class,
-            bind="bindConfigurationBindingsResourceDetectionStrategy", unbind="unbindConfigurationBindingsResourceDetectionStrategy",
+        @Reference(name="configurationBindingsResourceDetectionStrategy", service=ConfigurationInjectResourceDetectionStrategy.class,
+            bind="bindConfigurationInjectResourceDetectionStrategy", unbind="unbindConfigurationInjectResourceDetectionStrategy",
             cardinality=ReferenceCardinality.MULTIPLE,
             policy=ReferencePolicy.DYNAMIC, policyOption=ReferencePolicyOption.GREEDY)
     })
-public class ConfigurationBindingsResourceDetectionStrategyMultiplexerImpl implements ConfigurationBindingsResourceDetectionStrategyMultiplexer {
+public class ConfigurationInjectResourceDetectionStrategyMultiplexerImpl implements ConfigurationInjectResourceDetectionStrategyMultiplexer {
 
-    private RankedServices<ConfigurationBindingsResourceDetectionStrategy> resourceDetectionStrategies = new RankedServices<>(Order.DESCENDING);
+    private RankedServices<ConfigurationInjectResourceDetectionStrategy> resourceDetectionStrategies = new RankedServices<>(Order.DESCENDING);
 
-    protected void bindConfigurationBindingsResourceDetectionStrategy(ConfigurationBindingsResourceDetectionStrategy item, Map<String, Object> props) {
+    protected void bindConfigurationInjectResourceDetectionStrategy(ConfigurationInjectResourceDetectionStrategy item, Map<String, Object> props) {
         resourceDetectionStrategies.bind(item, props);
     }
 
-    protected void unbindConfigurationBindingsResourceDetectionStrategy(ConfigurationBindingsResourceDetectionStrategy item, Map<String, Object> props) {
+    protected void unbindConfigurationInjectResourceDetectionStrategy(ConfigurationInjectResourceDetectionStrategy item, Map<String, Object> props) {
         resourceDetectionStrategies.unbind(item, props);
     }
 
@@ -62,9 +61,9 @@ public class ConfigurationBindingsResourceDetectionStrategyMultiplexerImpl imple
      * Detects the resource by looking at the available bindings from the first implementation that has an answer.
      */
     @Override
-    public @Nullable Resource detectResource(@NotNull Bindings bindings) {
-        for (ConfigurationBindingsResourceDetectionStrategy resourceDetectionStrategy : resourceDetectionStrategies) {
-            Resource resource = resourceDetectionStrategy.detectResource(bindings);
+    public @Nullable Resource detectResource(@NotNull SlingHttpServletRequest request) {
+        for (ConfigurationInjectResourceDetectionStrategy resourceDetectionStrategy : resourceDetectionStrategies) {
+            Resource resource = resourceDetectionStrategy.detectResource(request);
             if (resource != null) {
                 return resource;
             }

@@ -26,10 +26,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import javax.script.Bindings;
-
+import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.caconfig.spi.ConfigurationBindingsResourceDetectionStrategy;
+import org.apache.sling.caconfig.spi.ConfigurationInjectResourceDetectionStrategy;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
 import org.junit.Before;
 import org.junit.Rule;
@@ -39,58 +38,58 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConfigurationBindingsResourceDetectionStrategyMultiplexerImplTest {
+public class ConfigurationInjectResourceDetectionStrategyMultiplexerImplTest {
 
     @Rule
     public SlingContext context = new SlingContext();
 
     @Mock
-    private Bindings bindings;
+    private SlingHttpServletRequest request;
     @Mock
     private Resource resource1;
     @Mock
     private Resource resource2;
 
-    private ConfigurationBindingsResourceDetectionStrategy underTest;
+    private ConfigurationInjectResourceDetectionStrategy underTest;
 
     @Before
     public void setUp() {
-        underTest = context.registerInjectActivateService(new ConfigurationBindingsResourceDetectionStrategyMultiplexerImpl());
+        underTest = context.registerInjectActivateService(new ConfigurationInjectResourceDetectionStrategyMultiplexerImpl());
     }
 
     @Test
     public void testWithNoStrategies() {
-        assertNull(underTest.detectResource(bindings));
+        assertNull(underTest.detectResource(request));
     }
 
     @Test
     @SuppressWarnings("null")
     public void testWithOneStrategy() {
-        ConfigurationBindingsResourceDetectionStrategy strategy = mock(ConfigurationBindingsResourceDetectionStrategy.class);
-        when(strategy.detectResource(bindings)).thenReturn(resource1);
-        context.registerService(ConfigurationBindingsResourceDetectionStrategy.class, strategy);
+        ConfigurationInjectResourceDetectionStrategy strategy = mock(ConfigurationInjectResourceDetectionStrategy.class);
+        when(strategy.detectResource(request)).thenReturn(resource1);
+        context.registerService(ConfigurationInjectResourceDetectionStrategy.class, strategy);
 
-        assertSame(resource1, underTest.detectResource(bindings));
+        assertSame(resource1, underTest.detectResource(request));
     }
 
     @Test
     @SuppressWarnings("null")
     public void testWithMultipleStrategies() {
-        ConfigurationBindingsResourceDetectionStrategy strategy1 = mock(ConfigurationBindingsResourceDetectionStrategy.class);
-        ConfigurationBindingsResourceDetectionStrategy strategy2 = mock(ConfigurationBindingsResourceDetectionStrategy.class);
-        ConfigurationBindingsResourceDetectionStrategy strategy3 = mock(ConfigurationBindingsResourceDetectionStrategy.class);
+        ConfigurationInjectResourceDetectionStrategy strategy1 = mock(ConfigurationInjectResourceDetectionStrategy.class);
+        ConfigurationInjectResourceDetectionStrategy strategy2 = mock(ConfigurationInjectResourceDetectionStrategy.class);
+        ConfigurationInjectResourceDetectionStrategy strategy3 = mock(ConfigurationInjectResourceDetectionStrategy.class);
 
-        when(strategy1.detectResource(bindings)).thenReturn(null);
-        when(strategy2.detectResource(bindings)).thenReturn(resource2);
+        when(strategy1.detectResource(request)).thenReturn(null);
+        when(strategy2.detectResource(request)).thenReturn(resource2);
 
-        context.registerService(ConfigurationBindingsResourceDetectionStrategy.class, strategy1);
-        context.registerService(ConfigurationBindingsResourceDetectionStrategy.class, strategy2);
-        context.registerService(ConfigurationBindingsResourceDetectionStrategy.class, strategy3);
+        context.registerService(ConfigurationInjectResourceDetectionStrategy.class, strategy1);
+        context.registerService(ConfigurationInjectResourceDetectionStrategy.class, strategy2);
+        context.registerService(ConfigurationInjectResourceDetectionStrategy.class, strategy3);
 
-        assertSame(resource2, underTest.detectResource(bindings));
+        assertSame(resource2, underTest.detectResource(request));
 
-        verify(strategy1, times(1)).detectResource(bindings);
-        verify(strategy2, times(1)).detectResource(bindings);
+        verify(strategy1, times(1)).detectResource(request);
+        verify(strategy2, times(1)).detectResource(request);
         verifyNoMoreInteractions(strategy3);
     }
 

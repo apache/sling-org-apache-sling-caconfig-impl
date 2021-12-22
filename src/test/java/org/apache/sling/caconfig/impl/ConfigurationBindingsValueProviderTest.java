@@ -38,7 +38,7 @@ import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.caconfig.impl.metadata.ConfigurationMetadataProviderMultiplexerImpl;
-import org.apache.sling.caconfig.spi.ConfigurationBindingsResourceDetectionStrategy;
+import org.apache.sling.caconfig.spi.ConfigurationInjectResourceDetectionStrategy;
 import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
 import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
@@ -78,7 +78,7 @@ public class ConfigurationBindingsValueProviderTest {
     @Mock
     private ConfigurationMetadataProvider configMetadataProvider;
     @Mock
-    private ConfigurationBindingsResourceDetectionStrategy configurationBindingsResourceDetectionStrategy;
+    private ConfigurationInjectResourceDetectionStrategy configurationBindingsResourceDetectionStrategy;
 
     private ConfigurationBindingsValueProvider underTest;
 
@@ -87,8 +87,8 @@ public class ConfigurationBindingsValueProviderTest {
     public void setUp() {
         context.registerInjectActivateService(new ConfigurationMetadataProviderMultiplexerImpl());
         context.registerService(ConfigurationMetadataProvider.class, configMetadataProvider);
-        context.registerInjectActivateService(new ConfigurationBindingsResourceDetectionStrategyMultiplexerImpl());
-        context.registerService(ConfigurationBindingsResourceDetectionStrategy.class, configurationBindingsResourceDetectionStrategy);
+        context.registerInjectActivateService(new ConfigurationInjectResourceDetectionStrategyMultiplexerImpl());
+        context.registerService(ConfigurationInjectResourceDetectionStrategy.class, configurationBindingsResourceDetectionStrategy);
         when(configMetadataProvider.getConfigurationNames()).thenReturn(CONFIG_NAMES);
 
         when(bindings.containsKey(SlingBindings.REQUEST)).thenReturn(true);
@@ -108,7 +108,7 @@ public class ConfigurationBindingsValueProviderTest {
 
     @Test
     public void testWithNoResourceFound() {
-        when(configurationBindingsResourceDetectionStrategy.detectResource(bindings)).thenReturn(null);
+        when(configurationBindingsResourceDetectionStrategy.detectResource(request)).thenReturn(null);
 
         underTest = context.registerInjectActivateService(new ConfigurationBindingsValueProvider(), "enabled", true);
         underTest.addBindings(bindings);
@@ -118,7 +118,7 @@ public class ConfigurationBindingsValueProviderTest {
 
     @Test
     public void testWithConfig() {
-        when(configurationBindingsResourceDetectionStrategy.detectResource(bindings)).thenReturn(resource);
+        when(configurationBindingsResourceDetectionStrategy.detectResource(request)).thenReturn(resource);
 
         underTest = context.registerInjectActivateService(new ConfigurationBindingsValueProvider(), "enabled", true);
         underTest.addBindings(bindings);

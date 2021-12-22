@@ -25,9 +25,11 @@ import java.util.Set;
 
 import javax.script.Bindings;
 
+import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.caconfig.ConfigurationBuilder;
-import org.apache.sling.caconfig.management.multiplexer.ConfigurationBindingsResourceDetectionStrategyMultiplexer;
+import org.apache.sling.caconfig.management.multiplexer.ConfigurationInjectResourceDetectionStrategyMultiplexer;
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationMetadataProviderMultiplexer;
 import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
@@ -71,7 +73,7 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
     private ConfigurationMetadataProviderMultiplexer configMetadataProvider;
 
     @Reference
-    private ConfigurationBindingsResourceDetectionStrategyMultiplexer configurationBindingsResourceDetectionStrategy;
+    private ConfigurationInjectResourceDetectionStrategyMultiplexer configurationInjectResourceDetectionStrategy;
 
     private boolean enabled;
 
@@ -81,12 +83,21 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
             return;
         }
 
-        Resource resource = configurationBindingsResourceDetectionStrategy.detectResource(bindings);
+        Resource resource = detectResourceForInjection(bindings);
         if (resource == null) {
             return;
         }
+
         Map<String,Object> configMap = new ConfigMap(resource, configMetadataProvider);
         bindings.put(BINDING_VARIABLE, configMap);
+    }
+
+    private Resource detectResourceForInjection(Bindings bindings) {
+        SlingHttpServletRequest request = (SlingHttpServletRequest)bindings.get(SlingBindings.REQUEST);
+        if (request != null) {
+            return configurationInjectResourceDetectionStrategy.detectResource(request);
+        }
+        return (Resource)bindings.get(SlingBindings.RESOURCE);
     }
 
     @Activate

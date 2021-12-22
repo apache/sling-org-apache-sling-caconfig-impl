@@ -18,16 +18,16 @@
  */
 package org.apache.sling.caconfig.management.multiplexer;
 
-import org.apache.sling.caconfig.spi.ConfigurationBindingsResourceDetectionStrategy;
+import org.apache.sling.caconfig.spi.ConfigurationInjectResourceDetectionStrategy;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * Detects all {@link ConfigurationBindingsResourceDetectionStrategy} implementations in the container
+ * Detects all {@link ConfigurationInjectResourceDetectionStrategy} implementations in the container
  * and consolidates their result based on service ranking.
  */
 @ProviderType
-public interface ConfigurationBindingsResourceDetectionStrategyMultiplexer extends ConfigurationBindingsResourceDetectionStrategy {
+public interface ConfigurationInjectResourceDetectionStrategyMultiplexer extends ConfigurationInjectResourceDetectionStrategy {
 
-    // inherits all methods from {@link ConfigurationBindingsResourceDetectionStrategy}
+    // inherits all methods from {@link ConfigurationInjectResourceDetectionStrategy}
 
 }

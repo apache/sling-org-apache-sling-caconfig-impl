@@ -26,8 +26,7 @@ import javax.script.Bindings;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.scripting.SlingBindings;
-import org.apache.sling.caconfig.spi.ConfigurationBindingsResourceDetectionStrategy;
+import org.apache.sling.caconfig.spi.ConfigurationInjectResourceDetectionStrategy;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
 import org.junit.Before;
 import org.junit.Rule;
@@ -37,7 +36,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultConfigurationBindingsResourceDetectionStrategyTest {
+public class DefaultConfigurationInjectResourceDetectionStrategyTest {
 
     @Rule
     public SlingContext context = new SlingContext();
@@ -51,13 +50,11 @@ public class DefaultConfigurationBindingsResourceDetectionStrategyTest {
     @Mock
     private Bindings bindings;
 
-    private ConfigurationBindingsResourceDetectionStrategy underTest;
+    private ConfigurationInjectResourceDetectionStrategy underTest;
 
     @Before
     public void before() {
-        underTest = context.registerService(ConfigurationBindingsResourceDetectionStrategy.class, new DefaultConfigurationBindingsResourceDetectionStrategy());
-        when(bindings.containsKey(SlingBindings.REQUEST)).thenReturn(true);
-        when(bindings.get(SlingBindings.REQUEST)).thenReturn(request);
+        underTest = context.registerService(ConfigurationInjectResourceDetectionStrategy.class, new DefaultConfigurationInjectResourceDetectionStrategy());
         when(request.getResource()).thenReturn(resource);
     }
 
@@ -65,19 +62,12 @@ public class DefaultConfigurationBindingsResourceDetectionStrategyTest {
     @SuppressWarnings("null")
     public void testNoResource() {
         when(request.getResource()).thenReturn(null);
-        assertNull(underTest.detectResource(bindings));
-    }
-
-    @Test
-    public void testNoRequest() {
-        when(bindings.containsKey(SlingBindings.REQUEST)).thenReturn(false);
-        assertNull(underTest.detectResource(bindings));
+        assertNull(underTest.detectResource(request));
     }
 
     @Test
     public void testWithResource() {
-        when(bindings.containsKey(SlingBindings.REQUEST)).thenReturn(true);
-        assertSame(resource, underTest.detectResource(bindings));
+        assertSame(resource, underTest.detectResource(request));
     }
 
 }
