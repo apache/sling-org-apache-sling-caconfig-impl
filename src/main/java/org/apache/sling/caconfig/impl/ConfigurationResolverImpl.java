@@ -23,9 +23,12 @@ import static org.apache.sling.caconfig.impl.ConfigurationNameConstants.CONFIGS_
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.caconfig.ConfigurationResolver;
 import org.apache.sling.caconfig.management.ConfigurationResourceResolverConfig;
@@ -41,11 +44,16 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.Designate;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component(service={ ConfigurationResolver.class, ConfigurationResourceResolverConfig.class }, immediate=true)
 @Designate(ocd=ConfigurationResolverImpl.Config.class)
 public class ConfigurationResolverImpl implements ConfigurationResolver, ConfigurationResourceResolverConfig {
 
+    private static final String CACHE_KEY = ConfigurationResolverImpl.class.getName() + "_CACHE";
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationResolverImpl.class);
+    
     @Reference
     private ConfigurationResourceResolvingStrategyMultiplexer configurationResourceResolvingStrategy;
     @Reference
@@ -83,10 +91,10 @@ public class ConfigurationResolverImpl implements ConfigurationResolver, Configu
 
     @Override
     public @NotNull ConfigurationBuilder get(@NotNull Resource resource) {
-        return new ConfigurationBuilderImpl(resource, this,
-                configurationResourceResolvingStrategy, configurationPersistenceStrategy,
-                configurationInheritanceStrategy, configurationOverrideMultiplexer, configurationMetadataProvider,
-                configBucketNames);
+        if (resource == null) {
+            return buildFor(resource);
+        }
+        return resolveFromCache(resource);
     }
 
     @Override
@@ -94,4 +102,43 @@ public class ConfigurationResolverImpl implements ConfigurationResolver, Configu
         return configBucketNames;
     }
 
+    
+    /**
+     * Resolve the ConfigurationBuilder
+     * already resolved instances are stored in the PropertyMap of the ResourceResolver, which shares
+     * its life-cycle with the ResourceResolver; so we don't need to care about any cleanup.
+     * @param resource the resource
+     * @return the resolved ConfigurationBuilder or null
+     */
+    private @NotNull ConfigurationBuilder resolveFromCache (@NotNull Resource resource) {
+        
+        ResourceResolver rr = resource.getResourceResolver();
+        Map<String,Object> map = rr.getPropertyMap();
+        
+        @SuppressWarnings("unchecked")
+        Map<String,ConfigurationBuilder> configurationBuilderCache = (Map<String, ConfigurationBuilder>) map.get(CACHE_KEY);
+        if (configurationBuilderCache == null) {
+            configurationBuilderCache = new HashMap<>();
+            map.put(CACHE_KEY, configurationBuilderCache);
+        }
+       
+        if (!configurationBuilderCache.containsKey(resource.getPath())) {
+            ConfigurationBuilder cb = buildFor(resource);
+            configurationBuilderCache.put(resource.getPath(), cb);
+            LOG.trace("created configurationBuilde for {}",resource.getPath());
+        }
+        ConfigurationBuilder result = configurationBuilderCache.get(resource.getPath());
+        LOG.trace("resolved configurationBuilder for {}", resource.getPath());
+        return result;
+    }
+    
+    
+    private ConfigurationBuilder buildFor(@NotNull Resource resource) {
+        return new ConfigurationBuilderImpl(resource, this,
+                configurationResourceResolvingStrategy, configurationPersistenceStrategy,
+                configurationInheritanceStrategy, configurationOverrideMultiplexer, configurationMetadataProvider,
+                configBucketNames);
+    }
+    
+    
 }
