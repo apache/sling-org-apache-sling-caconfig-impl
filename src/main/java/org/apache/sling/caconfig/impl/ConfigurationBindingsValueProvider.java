@@ -28,6 +28,7 @@ import javax.script.Bindings;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.scripting.SlingBindings;
+import org.apache.sling.api.scripting.LazyBindings;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationInjectResourceDetectionStrategyMultiplexer;
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationMetadataProviderMultiplexer;
@@ -82,14 +83,25 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
         if (!enabled) {
             return;
         }
+        if (bindings instanceof LazyBindings) {
+            // it's ok if the Supplier returns null, because Bindings.get(key) is allowed to return null
+            // both when the key is not available and when the value is null.
+            bindings.put(BINDING_VARIABLE, (LazyBindings.Supplier)() -> {
+                Resource resource = detectResourceForInjection(bindings);
+                if (resource == null) {
+                    return null;
+                }
+                return new ConfigMap(resource, configMetadataProvider);
+            });
+        } else { // resolve directly
+            Resource resource = detectResourceForInjection(bindings);
+            if (resource == null) {
+                return;
+            }
 
-        Resource resource = detectResourceForInjection(bindings);
-        if (resource == null) {
-            return;
+            Map<String,Object> configMap = new ConfigMap(resource, configMetadataProvider);
+            bindings.put(BINDING_VARIABLE, configMap);
         }
-
-        Map<String,Object> configMap = new ConfigMap(resource, configMetadataProvider);
-        bindings.put(BINDING_VARIABLE, configMap);
     }
 
     private Resource detectResourceForInjection(Bindings bindings) {
