@@ -395,7 +395,13 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
             if (resource == null || clazz == ConfigurationBuilder.class) {
                 return null;
             }
-            return applyDefaultValues(resource, configName).adaptTo(clazz);
+            Resource defaultsAppliedResource = applyDefaultValues(resource, configName);
+
+            if(clazz==Resource.class){
+                return (T)defaultsAppliedResource;
+            }else{
+                return defaultsAppliedResource.adaptTo(clazz);
+            }
         }
     }
 
