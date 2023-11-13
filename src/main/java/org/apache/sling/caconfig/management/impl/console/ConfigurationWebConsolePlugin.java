@@ -44,11 +44,11 @@ import org.apache.sling.caconfig.management.ConfigurationManager;
 import org.apache.sling.caconfig.management.ValueInfo;
 import org.apache.sling.caconfig.management.multiplexer.ContextPathStrategyMultiplexer;
 import org.apache.sling.caconfig.resource.spi.ContextResource;
-import org.apache.sling.xss.XSSAPI;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,9 +76,6 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
 
     @Reference(policyOption = ReferencePolicyOption.GREEDY)
     private ContextPathStrategyMultiplexer contextPathStrategyMultiplexer;
-
-    @Reference(policyOption = ReferencePolicyOption.GREEDY)
-    private XSSAPI xss;
 
     @Override
     public String getLabel() {
@@ -177,8 +174,8 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
                 while (contextResources.hasNext()) {
                     ContextResource contextResource = contextResources.next();
                     tableRows(pw);
-                    pw.println("<td>" + xss.encodeForHTML(contextResource.getResource().getPath()) + "</td>");
-                    pw.println("<td>" + xss.encodeForHTML(contextResource.getConfigRef()) + "</td>");
+                    pw.println("<td>" + Encode.forHtmlContent(contextResource.getResource().getPath()) + "</td>");
+                    pw.println("<td>" + Encode.forHtmlContent(contextResource.getConfigRef()) + "</td>");
                     pw.println("<td>" + contextResource.getServiceRanking() + "</td>");
                 }
                 tableEnd(pw);
@@ -219,7 +216,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
                     for (ConfigurationData data : configDatas) {
                         tableRows(pw);
                         pw.println("<td colspan='6' style='background-color:#f3f3f3'>");
-                        pw.print("Path: " + xss.encodeForHTML(data.getResourcePath()));
+                        pw.print("Path: " + Encode.forHtmlContent(data.getResourcePath()));
                         pw.println("</td>");
 
                         for (String propertyName : data.getPropertyNames()) {
@@ -259,7 +256,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
 
     private void info(PrintWriter pw, String text) {
         pw.print("<p class='statline ui-state-highlight'>");
-        pw.print(xss.encodeForHTML(text));
+        pw.print(Encode.forHtmlContent(text));
         pw.println("</p>");
     }
 
@@ -270,7 +267,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
         pw.print("<th colspan=");
         pw.print(String.valueOf(colspan));
         pw.print(">");
-        pw.print(xss.encodeForHTML(title));
+        pw.print(Encode.forHtmlContent(title));
         pw.println("</th>");
         pw.println("</tr>");
         pw.println("</thead>");
@@ -291,12 +288,12 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
 
     private void textField(PrintWriter pw, String label, String fieldName, String value, String... alertMessages) {
         pw.print("<td style='width:20%'>");
-        pw.print(xss.encodeForHTMLAttr(label));
+        pw.print(Encode.forHtmlContent(label));
         pw.println("</td>");
         pw.print("<td><input name='");
-        pw.print(xss.encodeForHTMLAttr(fieldName));
+        pw.print(Encode.forHtmlAttribute(fieldName));
         pw.print("' value='");
-        pw.print(xss.encodeForHTMLAttr(StringUtils.defaultString(value)));
+        pw.print(Encode.forHtmlAttribute(StringUtils.defaultString(value)));
         pw.print("' style='width:100%'/>");
         for (String alertMessage : alertMessages) {
             alertDiv(pw, alertMessage);
@@ -306,10 +303,10 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
 
     private void selectField(PrintWriter pw, String label, String fieldName, String value, Collection<String> options) {
         pw.print("<td style='width:20%'>");
-        pw.print(xss.encodeForHTMLAttr(label));
+        pw.print(Encode.forHtmlContent(label));
         pw.println("</td>");
         pw.print("<td><select name='");
-        pw.print(xss.encodeForHTMLAttr(fieldName));
+        pw.print(Encode.forHtmlAttribute(fieldName));
         pw.print("' style='width:100%'>");
         pw.print("<option value=''>(please select)</option>");
         for (String option : options) {
@@ -318,7 +315,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
                 pw.print(" selected");
             }
             pw.print(">");
-            pw.print(xss.encodeForHTMLAttr(option));
+            pw.print(Encode.forHtmlAttribute(option));
             pw.print("</option>");
         }
         pw.print("</select>");
@@ -327,10 +324,10 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
 
     private void checkboxField(PrintWriter pw, String label, String fieldName, boolean checked) {
         pw.print("<td style='width:20%'>");
-        pw.print(xss.encodeForHTMLAttr(label));
+        pw.print(Encode.forHtmlContent(label));
         pw.println("</td>");
         pw.print("<td><input type='checkbox' name='");
-        pw.print(xss.encodeForHTMLAttr(fieldName));
+        pw.print(Encode.forHtmlAttribute(fieldName));
         pw.print("' value='true'");
         if (checked) {
             pw.print(" checked");
@@ -345,7 +342,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
         pw.println("<div>");
         pw.println("<span class='ui-icon ui-icon-alert' style='float:left'></span>");
         pw.print("<span style='float:left'>");
-        pw.print(xss.encodeForHTML(text));
+        pw.print(Encode.forHtmlContent(text));
         pw.println("</span>");
         pw.println("</div>");
     }
@@ -354,7 +351,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
         pw.print("<td");
         if (title.length > 0 && !StringUtils.isBlank(title[0])) {
             pw.print(" title='");
-            pw.print(xss.encodeForHTML(title[0]));
+            pw.print(Encode.forHtmlAttribute(title[0]));
             pw.print("'");
         }
         pw.print(">");
@@ -363,12 +360,12 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
             if (value.getClass().isArray()) {
                 for (int i = 0; i < Array.getLength(value); i++) {
                     Object itemValue = Array.get(value, i);
-                    pw.print(xss.encodeForHTML(ObjectUtils.defaultIfNull(itemValue, "").toString()));
+                    pw.print(Encode.forHtmlContent(ObjectUtils.defaultIfNull(itemValue, "").toString()));
                     pw.println("<br>");
                 }
             }
             else {
-                pw.print(xss.encodeForHTML(value.toString()));
+                pw.print(Encode.forHtmlContent(value.toString()));
             }
         }
 
