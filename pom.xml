@@ -60,8 +60,6 @@
                             Import-Package: \
                               <!-- WebConsole support is optional -->\
                               org.apache.felix.webconsole;resolution:=optional,\
-                              <!-- Support XSS API 1.x and 2.x - we use only classes from the API with same signature in both versions -->\
-                              org.apache.sling.xss;version="[1.0.0,3)",\
                               *
                             </bnd>
                         </configuration>
@@ -184,7 +182,7 @@
             <version>1.0-alpha-1</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- web console dependencies -->
         <dependency>
             <groupId>org.apache.felix</groupId>
@@ -199,12 +197,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.xss</artifactId>
-            <version>1.0.0</version>
+            <groupId>org.owasp.encoder</groupId>
+            <artifactId>encoder</artifactId>
+            <version>1.2.3</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.sling</groupId>
