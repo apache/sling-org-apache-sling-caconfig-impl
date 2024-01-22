@@ -23,11 +23,10 @@ import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceN
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -49,7 +48,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.google.common.collect.ImmutableList;
 
-@SuppressWarnings("null")
+//@SuppressWarnings("null")
 @RunWith(Parameterized.class)
 public class ConfigurationResourceResolverImplTest {
     
@@ -133,32 +132,37 @@ public class ConfigurationResourceResolverImplTest {
     
     @Test
     public void testCachingResource() {
+        ConfigurationResourceResolvingStrategyMultiplexer multiplexer = context.getService(ConfigurationResourceResolvingStrategyMultiplexer.class);
+        assertNotNull(multiplexer);
+
+        Resource result1 = underTest.getResource(site1Page1, BUCKET, "feature");
+        Resource result2 = underTest.getResource(site1Page1, BUCKET, "feature");
         if (cachingEnabled) {
-            ConfigurationResourceResolvingStrategyMultiplexer multiplexer = context.getService(ConfigurationResourceResolvingStrategyMultiplexer.class);
-            assertNotNull(multiplexer);
-            
-            Resource result1 = underTest.getResource(site1Page1, BUCKET, "feature");
-            Resource result2 = underTest.getResource(site1Page1, BUCKET, "feature");
             assertSame(result1,result2);
-            // works because the multiplexer is created as a spy
-            verify(multiplexer,times(1)).getResource(eq(site1Page1),any(Collection.class),eq("feature"));
-            
+        } else {
+            assertNotSame(result1, result2);
         }
+        // works because the multiplexer is created as a spy
+        int expected = cachingEnabled ? 1 : 2;
+        verify(multiplexer,times(expected)).getResource(eq(site1Page1),any(Collection.class),eq("feature"));
+
     }
     
     @Test
     public void testCachingResourceCollection() {
+        ConfigurationResourceResolvingStrategyMultiplexer multiplexer = context.getService(ConfigurationResourceResolvingStrategyMultiplexer.class);
+        assertNotNull(multiplexer);
+
+        Collection<Resource> result1 = underTest.getResourceCollection(site1Page1, BUCKET, "feature");
+        Collection<Resource> result2 = underTest.getResourceCollection(site1Page1, BUCKET, "feature");
         if (cachingEnabled) {
-            ConfigurationResourceResolvingStrategyMultiplexer multiplexer = context.getService(ConfigurationResourceResolvingStrategyMultiplexer.class);
-            assertNotNull(multiplexer);
-            
-            Collection<Resource> result1 = underTest.getResourceCollection(site1Page1, BUCKET, "feature");
-            Collection<Resource> result2 = underTest.getResourceCollection(site1Page1, BUCKET, "feature");
             assertSame(result1,result2);
-            // works because the multiplexer is created as a spy
-            verify(multiplexer,times(1)).getResourceCollection(eq(site1Page1),any(Collection.class),eq("feature"));
-            
+        } else {
+            assertNotSame(result1, result2);
         }
+        // works because the multiplexer is created as a spy
+        int expected = cachingEnabled ? 1 : 2;
+        verify(multiplexer,times(expected)).getResourceCollection(eq(site1Page1),any(Collection.class),eq("feature"));
     }
-    
+
 }
