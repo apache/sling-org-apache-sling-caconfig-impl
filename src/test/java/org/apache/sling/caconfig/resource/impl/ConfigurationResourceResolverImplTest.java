@@ -22,19 +22,44 @@ import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceN
 import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.caconfig.management.multiplexer.ConfigurationResourceResolvingStrategyMultiplexer;
 import org.apache.sling.caconfig.resource.ConfigurationResourceResolver;
 import org.apache.sling.hamcrest.ResourceCollectionMatchers;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
 import com.google.common.collect.ImmutableList;
 
 @SuppressWarnings("null")
+@RunWith(Parameterized.class)
 public class ConfigurationResourceResolverImplTest {
+    
+    @Parameters
+    public static Iterable<Boolean> data() {
+        return Arrays.asList(true,false);
+    }
+    
+    @Parameter
+    public boolean cachingEnabled;
 
     private static final String BUCKET = "sling:test";
 
@@ -48,7 +73,7 @@ public class ConfigurationResourceResolverImplTest {
 
     @Before
     public void setUp() {
-        underTest = ConfigurationResourceTestUtils.registerConfigurationResourceResolver(context);
+        underTest = ConfigurationResourceTestUtils.registerConfigurationResourceResolver(context,cachingEnabled);
 
         // content resources
         context.build()
@@ -105,4 +130,35 @@ public class ConfigurationResourceResolverImplTest {
         assertEquals(ImmutableList.of("/content/site2"), underTest.getAllContextPaths(site2Page1));
     }
 
+    
+    @Test
+    public void testCachingResource() {
+        if (cachingEnabled) {
+            ConfigurationResourceResolvingStrategyMultiplexer multiplexer = context.getService(ConfigurationResourceResolvingStrategyMultiplexer.class);
+            assertNotNull(multiplexer);
+            
+            Resource result1 = underTest.getResource(site1Page1, BUCKET, "feature");
+            Resource result2 = underTest.getResource(site1Page1, BUCKET, "feature");
+            assertSame(result1,result2);
+            // works because the multiplexer is created as a spy
+            verify(multiplexer,times(1)).getResource(eq(site1Page1),any(Collection.class),eq("feature"));
+            
+        }
+    }
+    
+    @Test
+    public void testCachingResourceCollection() {
+        if (cachingEnabled) {
+            ConfigurationResourceResolvingStrategyMultiplexer multiplexer = context.getService(ConfigurationResourceResolvingStrategyMultiplexer.class);
+            assertNotNull(multiplexer);
+            
+            Collection<Resource> result1 = underTest.getResourceCollection(site1Page1, BUCKET, "feature");
+            Collection<Resource> result2 = underTest.getResourceCollection(site1Page1, BUCKET, "feature");
+            assertSame(result1,result2);
+            // works because the multiplexer is created as a spy
+            verify(multiplexer,times(1)).getResourceCollection(eq(site1Page1),any(Collection.class),eq("feature"));
+            
+        }
+    }
+    
 }
