@@ -90,6 +90,11 @@
             <artifactId>org.osgi.annotation.versioning</artifactId>
             <scope>provided</scope>
         </dependency>
+            <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.metatype.annotations</artifactId>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.commons.osgi</artifactId>
@@ -178,7 +183,7 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.sling-mock.junit4</artifactId>
-            <version>3.2.2</version>
+            <version>3.4.16</version>
             <scope>test</scope>
         </dependency>
         <dependency>
