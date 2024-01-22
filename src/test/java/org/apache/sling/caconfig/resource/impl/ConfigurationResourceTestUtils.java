@@ -18,6 +18,8 @@
  */
 package org.apache.sling.caconfig.resource.impl;
 
+import static org.mockito.Mockito.spy;
+
 import org.apache.sling.caconfig.management.impl.ContextPathStrategyMultiplexerImpl;
 import org.apache.sling.caconfig.resource.ConfigurationResourceResolver;
 import org.apache.sling.caconfig.resource.impl.def.DefaultConfigurationResourceResolvingStrategy;
@@ -30,16 +32,26 @@ public final class ConfigurationResourceTestUtils {
         // static methods only
     }
 
+    
     /**
      * Register all services for {@link ConfigurationResourceResolver}.
      * @param context Sling context
      */
     public static ConfigurationResourceResolver registerConfigurationResourceResolver(SlingContext context) {
-        context.registerInjectActivateService(new DefaultContextPathStrategy());
-        context.registerInjectActivateService(new ContextPathStrategyMultiplexerImpl());
-        context.registerInjectActivateService(new DefaultConfigurationResourceResolvingStrategy());
-        context.registerInjectActivateService(new ConfigurationResourceResolvingStrategyMultiplexerImpl());
-        return context.registerInjectActivateService(new ConfigurationResourceResolverImpl());
+        return registerConfigurationResourceResolver (context, false);
+    }
+    
+    /**
+     * Register all services for {@link ConfigurationResourceResolver}.
+     * @param context Sling context
+     * @param resultCachingEnabled indicates if the results should be cached
+     */
+    public static ConfigurationResourceResolver registerConfigurationResourceResolver(SlingContext context, boolean resultCachingEnabled) {
+        context.registerInjectActivateService(spy(new DefaultContextPathStrategy()));
+        context.registerInjectActivateService(spy(new ContextPathStrategyMultiplexerImpl()));
+        context.registerInjectActivateService(spy(new DefaultConfigurationResourceResolvingStrategy()));
+        context.registerInjectActivateService(spy(new ConfigurationResourceResolvingStrategyMultiplexerImpl()));
+        return context.registerInjectActivateService(new ConfigurationResourceResolverImpl(),"enableCaching",resultCachingEnabled);
     }
 
     /**
