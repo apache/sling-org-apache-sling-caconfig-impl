@@ -56,5 +56,4 @@ interface ServiceConfigurationPrinter<T> {
      * @param bundleContext Bundle context
      */
     void printConfiguration(PrintWriter printWriter, ServiceReference<T> serviceReference, BundleContext bundleContext);
-
 }

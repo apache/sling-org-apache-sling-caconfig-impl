@@ -18,33 +18,30 @@
  */
 package org.apache.sling.caconfig.resource.impl.util;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableList;
+import static org.junit.Assert.assertEquals;
 
 public class PathParentExpandIteratorTest {
 
     @Test
     public void testIterator() {
-        List<String> list = ImmutableList.of(
-                "/conf/a/b/c",
-                "/conf/a/b",
-                "/conf/x/y/z");
+        List<String> list = ImmutableList.of("/conf/a/b/c", "/conf/a/b", "/conf/x/y/z");
 
         List<String> result = ImmutableList.copyOf(new PathParentExpandIterator("/conf", list.iterator()));
-        assertEquals(ImmutableList.of(
-                "/conf/a/b/c",
-                "/conf/a/b",
-                "/conf/a",
-                "/conf/a/b",
-                "/conf/a",
-                "/conf/x/y/z",
-                "/conf/x/y",
-                "/conf/x"), result);
+        assertEquals(
+                ImmutableList.of(
+                        "/conf/a/b/c",
+                        "/conf/a/b",
+                        "/conf/a",
+                        "/conf/a/b",
+                        "/conf/a",
+                        "/conf/x/y/z",
+                        "/conf/x/y",
+                        "/conf/x"),
+                result);
     }
-
 }

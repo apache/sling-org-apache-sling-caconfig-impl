@@ -35,7 +35,7 @@ public final class MapUtil {
      * @param properties Properties
      * @return Debug output
      */
-    public static final String traceOutput(Map<String,Object> properties) {
+    public static final String traceOutput(Map<String, Object> properties) {
         SortedSet<String> propertyNames = new TreeSet<>(properties.keySet());
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -55,8 +55,7 @@ public final class MapUtil {
     private static void appendValue(StringBuilder sb, Object value) {
         if (value == null) {
             sb.append("null");
-        }
-        else if (value.getClass().isArray()) {
+        } else if (value.getClass().isArray()) {
             sb.append("[");
             for (int i = 0; i < Array.getLength(value); i++) {
                 if (i > 0) {
@@ -65,13 +64,10 @@ public final class MapUtil {
                 appendValue(sb, Array.get(value, i));
             }
             sb.append("]");
-        }
-        else if (value instanceof String) {
+        } else if (value instanceof String) {
             sb.append("'").append(value.toString()).append("'");
-        }
-        else {
+        } else {
             sb.append(value.toString());
         }
     }
-
 }

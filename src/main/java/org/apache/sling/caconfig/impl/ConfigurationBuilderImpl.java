@@ -67,7 +67,8 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationBuilderImpl.class);
 
-    public ConfigurationBuilderImpl(final Resource resource,
+    public ConfigurationBuilderImpl(
+            final Resource resource,
             final ConfigurationResolver configurationResolver,
             final ConfigurationResourceResolvingStrategy configurationResourceResolvingStrategy,
             final ConfigurationPersistenceStrategyMultiplexer configurationPersistenceStrategy,
@@ -75,11 +76,20 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
             final ConfigurationOverrideMultiplexer configurationOverrideMultiplexer,
             final ConfigurationMetadataProvider configurationMetadataProvider,
             final Collection<String> configBucketNames) {
-        this(resource, configurationResolver, configurationResourceResolvingStrategy, configurationPersistenceStrategy,
-                configurationInheritanceStrategy, configurationOverrideMultiplexer, configurationMetadataProvider, configBucketNames, null);
+        this(
+                resource,
+                configurationResolver,
+                configurationResourceResolvingStrategy,
+                configurationPersistenceStrategy,
+                configurationInheritanceStrategy,
+                configurationOverrideMultiplexer,
+                configurationMetadataProvider,
+                configBucketNames,
+                null);
     }
 
-    private ConfigurationBuilderImpl(final Resource resource,
+    private ConfigurationBuilderImpl(
+            final Resource resource,
             final ConfigurationResolver configurationResolver,
             final ConfigurationResourceResolvingStrategy configurationResourceResolvingStrategy,
             final ConfigurationPersistenceStrategyMultiplexer configurationPersistenceStrategy,
@@ -102,7 +112,8 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     @Override
     public @NotNull ConfigurationBuilder name(@NotNull final String configName) {
         ConfigNameUtil.ensureValidConfigName(configName);
-        return new ConfigurationBuilderImpl(contentResource,
+        return new ConfigurationBuilderImpl(
+                contentResource,
                 configurationResolver,
                 configurationResourceResolvingStrategy,
                 configurationPersistenceStrategy,
@@ -142,8 +153,8 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
         Iterator<Resource> resourceInheritanceChain = null;
         if (this.contentResource != null) {
             validateConfigurationName(configName);
-            resourceInheritanceChain = this.configurationResourceResolvingStrategy
-                    .getResourceInheritanceChain(this.contentResource, configBucketNames, configName);
+            resourceInheritanceChain = this.configurationResourceResolvingStrategy.getResourceInheritanceChain(
+                    this.contentResource, configBucketNames, configName);
         }
         return convert(resourceInheritanceChain, clazz, converter, configName, false);
     }
@@ -157,76 +168,85 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
      */
     private <T> Collection<T> getConfigResourceCollection(String configName, Class<T> clazz, Converter<T> converter) {
         if (this.contentResource != null) {
-           validateConfigurationName(configName);
+            validateConfigurationName(configName);
 
-           // get all possible colection parent config names
-           Collection<String> collectionParentConfigNames = configurationPersistenceStrategy.getAllCollectionParentConfigNames(configName);
-           List<Iterator<Resource>> resourceInheritanceChains = new ArrayList<>();
-           for (String collectionParentConfigName : collectionParentConfigNames) {
-               Collection<Iterator<Resource>> result = this.configurationResourceResolvingStrategy
-                       .getResourceCollectionInheritanceChain(this.contentResource, configBucketNames, collectionParentConfigName);
-               if (result != null) {
-                   resourceInheritanceChains.addAll(result);
-               }
-           }
+            // get all possible colection parent config names
+            Collection<String> collectionParentConfigNames =
+                    configurationPersistenceStrategy.getAllCollectionParentConfigNames(configName);
+            List<Iterator<Resource>> resourceInheritanceChains = new ArrayList<>();
+            for (String collectionParentConfigName : collectionParentConfigNames) {
+                Collection<Iterator<Resource>> result =
+                        this.configurationResourceResolvingStrategy.getResourceCollectionInheritanceChain(
+                                this.contentResource, configBucketNames, collectionParentConfigName);
+                if (result != null) {
+                    resourceInheritanceChains.addAll(result);
+                }
+            }
 
-           final Collection<T> result = new ArrayList<>();
-           for (final Iterator<Resource> resourceInheritanceChain : resourceInheritanceChains) {
-               final T obj = convert(resourceInheritanceChain, clazz, converter, configName, true);
-               if (obj != null) {
-                   result.add(obj);
-               }
-           }
-           return result;
-        }
-        else {
+            final Collection<T> result = new ArrayList<>();
+            for (final Iterator<Resource> resourceInheritanceChain : resourceInheritanceChains) {
+                final T obj = convert(resourceInheritanceChain, clazz, converter, configName, true);
+                if (obj != null) {
+                    result.add(obj);
+                }
+            }
+            return result;
+        } else {
             return Collections.emptyList();
         }
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T convert(final Iterator<Resource> resourceInhertianceChain, final Class<T> clazz, final Converter<T> converter,
-            final String name, final boolean isCollection) {
+    private <T> T convert(
+            final Iterator<Resource> resourceInhertianceChain,
+            final Class<T> clazz,
+            final Converter<T> converter,
+            final String name,
+            final boolean isCollection) {
         Resource configResource = null;
         String conversionName = name;
         if (resourceInhertianceChain != null) {
-            ResettableListIterator resettableResourceInhertianceChain = new ListIteratorWrapper(resourceInhertianceChain);
+            ResettableListIterator resettableResourceInhertianceChain =
+                    new ListIteratorWrapper(resourceInhertianceChain);
             // apply persistence transformation
-            Iterator<Resource> transformedResources = IteratorUtils.transformedIterator(resettableResourceInhertianceChain,
-                    new Transformer() {
+            Iterator<Resource> transformedResources =
+                    IteratorUtils.transformedIterator(resettableResourceInhertianceChain, new Transformer() {
                         @Override
                         public Object transform(Object input) {
                             if (isCollection) {
-                                return configurationPersistenceStrategy.getCollectionItemResource((Resource)input);
-                            }
-                            else {
-                                return configurationPersistenceStrategy.getResource((Resource)input);
+                                return configurationPersistenceStrategy.getCollectionItemResource((Resource) input);
+                            } else {
+                                return configurationPersistenceStrategy.getResource((Resource) input);
                             }
                         }
                     });
             // apply resource inheritance
             configResource = configurationInheritanceStrategy.getResource(transformedResources);
             // apply overrides
-            configResource = configurationOverrideMultiplexer.overrideProperties(contentResource.getPath(), name, configResource, contentResource.getResourceResolver());
+            configResource = configurationOverrideMultiplexer.overrideProperties(
+                    contentResource.getPath(), name, configResource, contentResource.getResourceResolver());
             // build name
             if (isCollection) {
                 // get untransformed resource for getting collection item name
                 resettableResourceInhertianceChain.reset();
-                Resource untransformedConfigResource = configurationInheritanceStrategy.getResource(resettableResourceInhertianceChain);
+                Resource untransformedConfigResource =
+                        configurationInheritanceStrategy.getResource(resettableResourceInhertianceChain);
                 if (untransformedConfigResource != null && configResource != null) {
-                    conversionName = configurationPersistenceStrategy.getCollectionParentConfigName(conversionName, configResource.getPath())
+                    conversionName = configurationPersistenceStrategy.getCollectionParentConfigName(
+                                    conversionName, configResource.getPath())
                             + "/" + untransformedConfigResource.getName();
                 }
             }
         }
         if (log.isTraceEnabled() && configResource != null) {
-            log.trace("+ Found config resource for context path " + contentResource.getPath() + ": " + configResource.getPath() + " "
-                    + MapUtil.traceOutput(configResource.getValueMap()));
+            log.trace("+ Found config resource for context path " + contentResource.getPath() + ": "
+                    + configResource.getPath() + " " + MapUtil.traceOutput(configResource.getValueMap()));
         }
 
         // if no config resource found still check for overrides
         if (configResource == null && contentResource != null) {
-            configResource = configurationOverrideMultiplexer.overrideProperties(contentResource.getPath(), name, (Resource)null, contentResource.getResourceResolver());
+            configResource = configurationOverrideMultiplexer.overrideProperties(
+                    contentResource.getPath(), name, (Resource) null, contentResource.getResourceResolver());
         }
 
         return converter.convert(configResource, clazz, conversionName, isCollection);
@@ -242,7 +262,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
         if (resource == null) {
             return null;
         }
-        Map<String,Object> updatedMap = applyDefaultValues(resource.getValueMap(), configName);
+        Map<String, Object> updatedMap = applyDefaultValues(resource.getValueMap(), configName);
         if (updatedMap == null) {
             return resource;
         }
@@ -255,7 +275,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
      * @param configName Configuration name
      * @return null if no default values found, or a new map with added default properties.
      */
-    private Map<String,Object> applyDefaultValues(Map<String,Object> props, String configName) {
+    private Map<String, Object> applyDefaultValues(Map<String, Object> props, String configName) {
         ConfigurationMetadata metadata = configurationMetadataProvider.getConfigurationMetadata(configName);
         if (metadata == null) {
             // probably a configuration list - remove item name from end
@@ -267,8 +287,9 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
                 return null;
             }
         }
-        Map<String,Object> updatedMap = new HashMap<>();
-        for (PropertyMetadata<?> propertyMetadata : metadata.getPropertyMetadata().values()) {
+        Map<String, Object> updatedMap = new HashMap<>();
+        for (PropertyMetadata<?> propertyMetadata :
+                metadata.getPropertyMetadata().values()) {
             if (propertyMetadata.getDefaultValue() != null) {
                 updatedMap.put(propertyMetadata.getName(), propertyMetadata.getDefaultValue());
             }
@@ -287,7 +308,11 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     public @NotNull <T> T as(@NotNull final Class<T> clazz) {
         final String name = getConfigurationNameForAnnotationClass(clazz);
         if (log.isDebugEnabled()) {
-            log.debug("Get configuration for context path {}, name '{}', class {}", contentResource.getPath(), name, clazz.getName());
+            log.debug(
+                    "Get configuration for context path {}, name '{}', class {}",
+                    contentResource.getPath(),
+                    name,
+                    clazz.getName());
         }
         return getConfigResource(name, clazz, new AnnotationConverter<T>());
     }
@@ -296,7 +321,11 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     public @NotNull <T> Collection<T> asCollection(@NotNull Class<T> clazz) {
         final String name = getConfigurationNameForAnnotationClass(clazz);
         if (log.isDebugEnabled()) {
-            log.debug("Get configuration collection for context path {}, name '{}', class {}", contentResource.getPath(), name, clazz.getName());
+            log.debug(
+                    "Get configuration collection for context path {}, name '{}', class {}",
+                    contentResource.getPath(),
+                    name,
+                    clazz.getName());
         }
         return getConfigResourceCollection(name, clazz, new AnnotationConverter<T>());
     }
@@ -304,8 +333,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     private String getConfigurationNameForAnnotationClass(Class<?> clazz) {
         if (this.configName != null) {
             return this.configName;
-        }
-        else {
+        } else {
             // derive configuration name from annotation class if no name specified
             return AnnotationClassParser.getConfigurationName(clazz);
         }
@@ -313,23 +341,28 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
 
     private class AnnotationConverter<T> implements Converter<T> {
         @Override
-        public T convert(final Resource resource, final Class<T> clazz, final String configName, final boolean isCollection) {
+        public T convert(
+                final Resource resource, final Class<T> clazz, final String configName, final boolean isCollection) {
             return ConfigurationProxy.get(resource, clazz, new ChildResolver() {
                 private ConfigurationBuilder getConfiguration(String nestedConfigName) {
                     String childName;
                     String relatedConfigPath = resource != null ? resource.getPath() : null;
                     if (isCollection) {
-                        childName = configurationPersistenceStrategy.getCollectionItemConfigName(configName, relatedConfigPath) + "/" + nestedConfigName;
-                    }
-                    else {
-                        childName = configurationPersistenceStrategy.getConfigName(configName, relatedConfigPath) + "/" + nestedConfigName;
+                        childName = configurationPersistenceStrategy.getCollectionItemConfigName(
+                                        configName, relatedConfigPath)
+                                + "/" + nestedConfigName;
+                    } else {
+                        childName = configurationPersistenceStrategy.getConfigName(configName, relatedConfigPath) + "/"
+                                + nestedConfigName;
                     }
                     return configurationResolver.get(contentResource).name(childName);
                 }
+
                 @Override
                 public <C> C getChild(String configName, Class<C> clazz) {
                     return getConfiguration(configName).as(clazz);
                 }
+
                 @Override
                 public <C> Collection<C> getChildren(String configName, Class<C> clazz) {
                     return getConfiguration(configName).asCollection(clazz);
@@ -351,7 +384,10 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     @Override
     public @NotNull Collection<ValueMap> asValueMapCollection() {
         if (log.isDebugEnabled()) {
-            log.debug("Get ValueMap collection for context path {}, name '{}'", contentResource.getPath(), this.configName);
+            log.debug(
+                    "Get ValueMap collection for context path {}, name '{}'",
+                    contentResource.getPath(),
+                    this.configName);
         }
         return getConfigResourceCollection(this.configName, ValueMap.class, new ValueMapConverter());
     }
@@ -360,11 +396,10 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
         @Override
         public ValueMap convert(Resource resource, Class<ValueMap> clazz, String configName, boolean isCollection) {
             ValueMap props = ResourceUtil.getValueMap(resource);
-            Map<String,Object> updatedMap = applyDefaultValues(props, configName);
+            Map<String, Object> updatedMap = applyDefaultValues(props, configName);
             if (updatedMap != null) {
                 return new ValueMapDecorator(updatedMap);
-            }
-            else {
+            } else {
                 return props;
             }
         }
@@ -375,7 +410,11 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     @Override
     public <T> T asAdaptable(@NotNull Class<T> clazz) {
         if (log.isDebugEnabled()) {
-            log.debug("Get adaptable for context path {}, name '{}', class {}", contentResource.getPath(), this.configName, clazz);
+            log.debug(
+                    "Get adaptable for context path {}, name '{}', class {}",
+                    contentResource.getPath(),
+                    this.configName,
+                    clazz);
         }
         return getConfigResource(this.configName, clazz, new AdaptableConverter<T>());
     }
@@ -383,7 +422,11 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     @Override
     public @NotNull <T> Collection<T> asAdaptableCollection(@NotNull Class<T> clazz) {
         if (log.isDebugEnabled()) {
-            log.debug("Get adaptable collection for context path {}, name '{}', class {}", contentResource.getPath(), this.configName, clazz);
+            log.debug(
+                    "Get adaptable collection for context path {}, name '{}', class {}",
+                    contentResource.getPath(),
+                    this.configName,
+                    clazz);
         }
         return getConfigResourceCollection(this.configName, clazz, new AdaptableConverter<T>());
     }
@@ -405,7 +448,11 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     public <T> boolean has(@NotNull Class<T> clazz) {
         final String name = getConfigurationNameForAnnotationClass(clazz);
         if (log.isDebugEnabled()) {
-            log.debug("Check configuration for context path {}, name '{}', class {}", contentResource.getPath(), name, clazz.getName());
+            log.debug(
+                    "Check configuration for context path {}, name '{}', class {}",
+                    contentResource.getPath(),
+                    name,
+                    clazz.getName());
         }
         return checkIfConfigNodeExists(name);
     }
@@ -413,7 +460,10 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     @Override
     public boolean has(@NotNull String configName) {
         if (log.isDebugEnabled()) {
-            log.debug("Check configuration for context path {}, configuration name '{}' ", contentResource.getPath(), configName);
+            log.debug(
+                    "Check configuration for context path {}, configuration name '{}' ",
+                    contentResource.getPath(),
+                    configName);
         }
         return checkIfConfigNodeExists(configName);
     }
@@ -422,10 +472,9 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
         Resource configResource = null;
         if (this.contentResource != null) {
             validateConfigurationName(configName);
-            configResource = this.configurationResourceResolvingStrategy
-                    .getResource(this.contentResource, configBucketNames, configName);
+            configResource = this.configurationResourceResolvingStrategy.getResource(
+                    this.contentResource, configBucketNames, configName);
         }
         return configResource != null ? true : false;
     }
-
 }

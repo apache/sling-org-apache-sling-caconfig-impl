@@ -28,59 +28,21 @@
     </parent>
 
     <artifactId>org.apache.sling.caconfig.impl</artifactId>
-    <packaging>jar</packaging>
     <version>1.6.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>Apache Sling Context-Aware Configuration Implementation</name>
     <description>Apache Sling Context-Aware Configuration Implementation</description>
-
-    <properties>
-        <project.build.outputTimestamp>2022-01-03T11:39:49Z</project.build.outputTimestamp>
-    </properties>
 
     <scm>
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-caconfig-impl.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-caconfig-impl.git</developerConnection>
-        <url>https://github.com/apache/sling-org-apache-sling-caconfig-impl.git</url>
         <tag>HEAD</tag>
+        <url>https://github.com/apache/sling-org-apache-sling-caconfig-impl.git</url>
     </scm>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>biz.aQute.bnd</groupId>
-                <artifactId>bnd-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>bnd-process</id>
-                        <goals>
-                            <goal>bnd-process</goal>
-                        </goals>
-                        <configuration>
-                            <bnd>
-                            Import-Package: \
-                              <!-- WebConsole support is optional -->\
-                              org.apache.felix.webconsole;resolution:=optional,\
-                              *
-                            </bnd>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>biz.aQute.bnd</groupId>
-                <artifactId>bnd-baseline-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.rat</groupId>
-                <artifactId>apache-rat-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>dependency-reduced-pom.xml</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <properties>
+        <project.build.outputTimestamp>2022-01-03T11:39:49Z</project.build.outputTimestamp>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -241,5 +203,44 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bnd-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bnd-process</id>
+                        <goals>
+                            <goal>bnd-process</goal>
+                        </goals>
+                        <configuration>
+                            <bnd>
+                                Import-Package: \
+                                <!-- WebConsole support is optional -->
+                                \
+                              org.apache.felix.webconsole;resolution:=optional,\
+                              *
+                            </bnd>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bnd-baseline-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>dependency-reduced-pom.xml</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

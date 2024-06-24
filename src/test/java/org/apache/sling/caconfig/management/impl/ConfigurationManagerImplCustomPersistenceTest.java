@@ -34,8 +34,11 @@ public class ConfigurationManagerImplCustomPersistenceTest extends Configuration
     @Before
     public void setUpCustomPersistence() {
         // custom strategy which redirects all config resources to a jcr:content subnode
-        context.registerService(ConfigurationPersistenceStrategy2.class,
-                new CustomConfigurationPersistenceStrategy(), Constants.SERVICE_RANKING, 2000);
+        context.registerService(
+                ConfigurationPersistenceStrategy2.class,
+                new CustomConfigurationPersistenceStrategy(),
+                Constants.SERVICE_RANKING,
+                2000);
     }
 
     @Override
@@ -74,7 +77,6 @@ public class ConfigurationManagerImplCustomPersistenceTest extends Configuration
 
     @Override
     protected String[] getAlternativeBucketNames() {
-        return new String[] { "settings" };
+        return new String[] {"settings"};
     }
-
 }

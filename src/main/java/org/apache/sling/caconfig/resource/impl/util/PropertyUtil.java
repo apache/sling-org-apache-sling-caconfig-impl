@@ -34,17 +34,17 @@ public final class PropertyUtil {
      * @param additionalKeys Alternative keys
      * @return Value
      */
-    public static boolean getBooleanValueAdditionalKeys(final ValueMap valueMap, final String key, final String[] additionalKeys) {
+    public static boolean getBooleanValueAdditionalKeys(
+            final ValueMap valueMap, final String key, final String[] additionalKeys) {
         Boolean result = valueMap.get(key, Boolean.class);
-        if ( result == null && !ArrayUtils.isEmpty(additionalKeys) ) {
-            for(final String name : additionalKeys) {
+        if (result == null && !ArrayUtils.isEmpty(additionalKeys)) {
+            for (final String name : additionalKeys) {
                 result = valueMap.get(name, Boolean.class);
-                if ( result != null ) {
+                if (result != null) {
                     break;
                 }
             }
         }
         return result == null ? false : result.booleanValue();
     }
-
 }

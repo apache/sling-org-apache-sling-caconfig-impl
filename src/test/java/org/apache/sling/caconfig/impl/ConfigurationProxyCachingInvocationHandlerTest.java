@@ -18,12 +18,6 @@
  */
 package org.apache.sling.caconfig.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
@@ -34,6 +28,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigurationProxyCachingInvocationHandlerTest {
 
@@ -41,6 +41,7 @@ public class ConfigurationProxyCachingInvocationHandlerTest {
 
     @Mock
     private InvocationHandler invocationHandler;
+
     private Object testObject;
     private Method testMethod;
 
@@ -80,5 +81,4 @@ public class ConfigurationProxyCachingInvocationHandlerTest {
         assertNull(underTest.invoke(testObject, testMethod, null));
         verify(invocationHandler, times(1)).invoke(testObject, testMethod, null);
     }
-
 }

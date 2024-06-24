@@ -34,24 +34,28 @@ import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-@Component(service=ConfigurationResourceResolver.class, immediate=true)
+@Component(service = ConfigurationResourceResolver.class, immediate = true)
 public class ConfigurationResourceResolverImpl implements ConfigurationResourceResolver {
 
     @Reference
     private ContextPathStrategyMultiplexer contextPathStrategy;
+
     @Reference
     private ConfigurationResourceResolvingStrategyMultiplexer configurationResourceResolvingStrategy;
 
     @Override
     public Resource getResource(@NotNull Resource resource, @NotNull String bucketName, @NotNull String configName) {
         ConfigNameUtil.ensureValidConfigName(configName);
-        return configurationResourceResolvingStrategy.getResource(resource, Collections.singleton(bucketName), configName);
+        return configurationResourceResolvingStrategy.getResource(
+                resource, Collections.singleton(bucketName), configName);
     }
 
     @Override
-    public @NotNull Collection<Resource> getResourceCollection(@NotNull Resource resource, @NotNull String bucketName, @NotNull String configName) {
+    public @NotNull Collection<Resource> getResourceCollection(
+            @NotNull Resource resource, @NotNull String bucketName, @NotNull String configName) {
         ConfigNameUtil.ensureValidConfigName(configName);
-        Collection<Resource> result = configurationResourceResolvingStrategy.getResourceCollection(resource, Collections.singleton(bucketName), configName);
+        Collection<Resource> result = configurationResourceResolvingStrategy.getResourceCollection(
+                resource, Collections.singleton(bucketName), configName);
         if (result == null) {
             result = Collections.emptyList();
         }
@@ -63,8 +67,7 @@ public class ConfigurationResourceResolverImpl implements ConfigurationResourceR
         Iterator<ContextResource> it = contextPathStrategy.findContextResources(resource);
         if (it.hasNext()) {
             return it.next().getResource().getPath();
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -78,5 +81,4 @@ public class ConfigurationResourceResolverImpl implements ConfigurationResourceR
         }
         return contextPaths;
     }
-
 }

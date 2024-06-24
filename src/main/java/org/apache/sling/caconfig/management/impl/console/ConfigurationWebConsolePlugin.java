@@ -18,17 +18,17 @@
  */
 package org.apache.sling.caconfig.management.impl.console;
 
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -55,11 +55,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Web console plugin to test configuration resolution.
  */
-@Component(service=Servlet.class,
-           property={Constants.SERVICE_DESCRIPTION + "=Apache Sling Context-Aware Configuration Web Console Plugin",
-                   WebConsoleConstants.PLUGIN_LABEL + "=" + ConfigurationWebConsolePlugin.LABEL,
-                   WebConsoleConstants.PLUGIN_TITLE + "=" + ConfigurationWebConsolePlugin.TITLE,
-                   WebConsoleConstants.PLUGIN_CATEGORY + "=Sling"})
+@Component(
+        service = Servlet.class,
+        property = {
+            Constants.SERVICE_DESCRIPTION + "=Apache Sling Context-Aware Configuration Web Console Plugin",
+            WebConsoleConstants.PLUGIN_LABEL + "=" + ConfigurationWebConsolePlugin.LABEL,
+            WebConsoleConstants.PLUGIN_TITLE + "=" + ConfigurationWebConsolePlugin.TITLE,
+            WebConsoleConstants.PLUGIN_CATEGORY + "=Sling"
+        })
 @SuppressWarnings("serial")
 public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
 
@@ -89,7 +92,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
 
     @Override
     protected void renderContent(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
 
         final PrintWriter pw = response.getWriter();
 
@@ -102,7 +105,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
 
     private String getParameter(final HttpServletRequest request, final String name, final String defaultValue) {
         String value = request.getParameter(name);
-        if ( value != null && !value.trim().isEmpty() ) {
+        if (value != null && !value.trim().isEmpty()) {
             return value.trim();
         }
         return defaultValue;
@@ -114,11 +117,11 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
         String configName = this.getParameter(request, "configName", null);
         if (configName == null) {
             configName = configNameOther;
-        }
-        else {
+        } else {
             configNameOther = null;
         }
-        final boolean resourceCollection = BooleanUtils.toBoolean(this.getParameter(request, "resourceCollection", "false"));
+        final boolean resourceCollection =
+                BooleanUtils.toBoolean(this.getParameter(request, "resourceCollection", "false"));
 
         ResourceResolver resolver = null;
         try {
@@ -138,8 +141,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
             if (path != null) {
                 if (resolver == null) {
                     alertMessage = "Unable to access repository - please check system configuration.";
-                }
-                else if (contentResource == null) {
+                } else if (contentResource == null) {
                     alertMessage = "Path does not exist.";
                 }
             }
@@ -166,7 +168,8 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
             if (contentResource != null && configName != null) {
 
                 // context paths
-                Iterator<ContextResource> contextResources = contextPathStrategyMultiplexer.findContextResources(contentResource);
+                Iterator<ContextResource> contextResources =
+                        contextPathStrategyMultiplexer.findContextResources(contentResource);
                 tableStart(pw, "Context paths", 3);
                 pw.println("<th>Context path</th>");
                 pw.println("<th>Config reference</th>");
@@ -174,7 +177,9 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
                 while (contextResources.hasNext()) {
                     ContextResource contextResource = contextResources.next();
                     tableRows(pw);
-                    pw.println("<td>" + Encode.forHtmlContent(contextResource.getResource().getPath()) + "</td>");
+                    pw.println("<td>"
+                            + Encode.forHtmlContent(
+                                    contextResource.getResource().getPath()) + "</td>");
                     pw.println("<td>" + Encode.forHtmlContent(contextResource.getConfigRef()) + "</td>");
                     pw.println("<td>" + contextResource.getServiceRanking() + "</td>");
                 }
@@ -185,14 +190,14 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
                 // resolve configuration
                 Collection<ConfigurationData> configDatas;
                 if (resourceCollection) {
-                    configDatas = configurationManager.getConfigurationCollection(contentResource, configName).getItems();
-                }
-                else {
+                    configDatas = configurationManager
+                            .getConfigurationCollection(contentResource, configName)
+                            .getItems();
+                } else {
                     ConfigurationData configData = configurationManager.getConfiguration(contentResource, configName);
                     if (configData != null) {
                         configDatas = Collections.singletonList(configData);
-                    }
-                    else {
+                    } else {
                         configDatas = Collections.emptyList();
                     }
                 }
@@ -203,8 +208,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
                     pw.println("<td colspan='6'>");
                     alertDiv(pw, "No matching item found.");
                     pw.println("<br/>&nbsp;</td>");
-                }
-                else {
+                } else {
 
                     pw.println("<th>Property</th>");
                     pw.println("<th>Effective Value</th>");
@@ -238,16 +242,13 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
 
                             td(pw, valueInfo.isOverridden());
                         }
-
-                   }
-
+                    }
                 }
 
                 tableEnd(pw);
             }
 
-        }
-        finally {
+        } finally {
             if (resolver != null) {
                 resolver.close();
             }
@@ -360,11 +361,11 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
             if (value.getClass().isArray()) {
                 for (int i = 0; i < Array.getLength(value); i++) {
                     Object itemValue = Array.get(value, i);
-                    pw.print(Encode.forHtmlContent(ObjectUtils.defaultIfNull(itemValue, "").toString()));
+                    pw.print(Encode.forHtmlContent(
+                            ObjectUtils.defaultIfNull(itemValue, "").toString()));
                     pw.println("<br>");
                 }
-            }
-            else {
+            } else {
                 pw.print(Encode.forHtmlContent(value.toString()));
             }
         }
@@ -379,18 +380,17 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
         ResourceResolver resolver = null;
         try {
             resolver = resolverFactory.getServiceResourceResolver(null);
-        }
-        catch (final LoginException ex) {
+        } catch (final LoginException ex) {
             // fallback if no service user is registered - try to get current web console resource resolver
-            resolver = (ResourceResolver)request.getAttribute("org.apache.sling.auth.core.ResourceResolver");
+            resolver = (ResourceResolver) request.getAttribute("org.apache.sling.auth.core.ResourceResolver");
             if (resolver == null) {
-                log.warn("Unable to get resource resolver - please ensure a system user is configured: {}", ex.getMessage());
-            }
-            else {
+                log.warn(
+                        "Unable to get resource resolver - please ensure a system user is configured: {}",
+                        ex.getMessage());
+            } else {
                 log.debug("No system user configured, use resource resolver from web console.");
             }
         }
         return resolver;
     }
-
 }

@@ -28,5 +28,4 @@ public @interface SpecialNamesConfig {
     int int__Param() default 5;
 
     boolean bool_Param();
-
 }

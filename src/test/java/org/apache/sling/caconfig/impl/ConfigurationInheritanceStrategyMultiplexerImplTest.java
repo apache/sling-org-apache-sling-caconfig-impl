@@ -18,17 +18,9 @@
  */
 package org.apache.sling.caconfig.impl;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
 import java.util.Iterator;
 
+import com.google.common.collect.ImmutableList;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.spi.ConfigurationInheritanceStrategy;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
@@ -41,7 +33,14 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
-import com.google.common.collect.ImmutableList;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigurationInheritanceStrategyMultiplexerImplTest {
@@ -51,6 +50,7 @@ public class ConfigurationInheritanceStrategyMultiplexerImplTest {
 
     @Mock
     private Resource resource1;
+
     @Mock
     private Resource resource2;
 
@@ -73,7 +73,7 @@ public class ConfigurationInheritanceStrategyMultiplexerImplTest {
     public void testWithOneStrategy() {
         ConfigurationInheritanceStrategy strategy = mock(ConfigurationInheritanceStrategy.class);
 
-        when(strategy.getResource((Iterator<Resource>)any())).thenAnswer(new Answer<Resource>() {
+        when(strategy.getResource((Iterator<Resource>) any())).thenAnswer(new Answer<Resource>() {
             @Override
             public Resource answer(InvocationOnMock invocation) throws Throwable {
                 Iterator<Resource> items = invocation.getArgument(0);
@@ -93,7 +93,7 @@ public class ConfigurationInheritanceStrategyMultiplexerImplTest {
         ConfigurationInheritanceStrategy strategy2 = mock(ConfigurationInheritanceStrategy.class);
         ConfigurationInheritanceStrategy strategy3 = mock(ConfigurationInheritanceStrategy.class);
 
-        when(strategy1.getResource((Iterator<Resource>)any())).thenAnswer(new Answer<Resource>() {
+        when(strategy1.getResource((Iterator<Resource>) any())).thenAnswer(new Answer<Resource>() {
             @Override
             public Resource answer(InvocationOnMock invocation) throws Throwable {
                 Iterator<Resource> items = invocation.getArgument(0);
@@ -103,7 +103,7 @@ public class ConfigurationInheritanceStrategyMultiplexerImplTest {
                 return null;
             }
         });
-        when(strategy2.getResource((Iterator<Resource>)any())).thenAnswer(new Answer<Resource>() {
+        when(strategy2.getResource((Iterator<Resource>) any())).thenAnswer(new Answer<Resource>() {
             @Override
             public Resource answer(InvocationOnMock invocation) throws Throwable {
                 Iterator<Resource> items = invocation.getArgument(0);
@@ -117,9 +117,8 @@ public class ConfigurationInheritanceStrategyMultiplexerImplTest {
 
         assertSame(resource1, underTest.getResource(resources));
 
-        verify(strategy1, times(1)).getResource((Iterator<Resource>)any());
-        verify(strategy2, times(1)).getResource((Iterator<Resource>)any());
+        verify(strategy1, times(1)).getResource((Iterator<Resource>) any());
+        verify(strategy2, times(1)).getResource((Iterator<Resource>) any());
         verifyNoMoreInteractions(strategy3);
     }
-
 }

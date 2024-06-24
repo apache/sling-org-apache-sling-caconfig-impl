@@ -45,18 +45,17 @@ public final class ConfigurationResourceWrapper extends AbstractResource {
 
     private static Resource unwrap(Resource resource) {
         if (resource instanceof ConfigurationResourceWrapper) {
-            return ((ConfigurationResourceWrapper)resource).resource;
-        }
-        else {
+            return ((ConfigurationResourceWrapper) resource).resource;
+        } else {
             return resource;
         }
     }
 
     @Override
-    @SuppressWarnings({ "unchecked", "null" })
+    @SuppressWarnings({"unchecked", "null"})
     public <AdapterType> AdapterType adaptTo(@NotNull Class<AdapterType> type) {
         if (type == ValueMap.class) {
-            return (AdapterType)props;
+            return (AdapterType) props;
         }
         return super.adaptTo(type);
     }
@@ -134,8 +133,6 @@ public final class ConfigurationResourceWrapper extends AbstractResource {
         } else {
             className = getClass().getSimpleName();
         }
-        return className + ", type=" + getResourceType()
-            + ", path=" + getPath() + ", resource=[" + resource + "]";
+        return className + ", type=" + getResourceType() + ", path=" + getPath() + ", resource=[" + resource + "]";
     }
-
 }

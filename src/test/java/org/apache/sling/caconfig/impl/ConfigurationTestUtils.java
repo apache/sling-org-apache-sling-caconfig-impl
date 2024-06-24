@@ -55,7 +55,8 @@ public final class ConfigurationTestUtils {
      * without the default implementations of the multiplexed services.
      * @param context Sling context
      */
-    public static ConfigurationResolver registerConfigurationResolverWithoutDefaultImpl(SlingContext context, Object... properties) {
+    public static ConfigurationResolver registerConfigurationResolverWithoutDefaultImpl(
+            SlingContext context, Object... properties) {
         ConfigurationResourceTestUtils.registerConfigurationResourceResolverWithoutDefaultImpl(context);
         context.registerInjectActivateService(new ConfigurationManagementSettingsImpl());
         context.registerInjectActivateService(new ConfigurationPersistenceStrategyMultiplexerImpl());
@@ -64,5 +65,4 @@ public final class ConfigurationTestUtils {
         context.registerInjectActivateService(new ConfigurationMetadataProviderMultiplexerImpl());
         return context.registerInjectActivateService(new ConfigurationResolverImpl(), properties);
     }
-
 }

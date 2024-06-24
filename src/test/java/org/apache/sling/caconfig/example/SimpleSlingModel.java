@@ -25,13 +25,12 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 @Model(adaptables = Resource.class)
 public interface SimpleSlingModel {
 
-    @ValueMapValue(name="stringParam")
+    @ValueMapValue(name = "stringParam")
     String getStringParam();
 
-    @ValueMapValue(name="intParam", optional = true)
+    @ValueMapValue(name = "intParam", optional = true)
     int getIntParam();
 
-    @ValueMapValue(name="boolParam", optional = true)
+    @ValueMapValue(name = "boolParam", optional = true)
     boolean getBoolParam();
-
 }

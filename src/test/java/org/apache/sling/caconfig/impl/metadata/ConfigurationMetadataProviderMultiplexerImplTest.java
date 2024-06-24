@@ -18,15 +18,13 @@
  */
 package org.apache.sling.caconfig.impl.metadata;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
 import org.apache.sling.caconfig.impl.def.DefaultConfigurationPersistenceStrategy;
 import org.apache.sling.caconfig.management.impl.ConfigurationManagementSettingsImpl;
 import org.apache.sling.caconfig.management.impl.ConfigurationPersistenceStrategyMultiplexerImpl;
@@ -39,8 +37,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class ConfigurationMetadataProviderMultiplexerImplTest {
 
@@ -96,7 +95,7 @@ public class ConfigurationMetadataProviderMultiplexerImplTest {
     }
 
     private void registerConfigurationMetadataProvider(String... names) {
-        final Map<String,ConfigurationMetadata> metadata = new HashMap<>();
+        final Map<String, ConfigurationMetadata> metadata = new HashMap<>();
         for (String name : names) {
             metadata.put(name, new ConfigurationMetadata(name, ImmutableList.<PropertyMetadata<?>>of(), false));
         }
@@ -105,11 +104,11 @@ public class ConfigurationMetadataProviderMultiplexerImplTest {
             public @NotNull SortedSet<String> getConfigurationNames() {
                 return new TreeSet<>(metadata.keySet());
             }
+
             @Override
             public ConfigurationMetadata getConfigurationMetadata(String configName) {
                 return metadata.get(configName);
             }
         });
     }
-
 }

@@ -41,7 +41,6 @@ import jakarta.json.JsonReader;
 import jakarta.json.JsonReaderFactory;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
-
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
@@ -63,7 +62,8 @@ class OverrideStringParser {
 
     private static final Pattern OVERRIDE_PATTERN = Pattern.compile("^(\\[([^\\[\\]=]+)\\])?([^\\[\\]=]+)=(.*)$");
 
-    private static final JsonReaderFactory JSON_READER_FACTORY = Json.createReaderFactory(Collections.<String,Object>emptyMap());
+    private static final JsonReaderFactory JSON_READER_FACTORY =
+            Json.createReaderFactory(Collections.<String, Object>emptyMap());
 
     private OverrideStringParser() {
         // static method sonly
@@ -97,8 +97,7 @@ class OverrideStringParser {
                 JsonObject json = toJson(value);
                 if (json != null) {
                     item = new OverrideItem(path, configName, toMap(json), true);
-                }
-                else {
+                } else {
                     // otherwise it defines a key/value pair in a single line
                     String propertyName = StringUtils.substringAfterLast(configName, "/");
                     if (StringUtils.isEmpty(propertyName)) {
@@ -106,13 +105,15 @@ class OverrideStringParser {
                         continue;
                     }
                     configName = StringUtils.substringBeforeLast(configName, "/");
-                    Map<String,Object> props = new HashMap<>();
+                    Map<String, Object> props = new HashMap<>();
                     props.put(propertyName, convertJsonValue(value));
                     item = new OverrideItem(path, configName, props, false);
                 }
-            }
-            catch (JsonException ex) {
-                log.warn("Ignore config override string - invalid JSON syntax ({}): {}", ex.getMessage(), overrideString);
+            } catch (JsonException ex) {
+                log.warn(
+                        "Ignore config override string - invalid JSON syntax ({}): {}",
+                        ex.getMessage(),
+                        overrideString);
                 continue;
             }
 
@@ -158,8 +159,7 @@ class OverrideStringParser {
         try (Reader reader = new StringReader(value);
                 JsonReader jsonReader = JSON_READER_FACTORY.createReader(reader)) {
             return jsonReader.readObject();
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             return null;
         }
     }
@@ -169,8 +169,8 @@ class OverrideStringParser {
      * @param json JSON object
      * @return Map (keys/values are not validated)
      */
-    private static Map<String,Object> toMap(JsonObject json) {
-        Map<String,Object> props = new HashMap<>();
+    private static Map<String, Object> toMap(JsonObject json) {
+        Map<String, Object> props = new HashMap<>();
         Iterator<String> keys = json.keySet().iterator();
         while (keys.hasNext()) {
             String key = keys.next();
@@ -193,26 +193,26 @@ class OverrideStringParser {
 
     private static Object convertJsonValue(JsonValue jsonValue) {
         switch (jsonValue.getValueType()) {
-        case STRING:
-            return ((JsonString)jsonValue).getString();
-        case NUMBER:
-            JsonNumber number = (JsonNumber)jsonValue;
-            if (number.isIntegral()) {
-                return number.longValue();
-            }
-            else {
-                return number.doubleValue();
-            }
-        case TRUE:
-            return true;
-        case FALSE:
-            return false;
-        case NULL:
-            return null;
-        case ARRAY:
-            return convertJsonArray((JsonArray)jsonValue);
-        default:
-            throw new RuntimeException("Unexpected JSON value type: " + jsonValue.getValueType() + ": " + jsonValue);
+            case STRING:
+                return ((JsonString) jsonValue).getString();
+            case NUMBER:
+                JsonNumber number = (JsonNumber) jsonValue;
+                if (number.isIntegral()) {
+                    return number.longValue();
+                } else {
+                    return number.doubleValue();
+                }
+            case TRUE:
+                return true;
+            case FALSE:
+                return false;
+            case NULL:
+                return null;
+            case ARRAY:
+                return convertJsonArray((JsonArray) jsonValue);
+            default:
+                throw new RuntimeException(
+                        "Unexpected JSON value type: " + jsonValue.getValueType() + ": " + jsonValue);
         }
     }
 
@@ -222,7 +222,7 @@ class OverrideStringParser {
             if (firstValue != null) {
                 Class firstType = firstValue.getClass();
                 Object convertedArray = Array.newInstance(firstType, jsonArray.size());
-                for (int i=0; i<jsonArray.size(); i++) {
+                for (int i = 0; i < jsonArray.size(); i++) {
                     Array.set(convertedArray, i, convertJsonValue(jsonArray.get(i)));
                 }
                 return convertedArray;
@@ -238,7 +238,8 @@ class OverrideStringParser {
      * @return true if item is valid
      */
     private static boolean isValid(OverrideItem item, String overrideString) {
-        if (item.getPath() != null && (!StringUtils.startsWith(item.getPath(), "/") || StringUtils.contains(item.getPath(), ".."))) {
+        if (item.getPath() != null
+                && (!StringUtils.startsWith(item.getPath(), "/") || StringUtils.contains(item.getPath(), ".."))) {
             log.warn("Ignore config override string - invalid path: {}", overrideString);
             return false;
         }
@@ -249,12 +250,17 @@ class OverrideStringParser {
         for (Map.Entry<String, Object> entry : item.getProperties().entrySet()) {
             String propertyName = entry.getKey();
             if (StringUtils.isEmpty(propertyName) || StringUtils.contains(propertyName, "/")) {
-                log.warn("Ignore config override string - invalid property name ({}): {}", propertyName, overrideString);
+                log.warn(
+                        "Ignore config override string - invalid property name ({}): {}", propertyName, overrideString);
                 return false;
             }
             Object value = entry.getValue();
             if (value == null || !isSupportedType(value)) {
-                log.warn("Ignore config override string - invalid property value ({} - {}): {}", value, value != null ? value.getClass().getName() : "", overrideString);
+                log.warn(
+                        "Ignore config override string - invalid property value ({} - {}): {}",
+                        value,
+                        value != null ? value.getClass().getName() : "",
+                        overrideString);
                 return false;
             }
         }
@@ -275,7 +281,7 @@ class OverrideStringParser {
             clazz = clazz.getComponentType();
         }
         for (Class type : PropertyMetadata.SUPPORTED_TYPES) {
-            if (type.equals(clazz )) {
+            if (type.equals(clazz)) {
                 return true;
             }
             if (type.isPrimitive() && ClassUtils.primitiveToWrapper(type).equals(clazz)) {
@@ -284,5 +290,4 @@ class OverrideStringParser {
         }
         return false;
     }
-
 }

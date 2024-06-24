@@ -43,5 +43,4 @@ public @interface IllegalTypesConfig {
     char charSingle();
 
     char[] charArray();
-
 }

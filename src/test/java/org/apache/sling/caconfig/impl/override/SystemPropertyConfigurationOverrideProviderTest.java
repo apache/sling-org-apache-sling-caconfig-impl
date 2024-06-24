@@ -18,9 +18,6 @@
  */
 package org.apache.sling.caconfig.impl.override;
 
-import static org.apache.sling.caconfig.impl.override.SystemPropertyConfigurationOverrideProvider.SYSTEM_PROPERTY_PREFIX;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Collection;
 
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
@@ -28,6 +25,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
+import static org.apache.sling.caconfig.impl.override.SystemPropertyConfigurationOverrideProvider.SYSTEM_PROPERTY_PREFIX;
+import static org.junit.Assert.assertTrue;
 
 public class SystemPropertyConfigurationOverrideProviderTest {
 
@@ -49,8 +49,7 @@ public class SystemPropertyConfigurationOverrideProviderTest {
     @Test
     public void testEnabled() {
         SystemPropertyConfigurationOverrideProvider provider = context.registerInjectActivateService(
-                new SystemPropertyConfigurationOverrideProvider(),
-                "enabled", true);
+                new SystemPropertyConfigurationOverrideProvider(), "enabled", true);
 
         Collection<String> overrides = provider.getOverrideStrings();
         assertTrue(overrides.contains("test/param1=value1"));
@@ -60,11 +59,9 @@ public class SystemPropertyConfigurationOverrideProviderTest {
     @Test
     public void testDisabled() {
         SystemPropertyConfigurationOverrideProvider provider = context.registerInjectActivateService(
-                new SystemPropertyConfigurationOverrideProvider(),
-                "enabled", false);
+                new SystemPropertyConfigurationOverrideProvider(), "enabled", false);
 
         Collection<String> overrides = provider.getOverrideStrings();
         assertTrue(overrides.isEmpty());
     }
-
 }

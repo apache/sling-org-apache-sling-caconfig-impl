@@ -18,25 +18,24 @@
  */
 package org.apache.sling.caconfig.impl.override;
 
+import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
+import org.junit.Before;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Map;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.collect.ImmutableMap;
-
 public class OverrideItemTest {
 
-    private Map<String,Object> props;
+    private Map<String, Object> props;
     private OverrideItem underTest;
 
     @Before
     public void setUp() {
-        props = ImmutableMap.<String,Object>of("p1", "abc", "p2", 55);
+        props = ImmutableMap.<String, Object>of("p1", "abc", "p2", 55);
         underTest = new OverrideItem("/a/b", "c/d", props, true);
     }
 
@@ -55,5 +54,4 @@ public class OverrideItemTest {
         assertFalse(underTest.matchesPath("/a"));
         assertFalse(underTest.matchesPath("/other"));
     }
-
 }

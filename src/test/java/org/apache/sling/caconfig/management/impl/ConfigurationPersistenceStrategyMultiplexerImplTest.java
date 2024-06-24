@@ -18,12 +18,7 @@
  */
 package org.apache.sling.caconfig.management.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
+import com.google.common.collect.ImmutableList;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.caconfig.impl.def.DefaultConfigurationPersistenceStrategy;
@@ -41,7 +36,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.osgi.framework.Constants;
 
-import com.google.common.collect.ImmutableList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public class ConfigurationPersistenceStrategyMultiplexerImplTest {
 
@@ -69,11 +68,15 @@ public class ConfigurationPersistenceStrategyMultiplexerImplTest {
     public void testWithNoStrategies() {
         assertNull(underTest.getResource(resource1));
         assertNull(underTest.getResourcePath(resource1.getPath()));
-        assertFalse(underTest.persistConfiguration(context.resourceResolver(), "/conf/test1", new ConfigurationPersistData(resource1.getValueMap())));
-        assertFalse(underTest.persistConfigurationCollection(context.resourceResolver(), "/conf/testCol",
+        assertFalse(underTest.persistConfiguration(
+                context.resourceResolver(), "/conf/test1", new ConfigurationPersistData(resource1.getValueMap())));
+        assertFalse(underTest.persistConfigurationCollection(
+                context.resourceResolver(),
+                "/conf/testCol",
                 new ConfigurationCollectionPersistData(ImmutableList.of(
                         new ConfigurationPersistData(resource1.getValueMap()).collectionItemName(resource1.getName()),
-                        new ConfigurationPersistData(resource2.getValueMap()).collectionItemName(resource2.getName())))));
+                        new ConfigurationPersistData(resource2.getValueMap())
+                                .collectionItemName(resource2.getName())))));
         assertFalse(underTest.deleteConfiguration(context.resourceResolver(), "/conf/test1"));
     }
 
@@ -83,120 +86,172 @@ public class ConfigurationPersistenceStrategyMultiplexerImplTest {
 
         assertSame(resource1, underTest.getResource(resource1));
         assertEquals(resource1.getPath(), underTest.getResourcePath(resource1.getPath()));
-        assertTrue(underTest.persistConfiguration(context.resourceResolver(), "/conf/test1", new ConfigurationPersistData(resource1.getValueMap())));
-        assertTrue(underTest.persistConfigurationCollection(context.resourceResolver(), "/conf/testCol",
+        assertTrue(underTest.persistConfiguration(
+                context.resourceResolver(), "/conf/test1", new ConfigurationPersistData(resource1.getValueMap())));
+        assertTrue(underTest.persistConfigurationCollection(
+                context.resourceResolver(),
+                "/conf/testCol",
                 new ConfigurationCollectionPersistData(ImmutableList.of(
                         new ConfigurationPersistData(resource1.getValueMap()).collectionItemName(resource1.getName()),
-                        new ConfigurationPersistData(resource2.getValueMap()).collectionItemName(resource2.getName())))));
+                        new ConfigurationPersistData(resource2.getValueMap())
+                                .collectionItemName(resource2.getName())))));
         assertTrue(underTest.deleteConfiguration(context.resourceResolver(), "/conf/test1"));
     }
 
     @Test
-    @SuppressWarnings({ "deprecation", "null" })
+    @SuppressWarnings({"deprecation", "null"})
     public void testMultipleStrategies() {
 
         // strategy 1 (using old ConfigurationPersistenceStrategy with bridge to ConfigurationPersistenceStrategy2)
-        org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy oldStrategy = context.registerService(org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy.class,
+        org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy oldStrategy = context.registerService(
+                org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy.class,
                 new org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy() {
-            @Override
-            public Resource getResource(@NotNull Resource resource) {
-                return resource2;
-            }
-            @Override
-            public String getResourcePath(@NotNull String resourcePath) {
-                return resource2.getPath();
-            }
-            @Override
-            public boolean persistConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath,
-                    @NotNull ConfigurationPersistData data) {
-                return true;
-            }
-            @Override
-            public boolean persistConfigurationCollection(@NotNull ResourceResolver resourceResolver,
-                    @NotNull String configResourceCollectionParentPath, @NotNull ConfigurationCollectionPersistData data) {
-                return false;
-            }
-            @Override
-            public boolean deleteConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath) {
-                return false;
-            }
-        }, Constants.SERVICE_RANKING, 2000);
+                    @Override
+                    public Resource getResource(@NotNull Resource resource) {
+                        return resource2;
+                    }
 
-        // bind manually as mock-osgi currently does not support tracking references to OSGi components which are not OSGi services
+                    @Override
+                    public String getResourcePath(@NotNull String resourcePath) {
+                        return resource2.getPath();
+                    }
+
+                    @Override
+                    public boolean persistConfiguration(
+                            @NotNull ResourceResolver resourceResolver,
+                            @NotNull String configResourcePath,
+                            @NotNull ConfigurationPersistData data) {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean persistConfigurationCollection(
+                            @NotNull ResourceResolver resourceResolver,
+                            @NotNull String configResourceCollectionParentPath,
+                            @NotNull ConfigurationCollectionPersistData data) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean deleteConfiguration(
+                            @NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath) {
+                        return false;
+                    }
+                },
+                Constants.SERVICE_RANKING,
+                2000);
+
+        // bind manually as mock-osgi currently does not support tracking references to OSGi components which are not
+        // OSGi services
         bridge.bindConfigurationPersistenceStrategy(oldStrategy, MapUtil.toMap(Constants.SERVICE_RANKING, 2000));
 
         // strategy 2
-        context.registerService(ConfigurationPersistenceStrategy2.class, new ConfigurationPersistenceStrategy2() {
-            @Override
-            public Resource getResource(@NotNull Resource resource) {
-                return resource1;
-            }
-            @Override
-            public Resource getCollectionParentResource(@NotNull Resource resource) {
-                return resource1;
-            }
-            @Override
-            public Resource getCollectionItemResource(@NotNull Resource resource) {
-                return resource1;
-            }
-            @Override
-            public String getResourcePath(@NotNull String resourcePath) {
-                return resource1.getPath();
-            }
-            @Override
-            public String getCollectionParentResourcePath(@NotNull String resourcePath) {
-                return resource1.getPath();
-            }
-            @Override
-            public String getCollectionItemResourcePath(@NotNull String resourcePath) {
-                return resource1.getPath();
-            }
-            @Override
-            public String getConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
-                return resource1.getPath();
-            }
-            @Override
-            public String getCollectionParentConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
-                return resource1.getPath();
-            }
-            @Override
-            public String getCollectionItemConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
-                return resource1.getPath();
-            }
-            @Override
-            public boolean persistConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath,
-                    @NotNull ConfigurationPersistData data) {
-                return false;
-            }
-            @Override
-            public boolean persistConfigurationCollection(@NotNull ResourceResolver resourceResolver,
-                    @NotNull String configResourceCollectionParentPath, @NotNull ConfigurationCollectionPersistData data) {
-                return true;
-            }
-            @Override
-            public boolean deleteConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath) {
-                return true;
-            }
-        }, Constants.SERVICE_RANKING, 1000);
+        context.registerService(
+                ConfigurationPersistenceStrategy2.class,
+                new ConfigurationPersistenceStrategy2() {
+                    @Override
+                    public Resource getResource(@NotNull Resource resource) {
+                        return resource1;
+                    }
+
+                    @Override
+                    public Resource getCollectionParentResource(@NotNull Resource resource) {
+                        return resource1;
+                    }
+
+                    @Override
+                    public Resource getCollectionItemResource(@NotNull Resource resource) {
+                        return resource1;
+                    }
+
+                    @Override
+                    public String getResourcePath(@NotNull String resourcePath) {
+                        return resource1.getPath();
+                    }
+
+                    @Override
+                    public String getCollectionParentResourcePath(@NotNull String resourcePath) {
+                        return resource1.getPath();
+                    }
+
+                    @Override
+                    public String getCollectionItemResourcePath(@NotNull String resourcePath) {
+                        return resource1.getPath();
+                    }
+
+                    @Override
+                    public String getConfigName(@NotNull String configName, @Nullable String relatedConfigPath) {
+                        return resource1.getPath();
+                    }
+
+                    @Override
+                    public String getCollectionParentConfigName(
+                            @NotNull String configName, @Nullable String relatedConfigPath) {
+                        return resource1.getPath();
+                    }
+
+                    @Override
+                    public String getCollectionItemConfigName(
+                            @NotNull String configName, @Nullable String relatedConfigPath) {
+                        return resource1.getPath();
+                    }
+
+                    @Override
+                    public boolean persistConfiguration(
+                            @NotNull ResourceResolver resourceResolver,
+                            @NotNull String configResourcePath,
+                            @NotNull ConfigurationPersistData data) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean persistConfigurationCollection(
+                            @NotNull ResourceResolver resourceResolver,
+                            @NotNull String configResourceCollectionParentPath,
+                            @NotNull ConfigurationCollectionPersistData data) {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean deleteConfiguration(
+                            @NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath) {
+                        return true;
+                    }
+                },
+                Constants.SERVICE_RANKING,
+                1000);
 
         assertEquals(resource2.getPath(), underTest.getResource(resource1).getPath());
-        assertEquals(resource1.getPath(), underTest.getCollectionParentResource(resource1).getPath());
-        assertEquals(resource2.getPath(), underTest.getCollectionItemResource(resource1).getPath());
+        assertEquals(
+                resource1.getPath(),
+                underTest.getCollectionParentResource(resource1).getPath());
+        assertEquals(
+                resource2.getPath(),
+                underTest.getCollectionItemResource(resource1).getPath());
         assertEquals(resource2.getPath(), underTest.getResourcePath(resource1.getPath()));
         assertEquals(resource1.getPath(), underTest.getCollectionParentResourcePath(resource1.getPath()));
         assertEquals(resource2.getPath(), underTest.getCollectionItemResourcePath(resource1.getPath()));
         assertEquals(resource2.getPath(), underTest.getConfigName(resource1.getPath(), null));
         assertEquals(resource1.getPath(), underTest.getCollectionParentConfigName(resource1.getPath(), null));
         assertEquals(resource2.getPath(), underTest.getCollectionItemConfigName(resource1.getPath(), null));
-        assertEquals(ImmutableList.of(resource2.getPath(), resource1.getPath()), ImmutableList.copyOf(underTest.getAllConfigNames(resource1.getPath())));
-        assertEquals(ImmutableList.of(resource1.getPath()), ImmutableList.copyOf(underTest.getAllCollectionParentConfigNames(resource1.getPath())));
-        assertEquals(ImmutableList.of(resource2.getPath(), resource1.getPath()), ImmutableList.copyOf(underTest.getAllCollectionItemConfigNames(resource1.getPath())));
-        assertTrue(underTest.persistConfiguration(context.resourceResolver(), "/conf/test1", new ConfigurationPersistData(resource1.getValueMap())));
-        assertTrue(underTest.persistConfigurationCollection(context.resourceResolver(), "/conf/testCol",
+        assertEquals(
+                ImmutableList.of(resource2.getPath(), resource1.getPath()),
+                ImmutableList.copyOf(underTest.getAllConfigNames(resource1.getPath())));
+        assertEquals(
+                ImmutableList.of(resource1.getPath()),
+                ImmutableList.copyOf(underTest.getAllCollectionParentConfigNames(resource1.getPath())));
+        assertEquals(
+                ImmutableList.of(resource2.getPath(), resource1.getPath()),
+                ImmutableList.copyOf(underTest.getAllCollectionItemConfigNames(resource1.getPath())));
+        assertTrue(underTest.persistConfiguration(
+                context.resourceResolver(), "/conf/test1", new ConfigurationPersistData(resource1.getValueMap())));
+        assertTrue(underTest.persistConfigurationCollection(
+                context.resourceResolver(),
+                "/conf/testCol",
                 new ConfigurationCollectionPersistData(ImmutableList.of(
                         new ConfigurationPersistData(resource1.getValueMap()).collectionItemName(resource1.getName()),
-                        new ConfigurationPersistData(resource2.getValueMap()).collectionItemName(resource2.getName())))));
+                        new ConfigurationPersistData(resource2.getValueMap())
+                                .collectionItemName(resource2.getName())))));
         assertTrue(underTest.deleteConfiguration(context.resourceResolver(), "/conf/test1"));
     }
-
 }

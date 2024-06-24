@@ -18,13 +18,13 @@
  */
 package org.apache.sling.caconfig.impl.metadata;
 
-import static org.apache.sling.caconfig.impl.ConfigurationNameConstants.CONFIGURATION_CLASSES_HEADER;
-
 import java.util.Dictionary;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
+
+import static org.apache.sling.caconfig.impl.ConfigurationNameConstants.CONFIGURATION_CLASSES_HEADER;
 
 /**
  * Detects deployed bundles with configuration class header.
@@ -47,7 +47,7 @@ class ConfigClassBundleTackerCustomizer implements BundleTrackerCustomizer<Bundl
         BundleConfigurationMapping bundleMapping = new BundleConfigurationMapping(bundle, classeNamesList);
         metadataProvider.addBundeMapping(bundleMapping);
         return bundleMapping;
-   }
+    }
 
     @Override
     public void modifiedBundle(Bundle bundle, BundleEvent event, BundleConfigurationMapping bundleMapping) {
@@ -58,5 +58,4 @@ class ConfigClassBundleTackerCustomizer implements BundleTrackerCustomizer<Bundl
     public void removedBundle(Bundle bundle, BundleEvent event, BundleConfigurationMapping bundleMapping) {
         metadataProvider.removeBundleMapping(bundleMapping);
     }
-
 }

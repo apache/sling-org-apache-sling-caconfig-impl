@@ -18,15 +18,14 @@
  */
 package org.apache.sling.caconfig.resource.impl.util;
 
+import java.util.Collection;
+
+import com.google.common.collect.ImmutableList;
+import org.junit.Test;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Collection;
-
-import org.junit.Test;
-
-import com.google.common.collect.ImmutableList;
 
 public class ConfigNameUtilTest {
 
@@ -41,13 +40,13 @@ public class ConfigNameUtilTest {
         assertTrue(ConfigNameUtil.isValid(ImmutableList.of("a")));
         assertTrue(ConfigNameUtil.isValid(ImmutableList.of("a", "a/b", "a/b/c")));
 
-        assertFalse(ConfigNameUtil.isValid((String)null));
+        assertFalse(ConfigNameUtil.isValid((String) null));
         assertFalse(ConfigNameUtil.isValid(""));
         assertFalse(ConfigNameUtil.isValid("/a"));
         assertFalse(ConfigNameUtil.isValid("/a/b/c"));
         assertFalse(ConfigNameUtil.isValid("a/b/../c"));
 
-        assertFalse(ConfigNameUtil.isValid((Collection<String>)null));
+        assertFalse(ConfigNameUtil.isValid((Collection<String>) null));
         assertFalse(ConfigNameUtil.isValid(ImmutableList.of("a", "/a")));
     }
 
@@ -56,8 +55,8 @@ public class ConfigNameUtilTest {
         assertArrayEquals(new String[0], ConfigNameUtil.getAllPartialConfigNameVariations(""));
         assertArrayEquals(new String[0], ConfigNameUtil.getAllPartialConfigNameVariations("a"));
         assertArrayEquals(new String[] {"a"}, ConfigNameUtil.getAllPartialConfigNameVariations("a/b"));
-        assertArrayEquals(new String[] {"a","a/b"}, ConfigNameUtil.getAllPartialConfigNameVariations("a/b/c"));
-        assertArrayEquals(new String[] {"a","a/b","a/b/c"}, ConfigNameUtil.getAllPartialConfigNameVariations("a/b/c/d"));
+        assertArrayEquals(new String[] {"a", "a/b"}, ConfigNameUtil.getAllPartialConfigNameVariations("a/b/c"));
+        assertArrayEquals(
+                new String[] {"a", "a/b", "a/b/c"}, ConfigNameUtil.getAllPartialConfigNameVariations("a/b/c/d"));
     }
-
 }

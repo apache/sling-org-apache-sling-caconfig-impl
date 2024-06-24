@@ -49,11 +49,15 @@ import org.osgi.service.component.annotations.Component;
 /**
  * Web console configuration printer.
  */
-@Component(service=InventoryPrinter.class,
-property={Constants.SERVICE_DESCRIPTION + "=Apache Sling Context-Aware Configuration Resolver Console Inventory Printer",
-        InventoryPrinter.NAME + "=" + CAConfigInventoryPrinter.NAME,
-        InventoryPrinter.TITLE + "=" + CAConfigInventoryPrinter.TITLE,
-        InventoryPrinter.FORMAT + "=TEXT"})
+@Component(
+        service = InventoryPrinter.class,
+        property = {
+            Constants.SERVICE_DESCRIPTION
+                    + "=Apache Sling Context-Aware Configuration Resolver Console Inventory Printer",
+            InventoryPrinter.NAME + "=" + CAConfigInventoryPrinter.NAME,
+            InventoryPrinter.TITLE + "=" + CAConfigInventoryPrinter.TITLE,
+            InventoryPrinter.FORMAT + "=TEXT"
+        })
 public class CAConfigInventoryPrinter implements InventoryPrinter {
 
     public static final String NAME = "slingcaconfig";
@@ -73,19 +77,30 @@ public class CAConfigInventoryPrinter implements InventoryPrinter {
         }
 
         printSPISection(pw, ContextPathStrategy.class, "Context Path Strategies");
-        printSPISection(pw, ConfigurationResourceResolvingStrategy.class, "Configuration Resource Resolving Strategies");
+        printSPISection(
+                pw, ConfigurationResourceResolvingStrategy.class, "Configuration Resource Resolving Strategies");
         printSPISection(pw, CollectionInheritanceDecider.class, "Collection Inheritance Deciders");
         printSPISection(pw, ConfigurationInheritanceStrategy.class, "Configuration Inheritance Strategies");
-        printSPISection(pw, ConfigurationPersistenceStrategy2.class, "Configuration Persistance Strategies",
+        printSPISection(
+                pw,
+                ConfigurationPersistenceStrategy2.class,
+                "Configuration Persistance Strategies",
                 new ConfigurationPersistenceStrategyPrinter());
-        printSPISection(pw, ConfigurationMetadataProvider.class, "Configuration Metadata Providers",
+        printSPISection(
+                pw,
+                ConfigurationMetadataProvider.class,
+                "Configuration Metadata Providers",
                 new ConfigurationMetadataPrinter());
-        printSPISection(pw, ConfigurationOverrideProvider.class, "Configuration Override Providers",
+        printSPISection(
+                pw,
+                ConfigurationOverrideProvider.class,
+                "Configuration Override Providers",
                 new ConfigurationOverridePrinter());
     }
 
     @SafeVarargs
-    private final <T> void printSPISection(PrintWriter pw, Class<T> clazz, String title, ServiceConfigurationPrinter<T>... serviceConfigPrinters) {
+    private final <T> void printSPISection(
+            PrintWriter pw, Class<T> clazz, String title, ServiceConfigurationPrinter<T>... serviceConfigPrinters) {
         Collection<ServiceReference<T>> serviceReferences = getServiceReferences(clazz);
 
         pw.println(title);
@@ -93,8 +108,7 @@ public class CAConfigInventoryPrinter implements InventoryPrinter {
 
         if (serviceReferences.isEmpty()) {
             pw.println("(none)");
-        }
-        else {
+        } else {
             for (ServiceReference<T> serviceReference : serviceReferences) {
                 pw.print(ServiceConfigurationPrinter.BULLET);
                 pw.print(getServiceClassName(serviceReference));
@@ -115,21 +129,18 @@ public class CAConfigInventoryPrinter implements InventoryPrinter {
 
     private <T> Collection<ServiceReference<T>> getServiceReferences(Class<T> clazz) {
         try {
-            SortedMap<Comparable<Object>,ServiceReference<T>> sortedServices = new TreeMap<>();
+            SortedMap<Comparable<Object>, ServiceReference<T>> sortedServices = new TreeMap<>();
             Collection<ServiceReference<T>> serviceReferences = bundleContext.getServiceReferences(clazz, null);
             for (ServiceReference<T> serviceReference : serviceReferences) {
-                Map<String,Object> props = new HashMap<>();
+                Map<String, Object> props = new HashMap<>();
                 for (String property : serviceReference.getPropertyKeys()) {
                     props.put(property, serviceReference.getProperty(property));
                 }
                 sortedServices.put(
-                        ServiceUtil.getComparableForServiceRanking(props, Order.DESCENDING),
-                        serviceReference
-                );
+                        ServiceUtil.getComparableForServiceRanking(props, Order.DESCENDING), serviceReference);
             }
             return sortedServices.values();
-        }
-        catch (InvalidSyntaxException ex) {
+        } catch (InvalidSyntaxException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -146,12 +157,10 @@ public class CAConfigInventoryPrinter implements InventoryPrinter {
         Object serviceRanking = serviceReference.getProperty(Constants.SERVICE_RANKING);
         if (serviceRanking == null) {
             return 0;
-        }
-        else {
+        } else {
             if (serviceRanking instanceof Number) {
-                return ((Number)serviceRanking).intValue();
-            }
-            else {
+                return ((Number) serviceRanking).intValue();
+            } else {
                 return NumberUtils.toInt(serviceRanking.toString(), 0);
             }
         }
@@ -161,13 +170,11 @@ public class CAConfigInventoryPrinter implements InventoryPrinter {
         Object enabledObject = serviceReference.getProperty("enabled");
         if (enabledObject != null) {
             if (enabledObject instanceof Boolean) {
-                return ((Boolean)enabledObject).booleanValue();
-            }
-            else {
+                return ((Boolean) enabledObject).booleanValue();
+            } else {
                 return BooleanUtils.toBoolean(enabledObject.toString());
             }
         }
         return true;
     }
-
 }

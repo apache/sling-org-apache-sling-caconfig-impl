@@ -33,7 +33,10 @@ import org.osgi.framework.ServiceReference;
 class ConfigurationMetadataPrinter implements ServiceConfigurationPrinter<ConfigurationMetadataProvider> {
 
     @Override
-    public void printConfiguration(PrintWriter pw, ServiceReference<ConfigurationMetadataProvider> serviceReference, BundleContext bundleContext) {
+    public void printConfiguration(
+            PrintWriter pw,
+            ServiceReference<ConfigurationMetadataProvider> serviceReference,
+            BundleContext bundleContext) {
         ConfigurationMetadataProvider service = bundleContext.getService(serviceReference);
 
         for (String configName : service.getConfigurationNames()) {
@@ -68,16 +71,14 @@ class ConfigurationMetadataPrinter implements ServiceConfigurationPrinter<Config
 
     private void printValue(PrintWriter pw, Object value) {
         if (value.getClass().isArray()) {
-            for (int i=0; i<Array.getLength(value); i++) {
+            for (int i = 0; i < Array.getLength(value); i++) {
                 if (i > 0) {
                     pw.print(", ");
                 }
                 printValue(pw, Array.get(value, i));
             }
-        }
-        else {
+        } else {
             pw.print(value);
         }
     }
-
 }

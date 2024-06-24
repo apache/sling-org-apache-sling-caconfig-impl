@@ -18,30 +18,27 @@
  */
 package org.apache.sling.caconfig.resource.impl.util;
 
-import static org.apache.sling.caconfig.resource.impl.util.MapUtil.traceOutput;
-import static org.junit.Assert.assertEquals;
-
+import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableMap;
+import static org.apache.sling.caconfig.resource.impl.util.MapUtil.traceOutput;
+import static org.junit.Assert.assertEquals;
 
 public class MapUtilTest {
 
     @Test
     public void testTraceOutput() {
-        assertEquals("{}", traceOutput(ImmutableMap.<String,Object>of()));
+        assertEquals("{}", traceOutput(ImmutableMap.<String, Object>of()));
 
-        assertEquals("{prop1: 'aa', prop2: 5, prop3: true}", traceOutput(ImmutableMap.<String,Object>of(
-                "prop1", "aa",
-                "prop2", 5,
-                "prop3", true
-                )));
+        assertEquals(
+                "{prop1: 'aa', prop2: 5, prop3: true}",
+                traceOutput(ImmutableMap.<String, Object>of("prop1", "aa", "prop2", 5, "prop3", true)));
 
-        assertEquals("{prop1: ['aa','bb'], prop2: [5,10], prop3: true}", traceOutput(ImmutableMap.<String,Object>of(
-                "prop1", new String[] { "aa", "bb" },
-                "prop2", new Integer[] { 5, 10 },
-                "prop3", true
-                )));
+        assertEquals(
+                "{prop1: ['aa','bb'], prop2: [5,10], prop3: true}",
+                traceOutput(ImmutableMap.<String, Object>of(
+                        "prop1", new String[] {"aa", "bb"},
+                        "prop2", new Integer[] {5, 10},
+                        "prop3", true)));
     }
-
 }

@@ -52,13 +52,18 @@ import org.slf4j.LoggerFactory;
  * Detects all {@link ConfigurationOverrideProvider} implementations in the container
  * and consolidates their result based on service ranking.
  */
-@Component(service = ConfigurationOverrideMultiplexer.class,
-reference={
-        @Reference(name="configurationOverrideProvider", service=ConfigurationOverrideProvider.class,
-                bind="bindConfigurationOverrideProvider", unbind="unbindConfigurationOverrideProvider",
-                cardinality=ReferenceCardinality.MULTIPLE,
-                policy=ReferencePolicy.DYNAMIC, policyOption=ReferencePolicyOption.GREEDY)
-})
+@Component(
+        service = ConfigurationOverrideMultiplexer.class,
+        reference = {
+            @Reference(
+                    name = "configurationOverrideProvider",
+                    service = ConfigurationOverrideProvider.class,
+                    bind = "bindConfigurationOverrideProvider",
+                    unbind = "unbindConfigurationOverrideProvider",
+                    cardinality = ReferenceCardinality.MULTIPLE,
+                    policy = ReferencePolicy.DYNAMIC,
+                    policyOption = ReferencePolicyOption.GREEDY)
+        })
 public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverrideMultiplexer, ChangeListener {
 
     private RankedServices<ConfigurationOverrideProvider> items = new RankedServices<>(Order.DESCENDING, this);
@@ -87,12 +92,13 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
     }
 
     @Override
-    public Map<String,Object> overrideProperties(@NotNull String contextPath, @NotNull String configName, @NotNull Map<String,Object> properties) {
+    public Map<String, Object> overrideProperties(
+            @NotNull String contextPath, @NotNull String configName, @NotNull Map<String, Object> properties) {
         if (allOverrides.size() == 0) {
             return null;
         }
         boolean anyMatch = false;
-        Map<String,Object> overrideProperties = new HashMap<>(properties);
+        Map<String, Object> overrideProperties = new HashMap<>(properties);
 
         for (OverrideItem override : allOverrides) {
             if (StringUtils.equals(configName, override.getConfigName()) && override.matchesPath(contextPath)) {
@@ -106,14 +112,14 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
 
         if (anyMatch) {
             return overrideProperties;
-        }
-        else {
+        } else {
             return null;
         }
     }
 
     @Override
-    public Resource overrideProperties(@NotNull String contextPath, @NotNull String configName, @Nullable Resource configResource) {
+    public Resource overrideProperties(
+            @NotNull String contextPath, @NotNull String configName, @Nullable Resource configResource) {
         if (configResource == null) {
             return null;
         }
@@ -121,20 +127,26 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
     }
 
     @Override
-    public Resource overrideProperties(@NotNull String contextPath, @NotNull String configName, @Nullable Resource configResource, @NotNull ResourceResolver resourceResolver) {
-        Map<String,Object> overrideProperties = overrideProperties(contextPath, configName, configResource != null ?  configResource.getValueMap() : ValueMap.EMPTY);
+    public Resource overrideProperties(
+            @NotNull String contextPath,
+            @NotNull String configName,
+            @Nullable Resource configResource,
+            @NotNull ResourceResolver resourceResolver) {
+        Map<String, Object> overrideProperties = overrideProperties(
+                contextPath, configName, configResource != null ? configResource.getValueMap() : ValueMap.EMPTY);
         if (overrideProperties == null) {
             return configResource;
         }
         Resource configResourceToUse = configResource;
         if (configResourceToUse == null) {
             // build synthetic resource if override properties exist
-            configResourceToUse = new SyntheticResource(resourceResolver, (String)null, (String)null);
+            configResourceToUse = new SyntheticResource(resourceResolver, (String) null, (String) null);
         }
         if (log.isTraceEnabled()) {
             log.trace("! Override properties for context path " + contextPath + ", name '" + configName + "', "
                     + (configResource != null ? "config path " + configResource.getPath() : "no config path") + ": "
-                    + (configResource != null ? MapUtil.traceOutput(configResource.getValueMap()) : "empty") + " -> " + MapUtil.traceOutput(overrideProperties));
+                    + (configResource != null ? MapUtil.traceOutput(configResource.getValueMap()) : "empty") + " -> "
+                    + MapUtil.traceOutput(overrideProperties));
         }
         return new ConfigurationResourceWrapper(configResourceToUse, new ValueMapDecorator(overrideProperties));
     }
@@ -148,11 +160,11 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
         for (ConfigurationOverrideProvider item : items) {
             Collection<OverrideItem> itemOverrides = OverrideStringParser.parse(item.getOverrideStrings());
             if (log.isDebugEnabled() && !itemOverrides.isEmpty()) {
-                log.debug("Override items from " + item.getClass().getName() + ":\n" + StringUtils.join(itemOverrides, "\n"));
+                log.debug("Override items from " + item.getClass().getName() + ":\n"
+                        + StringUtils.join(itemOverrides, "\n"));
             }
             overrides.addAll(itemOverrides);
         }
         allOverrides = overrides;
     }
-
 }

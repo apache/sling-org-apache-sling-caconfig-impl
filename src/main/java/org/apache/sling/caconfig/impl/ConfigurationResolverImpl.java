@@ -18,8 +18,6 @@
  */
 package org.apache.sling.caconfig.impl;
 
-import static org.apache.sling.caconfig.impl.ConfigurationNameConstants.CONFIGS_BUCKET_NAME;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,32 +40,42 @@ import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.Designate;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
-@Component(service={ ConfigurationResolver.class, ConfigurationResourceResolverConfig.class }, immediate=true)
-@Designate(ocd=ConfigurationResolverImpl.Config.class)
+import static org.apache.sling.caconfig.impl.ConfigurationNameConstants.CONFIGS_BUCKET_NAME;
+
+@Component(
+        service = {ConfigurationResolver.class, ConfigurationResourceResolverConfig.class},
+        immediate = true)
+@Designate(ocd = ConfigurationResolverImpl.Config.class)
 public class ConfigurationResolverImpl implements ConfigurationResolver, ConfigurationResourceResolverConfig {
 
     @Reference
     private ConfigurationResourceResolvingStrategyMultiplexer configurationResourceResolvingStrategy;
+
     @Reference
     private ConfigurationPersistenceStrategyMultiplexer configurationPersistenceStrategy;
+
     @Reference
     private ConfigurationInheritanceStrategyMultiplexer configurationInheritanceStrategy;
+
     @Reference
     private ConfigurationOverrideMultiplexer configurationOverrideMultiplexer;
+
     @Reference
     private ConfigurationMetadataProviderMultiplexer configurationMetadataProvider;
 
-    @ObjectClassDefinition(name="Apache Sling Context-Aware Configuration Resolver",
-            description="Getting context-aware configurations for a given resource context.")
+    @ObjectClassDefinition(
+            name = "Apache Sling Context-Aware Configuration Resolver",
+            description = "Getting context-aware configurations for a given resource context.")
     static @interface Config {
 
-        @AttributeDefinition(name = "Config bucket names",
-                description = "Additional bucket resource names to '" + CONFIGS_BUCKET_NAME + "' to store configuration resources. "
-                + "The names are used in the order defined, always starting with " + CONFIGS_BUCKET_NAME + ". "
-                + "Once a bucket resource with a matching name is found, that bucket is used and the following names are skipped. "
-                + "For writeback via ConfigurationManager always " + CONFIGS_BUCKET_NAME + " is used.")
+        @AttributeDefinition(
+                name = "Config bucket names",
+                description = "Additional bucket resource names to '" + CONFIGS_BUCKET_NAME
+                        + "' to store configuration resources. "
+                        + "The names are used in the order defined, always starting with " + CONFIGS_BUCKET_NAME + ". "
+                        + "Once a bucket resource with a matching name is found, that bucket is used and the following names are skipped. "
+                        + "For writeback via ConfigurationManager always " + CONFIGS_BUCKET_NAME + " is used.")
         String[] configBucketNames();
-
     }
 
     private Collection<String> configBucketNames;
@@ -83,9 +91,14 @@ public class ConfigurationResolverImpl implements ConfigurationResolver, Configu
 
     @Override
     public @NotNull ConfigurationBuilder get(@NotNull Resource resource) {
-        return new ConfigurationBuilderImpl(resource, this,
-                configurationResourceResolvingStrategy, configurationPersistenceStrategy,
-                configurationInheritanceStrategy, configurationOverrideMultiplexer, configurationMetadataProvider,
+        return new ConfigurationBuilderImpl(
+                resource,
+                this,
+                configurationResourceResolvingStrategy,
+                configurationPersistenceStrategy,
+                configurationInheritanceStrategy,
+                configurationOverrideMultiplexer,
+                configurationMetadataProvider,
                 configBucketNames);
     }
 
@@ -93,5 +106,4 @@ public class ConfigurationResolverImpl implements ConfigurationResolver, Configu
     public @NotNull Collection<String> configBucketNames() {
         return configBucketNames;
     }
-
 }

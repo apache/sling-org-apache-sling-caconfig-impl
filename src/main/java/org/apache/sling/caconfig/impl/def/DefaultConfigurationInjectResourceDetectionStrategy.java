@@ -30,11 +30,11 @@ import org.osgi.service.component.annotations.Component;
  * uses the resource of the current request.
  */
 @Component(service = ConfigurationInjectResourceDetectionStrategy.class)
-public class DefaultConfigurationInjectResourceDetectionStrategy implements ConfigurationInjectResourceDetectionStrategy {
+public class DefaultConfigurationInjectResourceDetectionStrategy
+        implements ConfigurationInjectResourceDetectionStrategy {
 
     @Override
     public @Nullable Resource detectResource(@NotNull final SlingHttpServletRequest request) {
         return request.getResource();
     }
-
 }
