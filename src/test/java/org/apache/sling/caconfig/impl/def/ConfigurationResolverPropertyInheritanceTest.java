@@ -18,14 +18,6 @@
  */
 package org.apache.sling.caconfig.impl.def;
 
-import static org.apache.sling.caconfig.impl.def.ConfigurationDefNameConstants.PROPERTY_CONFIG_PROPERTY_INHERIT;
-import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.not;
-
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.ConfigurationResolver;
 import org.apache.sling.caconfig.impl.ConfigurationTestUtils;
@@ -33,6 +25,14 @@ import org.apache.sling.testing.mock.sling.junit.SlingContext;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
+import static org.apache.sling.caconfig.impl.def.ConfigurationDefNameConstants.PROPERTY_CONFIG_PROPERTY_INHERIT;
+import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Test {@link ConfigurationResolver} with property inheritance and merging.
@@ -53,10 +53,10 @@ public class ConfigurationResolverPropertyInheritanceTest {
 
         // content resources that form a deeper hierarchy
         context.build()
-            .resource("/content/tenant1", PROPERTY_CONFIG_REF, "/conf/brand1/tenant1")
-            .resource("/content/tenant1/region1", PROPERTY_CONFIG_REF, "/conf/brand1/tenant1/region1")
-            .resource("/content/tenant1/region1/site1", PROPERTY_CONFIG_REF, "/conf/brand1/tenant1/region1/site1")
-            .resource("/content/tenant1/region1/site2", PROPERTY_CONFIG_REF, "/conf/brand1/tenant1/region1/site2");
+                .resource("/content/tenant1", PROPERTY_CONFIG_REF, "/conf/brand1/tenant1")
+                .resource("/content/tenant1/region1", PROPERTY_CONFIG_REF, "/conf/brand1/tenant1/region1")
+                .resource("/content/tenant1/region1/site1", PROPERTY_CONFIG_REF, "/conf/brand1/tenant1/region1/site1")
+                .resource("/content/tenant1/region1/site2", PROPERTY_CONFIG_REF, "/conf/brand1/tenant1/region1/site2");
         site1Page1 = context.create().resource("/content/tenant1/region1/site1/page1");
         site2Page1 = context.create().resource("/content/tenant1/region1/site2/page1");
     }
@@ -64,56 +64,80 @@ public class ConfigurationResolverPropertyInheritanceTest {
     @Test
     public void testInheritanceWithoutMerging() {
         context.build()
-            .resource("/conf/global/sling:configs/test", "param1", "value1", "param2", "value2")
-            .resource("/conf/brand1/tenant1/region1/site1/sling:configs/test", "param1", "value1a")
-            .resource("/conf/brand1/tenant1/region1/site2/sling:configs/test", "param1", "value1b");
+                .resource("/conf/global/sling:configs/test", "param1", "value1", "param2", "value2")
+                .resource("/conf/brand1/tenant1/region1/site1/sling:configs/test", "param1", "value1a")
+                .resource("/conf/brand1/tenant1/region1/site2/sling:configs/test", "param1", "value1b");
 
-        assertThat(underTest.get(site1Page1).name("test").asValueMap(), allOf(
-                        hasEntry("param1", (Object)"value1a"),
-                        not(hasKey("param2"))));
-        assertThat(underTest.get(site2Page1).name("test").asValueMap(), allOf(
-                        hasEntry("param1", (Object)"value1b"),
-                        not(hasKey("param2"))));
+        assertThat(
+                underTest.get(site1Page1).name("test").asValueMap(),
+                allOf(hasEntry("param1", (Object) "value1a"), not(hasKey("param2"))));
+        assertThat(
+                underTest.get(site2Page1).name("test").asValueMap(),
+                allOf(hasEntry("param1", (Object) "value1b"), not(hasKey("param2"))));
     }
 
     @Test
     public void testInheritanceMerging() {
         context.build()
-            .resource("/conf/global/sling:configs/test", "param1", "value1", "param2", "value2")
-            .resource("/conf/brand1/tenant1/region1/site1/sling:configs/test", "param1", "value1a",
-                    PROPERTY_CONFIG_PROPERTY_INHERIT, true)
-            .resource("/conf/brand1/tenant1/region1/site2/sling:configs/test", "param1", "value1b");
+                .resource("/conf/global/sling:configs/test", "param1", "value1", "param2", "value2")
+                .resource(
+                        "/conf/brand1/tenant1/region1/site1/sling:configs/test",
+                        "param1",
+                        "value1a",
+                        PROPERTY_CONFIG_PROPERTY_INHERIT,
+                        true)
+                .resource("/conf/brand1/tenant1/region1/site2/sling:configs/test", "param1", "value1b");
 
-        assertThat(underTest.get(site1Page1).name("test").asValueMap(), allOf(
-                hasEntry("param1", (Object)"value1a"),
-                hasEntry("param2", (Object)"value2")));
-        assertThat(underTest.get(site2Page1).name("test").asValueMap(), allOf(
-                hasEntry("param1", (Object)"value1b"),
-                not(hasKey("param2"))));
+        assertThat(
+                underTest.get(site1Page1).name("test").asValueMap(),
+                allOf(hasEntry("param1", (Object) "value1a"), hasEntry("param2", (Object) "value2")));
+        assertThat(
+                underTest.get(site2Page1).name("test").asValueMap(),
+                allOf(hasEntry("param1", (Object) "value1b"), not(hasKey("param2"))));
     }
 
     @Test
     public void testInheritanceMergingMultipleLevels() {
         context.build()
-            .resource("/conf/global/sling:configs/test", "param1", "value1", "param4", "value4")
-            .resource("/conf/brand1/tenant1/sling:configs/test", "param1", "value1a", "param3", "value3",
-                    PROPERTY_CONFIG_PROPERTY_INHERIT, true)
-            .resource("/conf/brand1/tenant1/region1/sling:configs/test", "param1", "value1b", "param2", "value2",
-                    PROPERTY_CONFIG_PROPERTY_INHERIT, true)
-            .resource("/conf/brand1/tenant1/region1/site1/sling:configs/test", "param1", "value1c",
-                    PROPERTY_CONFIG_PROPERTY_INHERIT, true)
-            .resource("/conf/brand1/tenant1/region1/site2/sling:configs/test", "param1", "value1d");
+                .resource("/conf/global/sling:configs/test", "param1", "value1", "param4", "value4")
+                .resource(
+                        "/conf/brand1/tenant1/sling:configs/test",
+                        "param1",
+                        "value1a",
+                        "param3",
+                        "value3",
+                        PROPERTY_CONFIG_PROPERTY_INHERIT,
+                        true)
+                .resource(
+                        "/conf/brand1/tenant1/region1/sling:configs/test",
+                        "param1",
+                        "value1b",
+                        "param2",
+                        "value2",
+                        PROPERTY_CONFIG_PROPERTY_INHERIT,
+                        true)
+                .resource(
+                        "/conf/brand1/tenant1/region1/site1/sling:configs/test",
+                        "param1",
+                        "value1c",
+                        PROPERTY_CONFIG_PROPERTY_INHERIT,
+                        true)
+                .resource("/conf/brand1/tenant1/region1/site2/sling:configs/test", "param1", "value1d");
 
-        assertThat(underTest.get(site1Page1).name("test").asValueMap(), allOf(
-                hasEntry("param1", (Object)"value1c"),
-                hasEntry("param2", (Object)"value2"),
-                hasEntry("param3", (Object)"value3"),
-                hasEntry("param4", (Object)"value4")));
-        assertThat(underTest.get(site2Page1).name("test").asValueMap(), allOf(
-                hasEntry("param1", (Object)"value1d"),
-                not(hasKey("param2")),
-                not(hasKey("param3")),
-                not(hasKey("param4"))));
+        assertThat(
+                underTest.get(site1Page1).name("test").asValueMap(),
+                allOf(
+                        hasEntry("param1", (Object) "value1c"),
+                        hasEntry("param2", (Object) "value2"),
+                        hasEntry("param3", (Object) "value3"),
+                        hasEntry("param4", (Object) "value4")));
+        assertThat(
+                underTest.get(site2Page1).name("test").asValueMap(),
+                allOf(
+                        hasEntry("param1", (Object) "value1d"),
+                        not(hasKey("param2")),
+                        not(hasKey("param3")),
+                        not(hasKey("param4"))));
     }
 
     /**
@@ -122,79 +146,119 @@ public class ConfigurationResolverPropertyInheritanceTest {
     @Test
     public void testInheritanceMergingOnParent() {
         context.build()
-            .resource("/conf/global/sling:configs/test", "param1", "value1", "param2", "value2",
-                    PROPERTY_CONFIG_PROPERTY_INHERIT, true)
-            .resource("/conf/brand1/tenant1/region1/site1/sling:configs/test", "param1", "value1a")
-            .resource("/conf/brand1/tenant1/region1/site2/sling:configs/test", "param1", "value1b");
+                .resource(
+                        "/conf/global/sling:configs/test",
+                        "param1",
+                        "value1",
+                        "param2",
+                        "value2",
+                        PROPERTY_CONFIG_PROPERTY_INHERIT,
+                        true)
+                .resource("/conf/brand1/tenant1/region1/site1/sling:configs/test", "param1", "value1a")
+                .resource("/conf/brand1/tenant1/region1/site2/sling:configs/test", "param1", "value1b");
 
-        assertThat(underTest.get(site1Page1).name("test").asValueMap(), allOf(
-                hasEntry("param1", (Object)"value1a"),
-                not(hasKey("param2"))));
-        assertThat(underTest.get(site2Page1).name("test").asValueMap(), allOf(
-                hasEntry("param1", (Object)"value1b"),
-                not(hasKey("param2"))));
+        assertThat(
+                underTest.get(site1Page1).name("test").asValueMap(),
+                allOf(hasEntry("param1", (Object) "value1a"), not(hasKey("param2"))));
+        assertThat(
+                underTest.get(site2Page1).name("test").asValueMap(),
+                allOf(hasEntry("param1", (Object) "value1b"), not(hasKey("param2"))));
     }
 
     @Test
     public void testCollectionInheritanceWithoutMerging() {
         context.build()
-            .resource("/conf/global/sling:configs/test")
+                .resource("/conf/global/sling:configs/test")
                 .resource("item1", "param1", "value1", "param2", "value2")
-            .resource("/conf/brand1/tenant1/region1/site1/sling:configs/test")
+                .resource("/conf/brand1/tenant1/region1/site1/sling:configs/test")
                 .resource("item1", "param1", "value1a")
-            .resource("/conf/brand1/tenant1/region1/site2/sling:configs/test")
+                .resource("/conf/brand1/tenant1/region1/site2/sling:configs/test")
                 .resource("item1", "param1", "value1b");
 
-        assertThat(underTest.get(site1Page1).name("test").asValueMapCollection().iterator().next(), allOf(
-                hasEntry("param1", (Object)"value1a"),
-                not(hasKey("param2"))));
-        assertThat(underTest.get(site2Page1).name("test").asValueMapCollection().iterator().next(), allOf(
-                hasEntry("param1", (Object)"value1b"),
-                not(hasKey("param2"))));
+        assertThat(
+                underTest
+                        .get(site1Page1)
+                        .name("test")
+                        .asValueMapCollection()
+                        .iterator()
+                        .next(),
+                allOf(hasEntry("param1", (Object) "value1a"), not(hasKey("param2"))));
+        assertThat(
+                underTest
+                        .get(site2Page1)
+                        .name("test")
+                        .asValueMapCollection()
+                        .iterator()
+                        .next(),
+                allOf(hasEntry("param1", (Object) "value1b"), not(hasKey("param2"))));
     }
 
     @Test
     public void testCollectionInheritanceMerging() {
         context.build()
-            .resource("/conf/global/sling:configs/test")
+                .resource("/conf/global/sling:configs/test")
                 .resource("item1", "param1", "value1", "param2", "value2")
-            .resource("/conf/brand1/tenant1/region1/site1/sling:configs/test")
+                .resource("/conf/brand1/tenant1/region1/site1/sling:configs/test")
                 .resource("item1", "param1", "value1a", PROPERTY_CONFIG_PROPERTY_INHERIT, true)
-            .resource("/conf/brand1/tenant1/region1/site2/sling:configs/test")
+                .resource("/conf/brand1/tenant1/region1/site2/sling:configs/test")
                 .resource("item1", "param1", "value1b");
 
-        assertThat(underTest.get(site1Page1).name("test").asValueMapCollection().iterator().next(), allOf(
-                hasEntry("param1", (Object)"value1a"),
-                hasEntry("param2", (Object)"value2")));
-        assertThat(underTest.get(site2Page1).name("test").asValueMapCollection().iterator().next(), allOf(
-                hasEntry("param1", (Object)"value1b"),
-                not(hasKey("param2"))));
+        assertThat(
+                underTest
+                        .get(site1Page1)
+                        .name("test")
+                        .asValueMapCollection()
+                        .iterator()
+                        .next(),
+                allOf(hasEntry("param1", (Object) "value1a"), hasEntry("param2", (Object) "value2")));
+        assertThat(
+                underTest
+                        .get(site2Page1)
+                        .name("test")
+                        .asValueMapCollection()
+                        .iterator()
+                        .next(),
+                allOf(hasEntry("param1", (Object) "value1b"), not(hasKey("param2"))));
     }
 
     @Test
     public void testCollectionInheritanceMergingMultipleLevels() {
         context.build()
-            .resource("/conf/global/sling:configs/test")
+                .resource("/conf/global/sling:configs/test")
                 .resource("item1", "param1", "value1", "param4", "value4")
-            .resource("/conf/brand1/tenant1/sling:configs/test")
+                .resource("/conf/brand1/tenant1/sling:configs/test")
                 .resource("item1", "param1", "value1a", "param3", "value3", PROPERTY_CONFIG_PROPERTY_INHERIT, true)
-            .resource("/conf/brand1/tenant1/region1/sling:configs/test")
+                .resource("/conf/brand1/tenant1/region1/sling:configs/test")
                 .resource("item1", "param1", "value1b", "param2", "value2", PROPERTY_CONFIG_PROPERTY_INHERIT, true)
-            .resource("/conf/brand1/tenant1/region1/site1/sling:configs/test")
+                .resource("/conf/brand1/tenant1/region1/site1/sling:configs/test")
                 .resource("item1", "param1", "value1c", PROPERTY_CONFIG_PROPERTY_INHERIT, true)
-            .resource("/conf/brand1/tenant1/region1/site2/sling:configs/test")
+                .resource("/conf/brand1/tenant1/region1/site2/sling:configs/test")
                 .resource("item1", "param1", "value1d");
 
-        assertThat(underTest.get(site1Page1).name("test").asValueMapCollection().iterator().next(), allOf(
-                hasEntry("param1", (Object)"value1c"),
-                hasEntry("param2", (Object)"value2"),
-                hasEntry("param3", (Object)"value3"),
-                hasEntry("param4", (Object)"value4")));
-        assertThat(underTest.get(site2Page1).name("test").asValueMapCollection().iterator().next(), allOf(
-                hasEntry("param1", (Object)"value1d"),
-                not(hasKey("param2")),
-                not(hasKey("param3")),
-                not(hasKey("param4"))));
+        assertThat(
+                underTest
+                        .get(site1Page1)
+                        .name("test")
+                        .asValueMapCollection()
+                        .iterator()
+                        .next(),
+                allOf(
+                        hasEntry("param1", (Object) "value1c"),
+                        hasEntry("param2", (Object) "value2"),
+                        hasEntry("param3", (Object) "value3"),
+                        hasEntry("param4", (Object) "value4")));
+        assertThat(
+                underTest
+                        .get(site2Page1)
+                        .name("test")
+                        .asValueMapCollection()
+                        .iterator()
+                        .next(),
+                allOf(
+                        hasEntry("param1", (Object) "value1d"),
+                        not(hasKey("param2")),
+                        not(hasKey("param3")),
+                        not(hasKey("param4"))));
     }
 
     /**
@@ -203,19 +267,28 @@ public class ConfigurationResolverPropertyInheritanceTest {
     @Test
     public void testCollectionInheritanceMergingOnParent() {
         context.build()
-            .resource("/conf/global/sling:configs/test", PROPERTY_CONFIG_PROPERTY_INHERIT, true)
+                .resource("/conf/global/sling:configs/test", PROPERTY_CONFIG_PROPERTY_INHERIT, true)
                 .resource("item1", "param1", "value1", "param2", "value2")
-            .resource("/conf/brand1/tenant1/region1/site1/sling:configs/test")
+                .resource("/conf/brand1/tenant1/region1/site1/sling:configs/test")
                 .resource("item1", "param1", "value1a")
-            .resource("/conf/brand1/tenant1/region1/site2/sling:configs/test")
+                .resource("/conf/brand1/tenant1/region1/site2/sling:configs/test")
                 .resource("item1", "param1", "value1b");
 
-        assertThat(underTest.get(site1Page1).name("test").asValueMapCollection().iterator().next(), allOf(
-                hasEntry("param1", (Object)"value1a"),
-                not(hasKey("param2"))));
-        assertThat(underTest.get(site2Page1).name("test").asValueMapCollection().iterator().next(), allOf(
-                hasEntry("param1", (Object)"value1b"),
-                not(hasKey("param2"))));
+        assertThat(
+                underTest
+                        .get(site1Page1)
+                        .name("test")
+                        .asValueMapCollection()
+                        .iterator()
+                        .next(),
+                allOf(hasEntry("param1", (Object) "value1a"), not(hasKey("param2"))));
+        assertThat(
+                underTest
+                        .get(site2Page1)
+                        .name("test")
+                        .asValueMapCollection()
+                        .iterator()
+                        .next(),
+                allOf(hasEntry("param1", (Object) "value1b"), not(hasKey("param2"))));
     }
-
 }

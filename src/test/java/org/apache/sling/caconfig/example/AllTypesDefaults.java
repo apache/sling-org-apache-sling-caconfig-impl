@@ -43,5 +43,4 @@ public final class AllTypesDefaults {
     public static final boolean BOOL_DEFAULT = true;
 
     public static final boolean BOOL_DEFAULT_2 = false;
-
 }

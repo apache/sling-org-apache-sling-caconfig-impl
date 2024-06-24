@@ -28,19 +28,22 @@ import org.osgi.framework.ServiceReference;
 /**
  * Print original class information for a {@link ConfigurationPersistenceStrategy2} bridge service.
  */
-class ConfigurationPersistenceStrategyPrinter implements ServiceConfigurationPrinter<ConfigurationPersistenceStrategy2> {
+class ConfigurationPersistenceStrategyPrinter
+        implements ServiceConfigurationPrinter<ConfigurationPersistenceStrategy2> {
 
     @Override
-    public void printConfiguration(PrintWriter pw, ServiceReference<ConfigurationPersistenceStrategy2> serviceReference, BundleContext bundleContext) {
+    public void printConfiguration(
+            PrintWriter pw,
+            ServiceReference<ConfigurationPersistenceStrategy2> serviceReference,
+            BundleContext bundleContext) {
         ConfigurationPersistenceStrategy2 service = bundleContext.getService(serviceReference);
         if (service instanceof ConfigurationPersistenceStrategyBridge.Adapter) {
             ConfigurationPersistenceStrategyBridge.Adapter adapter =
-                    (ConfigurationPersistenceStrategyBridge.Adapter)service;
+                    (ConfigurationPersistenceStrategyBridge.Adapter) service;
             pw.print(INDENT);
             pw.print(BULLET);
             pw.println("Delegates to " + adapter.getOriginalServiceClass().getName());
         }
         bundleContext.ungetService(serviceReference);
     }
-
 }

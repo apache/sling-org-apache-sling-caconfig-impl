@@ -28,5 +28,4 @@ public @interface ListDoubleNestedConfig {
     int intParam();
 
     ListNestedConfig[] subListNestedConfig();
-
 }

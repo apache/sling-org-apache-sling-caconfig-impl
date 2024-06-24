@@ -54,17 +54,16 @@ import org.slf4j.LoggerFactory;
  * All existing child resources are removed when a new configs are stored for collection config resources.
  */
 @Component(service = ConfigurationPersistenceStrategy2.class)
-@Designate(ocd=DefaultConfigurationPersistenceStrategy.Config.class)
+@Designate(ocd = DefaultConfigurationPersistenceStrategy.Config.class)
 public class DefaultConfigurationPersistenceStrategy implements ConfigurationPersistenceStrategy2 {
 
-    @ObjectClassDefinition(name="Apache Sling Context-Aware Configuration Default Resource Persistence Strategy",
-            description="Directly uses configuration resources for storing configuration data.")
+    @ObjectClassDefinition(
+            name = "Apache Sling Context-Aware Configuration Default Resource Persistence Strategy",
+            description = "Directly uses configuration resources for storing configuration data.")
     static @interface Config {
 
-        @AttributeDefinition(name="Enabled",
-                      description = "Enable this configuration resource persistence strategy.")
+        @AttributeDefinition(name = "Enabled", description = "Enable this configuration resource persistence strategy.")
         boolean enabled() default true;
-
     }
 
     @Reference
@@ -152,7 +151,9 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
     }
 
     @Override
-    public boolean persistConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath,
+    public boolean persistConfiguration(
+            @NotNull ResourceResolver resourceResolver,
+            @NotNull String configResourcePath,
             @NotNull ConfigurationPersistData data) {
         if (!config.enabled()) {
             return false;
@@ -163,12 +164,15 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
     }
 
     @Override
-    public boolean persistConfigurationCollection(@NotNull ResourceResolver resourceResolver, @NotNull String configResourceCollectionParentPath,
+    public boolean persistConfigurationCollection(
+            @NotNull ResourceResolver resourceResolver,
+            @NotNull String configResourceCollectionParentPath,
             @NotNull ConfigurationCollectionPersistData data) {
         if (!config.enabled()) {
             return false;
         }
-        Resource configResourceParent = getOrCreateResource(resourceResolver, configResourceCollectionParentPath, data.getProperties());
+        Resource configResourceParent =
+                getOrCreateResource(resourceResolver, configResourceCollectionParentPath, data.getProperties());
 
         // delete existing children and create new ones
         deleteChildrenNotInCollection(configResourceParent, data);
@@ -191,8 +195,7 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
             try {
                 log.trace("! Delete resource {}", resource.getPath());
                 resourceResolver.delete(resource);
-            }
-            catch (PersistenceException ex) {
+            } catch (PersistenceException ex) {
                 throw convertPersistenceException("Unable to delete configuration at " + configResourcePath, ex);
             }
         }
@@ -200,15 +203,16 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
         return true;
     }
 
-    private Resource getOrCreateResource(ResourceResolver resourceResolver, String path, Map<String,Object> properties) {
+    private Resource getOrCreateResource(
+            ResourceResolver resourceResolver, String path, Map<String, Object> properties) {
         try {
-            Resource resource = ResourceUtil.getOrCreateResource(resourceResolver, path, (String)null, (String)null, false);
+            Resource resource =
+                    ResourceUtil.getOrCreateResource(resourceResolver, path, (String) null, (String) null, false);
             if (properties != null) {
                 replaceProperties(resource, properties);
             }
             return resource;
-        }
-        catch (PersistenceException ex) {
+        } catch (PersistenceException ex) {
             throw convertPersistenceException("Unable to persist configuration to " + path, ex);
         }
     }
@@ -233,19 +237,19 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
                     resourceResolver.delete(child);
                 }
             }
-        }
-        catch (PersistenceException ex) {
+        } catch (PersistenceException ex) {
             throw convertPersistenceException("Unable to remove children from " + resource.getPath(), ex);
         }
     }
 
-    private void replaceProperties(Resource resource, Map<String,Object> properties) {
+    private void replaceProperties(Resource resource, Map<String, Object> properties) {
         if (log.isTraceEnabled()) {
             log.trace("! Store properties for resource {}: {}", resource.getPath(), MapUtil.traceOutput(properties));
         }
         ModifiableValueMap modValueMap = resource.adaptTo(ModifiableValueMap.class);
         if (modValueMap == null) {
-            throw new ConfigurationPersistenceAccessDeniedException("No write access: Unable to store configuration data to " + resource.getPath() + ".");
+            throw new ConfigurationPersistenceAccessDeniedException(
+                    "No write access: Unable to store configuration data to " + resource.getPath() + ".");
         }
         // remove all existing properties that are not filterd
         Set<String> propertyNamesToRemove = new HashSet<>(modValueMap.keySet());
@@ -259,8 +263,7 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
     private void commit(ResourceResolver resourceResolver, String relatedResourcePath) {
         try {
             resourceResolver.commit();
-        }
-        catch (PersistenceException ex) {
+        } catch (PersistenceException ex) {
             throw convertPersistenceException("Unable to persist configuration changes to " + relatedResourcePath, ex);
         }
     }
@@ -272,5 +275,4 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
         }
         return new ConfigurationPersistenceException(message, ex);
     }
-
 }

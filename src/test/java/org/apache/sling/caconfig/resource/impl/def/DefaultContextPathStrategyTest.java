@@ -18,12 +18,7 @@
  */
 package org.apache.sling.caconfig.resource.impl.def;
 
-import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
-import static org.apache.sling.caconfig.resource.impl.util.ContextResourceTestUtil.toConfigRefIterator;
-import static org.apache.sling.caconfig.resource.impl.util.ContextResourceTestUtil.toResourceIterator;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertFalse;
-
+import com.google.common.collect.ImmutableList;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.resource.spi.ContextPathStrategy;
 import org.apache.sling.hamcrest.ResourceIteratorMatchers;
@@ -33,7 +28,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableList;
+import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
+import static org.apache.sling.caconfig.resource.impl.util.ContextResourceTestUtil.toConfigRefIterator;
+import static org.apache.sling.caconfig.resource.impl.util.ContextResourceTestUtil.toResourceIterator;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
 
 public class DefaultContextPathStrategyTest {
 
@@ -47,10 +46,10 @@ public class DefaultContextPathStrategyTest {
     public void setUp() {
         // content resources that form a deeper hierarchy
         context.build()
-            .resource("/content/tenant1", PROPERTY_CONFIG_REF, "/conf/tenant1")
-            .resource("/content/tenant1/region1", PROPERTY_CONFIG_REF, "/conf/tenant1/region1")
-            .resource("/content/tenant1/region1/site1", PROPERTY_CONFIG_REF, "/conf/tenant1/region1/site1")
-            .resource("/content/tenant1/region1/site2", PROPERTY_CONFIG_REF, "/conf/tenant1/region1/site2");
+                .resource("/content/tenant1", PROPERTY_CONFIG_REF, "/conf/tenant1")
+                .resource("/content/tenant1/region1", PROPERTY_CONFIG_REF, "/conf/tenant1/region1")
+                .resource("/content/tenant1/region1/site1", PROPERTY_CONFIG_REF, "/conf/tenant1/region1/site1")
+                .resource("/content/tenant1/region1/site2", PROPERTY_CONFIG_REF, "/conf/tenant1/region1/site2");
         site1Page1 = context.create().resource("/content/tenant1/region1/site1/page1");
         site2Page1 = context.create().resource("/content/tenant1/region1/site2/page1");
     }
@@ -59,29 +58,27 @@ public class DefaultContextPathStrategyTest {
     public void testFindContextPaths() {
         ContextPathStrategy underTest = context.registerInjectActivateService(new DefaultContextPathStrategy());
 
-        assertThat(toResourceIterator(underTest.findContextResources(site1Page1)), ResourceIteratorMatchers.paths(
-                "/content/tenant1/region1/site1",
-                "/content/tenant1/region1",
-                "/content/tenant1"));
-        assertThat(ImmutableList.copyOf(toConfigRefIterator(underTest.findContextResources(site1Page1))), Matchers.contains(
-                "/conf/tenant1/region1/site1",
-                "/conf/tenant1/region1",
-                "/conf/tenant1"));
+        assertThat(
+                toResourceIterator(underTest.findContextResources(site1Page1)),
+                ResourceIteratorMatchers.paths(
+                        "/content/tenant1/region1/site1", "/content/tenant1/region1", "/content/tenant1"));
+        assertThat(
+                ImmutableList.copyOf(toConfigRefIterator(underTest.findContextResources(site1Page1))),
+                Matchers.contains("/conf/tenant1/region1/site1", "/conf/tenant1/region1", "/conf/tenant1"));
 
-        assertThat(toResourceIterator(underTest.findContextResources(site2Page1)), ResourceIteratorMatchers.paths(
-                "/content/tenant1/region1/site2",
-                "/content/tenant1/region1",
-                "/content/tenant1"));
-        assertThat(ImmutableList.copyOf(toConfigRefIterator(underTest.findContextResources(site2Page1))), Matchers.contains(
-                "/conf/tenant1/region1/site2",
-                "/conf/tenant1/region1",
-                "/conf/tenant1"));
+        assertThat(
+                toResourceIterator(underTest.findContextResources(site2Page1)),
+                ResourceIteratorMatchers.paths(
+                        "/content/tenant1/region1/site2", "/content/tenant1/region1", "/content/tenant1"));
+        assertThat(
+                ImmutableList.copyOf(toConfigRefIterator(underTest.findContextResources(site2Page1))),
+                Matchers.contains("/conf/tenant1/region1/site2", "/conf/tenant1/region1", "/conf/tenant1"));
     }
 
     @Test
     public void testDisabled() {
-        ContextPathStrategy underTest = context.registerInjectActivateService(new DefaultContextPathStrategy(),
-                "enabled", false);
+        ContextPathStrategy underTest =
+                context.registerInjectActivateService(new DefaultContextPathStrategy(), "enabled", false);
 
         assertFalse(underTest.findContextResources(site1Page1).hasNext());
         assertFalse(underTest.findContextResources(site2Page1).hasNext());
@@ -89,21 +86,23 @@ public class DefaultContextPathStrategyTest {
 
     @Test
     public void testConfigRefResourceNames() {
-        ContextPathStrategy underTest = context.registerInjectActivateService(new DefaultContextPathStrategy(),
-                "configRefResourceNames", new String[] { "jcr:content" });
+        ContextPathStrategy underTest = context.registerInjectActivateService(
+                new DefaultContextPathStrategy(), "configRefResourceNames", new String[] {"jcr:content"});
 
-        context.build()
-            .resource("/content/tenant1/region1/jcr:content", PROPERTY_CONFIG_REF, "/conf/tenant1/region1");
+        context.build().resource("/content/tenant1/region1/jcr:content", PROPERTY_CONFIG_REF, "/conf/tenant1/region1");
 
-        assertThat(toResourceIterator(underTest.findContextResources(site1Page1)), ResourceIteratorMatchers.paths(
-                "/content/tenant1/region1"));
-        assertThat(ImmutableList.copyOf(toConfigRefIterator(underTest.findContextResources(site1Page1))), Matchers.contains(
-                "/conf/tenant1/region1"));
+        assertThat(
+                toResourceIterator(underTest.findContextResources(site1Page1)),
+                ResourceIteratorMatchers.paths("/content/tenant1/region1"));
+        assertThat(
+                ImmutableList.copyOf(toConfigRefIterator(underTest.findContextResources(site1Page1))),
+                Matchers.contains("/conf/tenant1/region1"));
 
-        assertThat(toResourceIterator(underTest.findContextResources(site2Page1)), ResourceIteratorMatchers.paths(
-                "/content/tenant1/region1"));
-        assertThat(ImmutableList.copyOf(toConfigRefIterator(underTest.findContextResources(site2Page1))), Matchers.contains(
-                "/conf/tenant1/region1"));
+        assertThat(
+                toResourceIterator(underTest.findContextResources(site2Page1)),
+                ResourceIteratorMatchers.paths("/content/tenant1/region1"));
+        assertThat(
+                ImmutableList.copyOf(toConfigRefIterator(underTest.findContextResources(site2Page1))),
+                Matchers.contains("/conf/tenant1/region1"));
     }
-
 }

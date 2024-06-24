@@ -29,5 +29,4 @@ public final class ConfigurationDefNameConstants {
      * should be inherited from the configuration hierarchy and merged.
      */
     public static final String PROPERTY_CONFIG_PROPERTY_INHERIT = "sling:configPropertyInherit";
-
 }

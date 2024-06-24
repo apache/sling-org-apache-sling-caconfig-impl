@@ -48,7 +48,9 @@ public interface ConfigurationOverrideMultiplexer {
      * @param properties Resolved configuration properties
      * @return Overwritten or replaced properties - or null if no override took place
      */
-    @Nullable Map<String,Object> overrideProperties(@NotNull String contextPath, @NotNull String configName, @NotNull Map<String,Object> properties);
+    @Nullable
+    Map<String, Object> overrideProperties(
+            @NotNull String contextPath, @NotNull String configName, @NotNull Map<String, Object> properties);
 
     /**
      * Override properties in given configuration resource (if any overrides are defined).
@@ -59,7 +61,9 @@ public interface ConfigurationOverrideMultiplexer {
      * @deprecated Please use {@link #overrideProperties(String, String, Resource, ResourceResolver)} instead.
      */
     @Deprecated
-    @Nullable Resource overrideProperties(@NotNull String contextPath, @NotNull String configName, @Nullable Resource configResource);
+    @Nullable
+    Resource overrideProperties(
+            @NotNull String contextPath, @NotNull String configName, @Nullable Resource configResource);
 
     /**
      * Override properties in given configuration resource (if any overrides are defined).
@@ -69,7 +73,10 @@ public interface ConfigurationOverrideMultiplexer {
      * @param resourceResolver Resource resolver
      * @return Resource with overwritten configuration properties - or original configuration resource if no override took place
      */
-    @Nullable Resource overrideProperties(@NotNull String contextPath, @NotNull String configName, @Nullable Resource configResource,
+    @Nullable
+    Resource overrideProperties(
+            @NotNull String contextPath,
+            @NotNull String configName,
+            @Nullable Resource configResource,
             @NotNull ResourceResolver resourceResolver);
-
 }

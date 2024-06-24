@@ -38,32 +38,34 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 @Designate(ocd = OsgiConfigurationOverrideProvider.Config.class, factory = true)
 public final class OsgiConfigurationOverrideProvider implements ConfigurationOverrideProvider {
 
-    @ObjectClassDefinition(name = "Apache Sling Context-Aware Configuration Override Provider: OSGi configuration",
+    @ObjectClassDefinition(
+            name = "Apache Sling Context-Aware Configuration Override Provider: OSGi configuration",
             description = "Allows to override configuration property values from OSGi configurations.")
     public static @interface Config {
 
-        @AttributeDefinition(name = "Description",
+        @AttributeDefinition(
+                name = "Description",
                 description = "This description is used for display in the web console.")
         String description();
 
-        @AttributeDefinition(name = "Overrides",
+        @AttributeDefinition(
+                name = "Overrides",
                 description = "Override strings - examples:\n"
-                + "{configName}/{propertyName}={propertyJsonValue}\n"
-                + "{configName}={propertyJsonObject}\n"
-                + "[{contextPath}]{configName}/{propertyName}={propertyJsonValue}\n"
-                + "[{contextPath}]{configName}={propertyJsonObject}")
+                        + "{configName}/{propertyName}={propertyJsonValue}\n"
+                        + "{configName}={propertyJsonObject}\n"
+                        + "[{contextPath}]{configName}/{propertyName}={propertyJsonValue}\n"
+                        + "[{contextPath}]{configName}={propertyJsonObject}")
         String[] overrides();
 
-        @AttributeDefinition(name = "Enabled",
-                description = "Enable this override provider.")
+        @AttributeDefinition(name = "Enabled", description = "Enable this override provider.")
         boolean enabled() default false;
 
-        @AttributeDefinition(name = "Service Ranking",
+        @AttributeDefinition(
+                name = "Service Ranking",
                 description = "Priority of configuration override providers (higher = higher priority).")
         int service_ranking() default 100;
 
         String webconsole_configurationFactory_nameHint() default "{description}, enabled={enabled}";
-
     }
 
     private Collection<String> overrideStrings;
@@ -81,5 +83,4 @@ public final class OsgiConfigurationOverrideProvider implements ConfigurationOve
     public @NotNull Collection<String> getOverrideStrings() {
         return overrideStrings;
     }
-
 }

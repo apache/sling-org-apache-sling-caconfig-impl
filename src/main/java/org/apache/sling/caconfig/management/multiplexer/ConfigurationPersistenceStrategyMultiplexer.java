@@ -36,20 +36,22 @@ public interface ConfigurationPersistenceStrategyMultiplexer extends Configurati
      * @param configName Configuration name
      * @return Possible configuration names in order of persistence strategy service ranking.
      */
-    @NotNull Collection<String> getAllConfigNames(@NotNull String configName);
+    @NotNull
+    Collection<String> getAllConfigNames(@NotNull String configName);
 
     /**
      * Get all configuration names from all configuration persistence strategies. This can be used when no nested parent resources is known.
      * @param configName Configuration name
      * @return Possible configuration names in order of persistence strategy service ranking.
      */
-    @NotNull Collection<String> getAllCollectionParentConfigNames(@NotNull String configName);
+    @NotNull
+    Collection<String> getAllCollectionParentConfigNames(@NotNull String configName);
 
     /**
      * Get all configuration names from all configuration persistence strategies. This can be used when no nested parent resources is known.
      * @param configName Configuration name
      * @return Possible configuration names in order of persistence strategy service ranking.
      */
-    @NotNull Collection<String> getAllCollectionItemConfigNames(@NotNull String configName);
-
+    @NotNull
+    Collection<String> getAllCollectionItemConfigNames(@NotNull String configName);
 }

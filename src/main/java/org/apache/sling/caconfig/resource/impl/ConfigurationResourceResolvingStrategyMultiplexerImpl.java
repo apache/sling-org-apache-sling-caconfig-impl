@@ -38,22 +38,30 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  * Detects all {@link ConfigurationResourceResolvingStrategy} implementations in the container
  * and consolidates their result based on service ranking.
  */
-@Component(service = ConfigurationResourceResolvingStrategyMultiplexer.class,
-reference={
-        @Reference(name="configurationResourceResolvingStrategy", service=ConfigurationResourceResolvingStrategy.class,
-                bind="bindConfigurationResourceResolvingStrategy", unbind="unbindConfigurationResourceResolvingStrategy",
-                cardinality=ReferenceCardinality.MULTIPLE,
-                policy=ReferencePolicy.DYNAMIC, policyOption=ReferencePolicyOption.GREEDY)
-})
-public class ConfigurationResourceResolvingStrategyMultiplexerImpl implements ConfigurationResourceResolvingStrategyMultiplexer {
+@Component(
+        service = ConfigurationResourceResolvingStrategyMultiplexer.class,
+        reference = {
+            @Reference(
+                    name = "configurationResourceResolvingStrategy",
+                    service = ConfigurationResourceResolvingStrategy.class,
+                    bind = "bindConfigurationResourceResolvingStrategy",
+                    unbind = "unbindConfigurationResourceResolvingStrategy",
+                    cardinality = ReferenceCardinality.MULTIPLE,
+                    policy = ReferencePolicy.DYNAMIC,
+                    policyOption = ReferencePolicyOption.GREEDY)
+        })
+public class ConfigurationResourceResolvingStrategyMultiplexerImpl
+        implements ConfigurationResourceResolvingStrategyMultiplexer {
 
     private RankedServices<ConfigurationResourceResolvingStrategy> items = new RankedServices<>(Order.DESCENDING);
 
-    protected void bindConfigurationResourceResolvingStrategy(ConfigurationResourceResolvingStrategy contextPathStrategy, Map<String, Object> props) {
+    protected void bindConfigurationResourceResolvingStrategy(
+            ConfigurationResourceResolvingStrategy contextPathStrategy, Map<String, Object> props) {
         items.bind(contextPathStrategy, props);
     }
 
-    protected void unbindConfigurationResourceResolvingStrategy(ConfigurationResourceResolvingStrategy contextPathStrategy, Map<String, Object> props) {
+    protected void unbindConfigurationResourceResolvingStrategy(
+            ConfigurationResourceResolvingStrategy contextPathStrategy, Map<String, Object> props) {
         items.unbind(contextPathStrategy, props);
     }
 
@@ -61,7 +69,8 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImpl implements Co
      * Gets the configuration resource from the first implementation that has an answer.
      */
     @Override
-    public Resource getResource(@NotNull Resource resource, @NotNull Collection<String> bucketNames, @NotNull String configName) {
+    public Resource getResource(
+            @NotNull Resource resource, @NotNull Collection<String> bucketNames, @NotNull String configName) {
         for (ConfigurationResourceResolvingStrategy item : items) {
             Resource result = item.getResource(resource, bucketNames, configName);
             if (result != null) {
@@ -75,7 +84,8 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImpl implements Co
      * Gets the configuration resource collection from the first implementation that has an answer.
      */
     @Override
-    public Collection<Resource> getResourceCollection(@NotNull Resource resource, @NotNull Collection<String> bucketNames, @NotNull String configName) {
+    public Collection<Resource> getResourceCollection(
+            @NotNull Resource resource, @NotNull Collection<String> bucketNames, @NotNull String configName) {
         for (ConfigurationResourceResolvingStrategy item : items) {
             Collection<Resource> result = item.getResourceCollection(resource, bucketNames, configName);
             if (result != null) {
@@ -89,7 +99,8 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImpl implements Co
      * Gets the configuration resource inheritance chain from the first implementation that has an answer.
      */
     @Override
-    public Iterator<Resource> getResourceInheritanceChain(@NotNull Resource resource, @NotNull Collection<String> bucketNames, @NotNull String configName) {
+    public Iterator<Resource> getResourceInheritanceChain(
+            @NotNull Resource resource, @NotNull Collection<String> bucketNames, @NotNull String configName) {
         for (ConfigurationResourceResolvingStrategy item : items) {
             Iterator<Resource> result = item.getResourceInheritanceChain(resource, bucketNames, configName);
             if (result != null) {
@@ -103,10 +114,11 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImpl implements Co
      * Gets the configuration resource collection inheritance chains from the first implementation that has an answer.
      */
     @Override
-    public Collection<Iterator<Resource>> getResourceCollectionInheritanceChain(@NotNull Resource resource, @NotNull Collection<String> bucketNames,
-            @NotNull String configName) {
+    public Collection<Iterator<Resource>> getResourceCollectionInheritanceChain(
+            @NotNull Resource resource, @NotNull Collection<String> bucketNames, @NotNull String configName) {
         for (ConfigurationResourceResolvingStrategy item : items) {
-            Collection<Iterator<Resource>> result = item.getResourceCollectionInheritanceChain(resource, bucketNames, configName);
+            Collection<Iterator<Resource>> result =
+                    item.getResourceCollectionInheritanceChain(resource, bucketNames, configName);
             if (result != null) {
                 return result;
             }
@@ -132,7 +144,8 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImpl implements Co
      * Gets the configuration resource collection parent path from the first implementation that has an answer.
      */
     @Override
-    public String getResourceCollectionParentPath(@NotNull Resource resource, @NotNull String bucketName, @NotNull String configName) {
+    public String getResourceCollectionParentPath(
+            @NotNull Resource resource, @NotNull String bucketName, @NotNull String configName) {
         for (ConfigurationResourceResolvingStrategy item : items) {
             String result = item.getResourceCollectionParentPath(resource, bucketName, configName);
             if (result != null) {
@@ -141,5 +154,4 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImpl implements Co
         }
         return null;
     }
-
 }

@@ -35,5 +35,4 @@ public final class ConfigurationResourceNameConstants {
      * Merging means merging the lists, not the list items (properties of the resources) itself.
      */
     public static final String PROPERTY_CONFIG_COLLECTION_INHERIT = "sling:configCollectionInherit";
-
 }

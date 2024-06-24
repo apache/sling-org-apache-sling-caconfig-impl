@@ -18,6 +18,8 @@
  */
 package org.apache.sling.caconfig.example;
 
+import org.apache.sling.caconfig.annotation.Configuration;
+
 import static org.apache.sling.caconfig.example.AllTypesDefaults.BOOL_DEFAULT;
 import static org.apache.sling.caconfig.example.AllTypesDefaults.BOOL_DEFAULT_2;
 import static org.apache.sling.caconfig.example.AllTypesDefaults.DOUBLE_DEFAULT;
@@ -28,8 +30,6 @@ import static org.apache.sling.caconfig.example.AllTypesDefaults.LONG_DEFAULT;
 import static org.apache.sling.caconfig.example.AllTypesDefaults.LONG_DEFAULT_2;
 import static org.apache.sling.caconfig.example.AllTypesDefaults.STRING_DEFAULT;
 import static org.apache.sling.caconfig.example.AllTypesDefaults.STRING_DEFAULT_2;
-
-import org.apache.sling.caconfig.annotation.Configuration;
 
 @Configuration
 public @interface AllTypesConfig {
@@ -56,22 +56,21 @@ public @interface AllTypesConfig {
 
     String[] stringArrayParam();
 
-    String[] stringArrayParamWithDefault() default { STRING_DEFAULT, STRING_DEFAULT_2 };
+    String[] stringArrayParamWithDefault() default {STRING_DEFAULT, STRING_DEFAULT_2};
 
     int[] intArrayParam();
 
-    int[] intArrayParamWithDefault() default { INT_DEFAULT, INT_DEFAULT_2 };
+    int[] intArrayParamWithDefault() default {INT_DEFAULT, INT_DEFAULT_2};
 
     long[] longArrayParam();
 
-    long[] longArrayParamWithDefault() default { LONG_DEFAULT, LONG_DEFAULT_2 };
+    long[] longArrayParamWithDefault() default {LONG_DEFAULT, LONG_DEFAULT_2};
 
     double[] doubleArrayParam();
 
-    double[] doubleArrayParamWithDefault() default { DOUBLE_DEFAULT, DOUBLE_DEFAULT_2 };
+    double[] doubleArrayParamWithDefault() default {DOUBLE_DEFAULT, DOUBLE_DEFAULT_2};
 
     boolean[] boolArrayParam();
 
-    boolean[] boolArrayParamWithDefault() default { BOOL_DEFAULT, BOOL_DEFAULT_2 };
-
+    boolean[] boolArrayParamWithDefault() default {BOOL_DEFAULT, BOOL_DEFAULT_2};
 }

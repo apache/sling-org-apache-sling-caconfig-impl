@@ -38,22 +38,31 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  * Detects all {@link ConfigurationInjectResourceDetectionStrategy} implementations in the container
  * and consolidates their result based on service ranking.
  */
-@Component(service = ConfigurationInjectResourceDetectionStrategyMultiplexer.class,
-    reference={
-        @Reference(name="configurationBindingsResourceDetectionStrategy", service=ConfigurationInjectResourceDetectionStrategy.class,
-            bind="bindConfigurationInjectResourceDetectionStrategy", unbind="unbindConfigurationInjectResourceDetectionStrategy",
-            cardinality=ReferenceCardinality.MULTIPLE,
-            policy=ReferencePolicy.DYNAMIC, policyOption=ReferencePolicyOption.GREEDY)
-    })
-public class ConfigurationInjectResourceDetectionStrategyMultiplexerImpl implements ConfigurationInjectResourceDetectionStrategyMultiplexer {
+@Component(
+        service = ConfigurationInjectResourceDetectionStrategyMultiplexer.class,
+        reference = {
+            @Reference(
+                    name = "configurationBindingsResourceDetectionStrategy",
+                    service = ConfigurationInjectResourceDetectionStrategy.class,
+                    bind = "bindConfigurationInjectResourceDetectionStrategy",
+                    unbind = "unbindConfigurationInjectResourceDetectionStrategy",
+                    cardinality = ReferenceCardinality.MULTIPLE,
+                    policy = ReferencePolicy.DYNAMIC,
+                    policyOption = ReferencePolicyOption.GREEDY)
+        })
+public class ConfigurationInjectResourceDetectionStrategyMultiplexerImpl
+        implements ConfigurationInjectResourceDetectionStrategyMultiplexer {
 
-    private RankedServices<ConfigurationInjectResourceDetectionStrategy> resourceDetectionStrategies = new RankedServices<>(Order.DESCENDING);
+    private RankedServices<ConfigurationInjectResourceDetectionStrategy> resourceDetectionStrategies =
+            new RankedServices<>(Order.DESCENDING);
 
-    protected void bindConfigurationInjectResourceDetectionStrategy(ConfigurationInjectResourceDetectionStrategy item, Map<String, Object> props) {
+    protected void bindConfigurationInjectResourceDetectionStrategy(
+            ConfigurationInjectResourceDetectionStrategy item, Map<String, Object> props) {
         resourceDetectionStrategies.bind(item, props);
     }
 
-    protected void unbindConfigurationInjectResourceDetectionStrategy(ConfigurationInjectResourceDetectionStrategy item, Map<String, Object> props) {
+    protected void unbindConfigurationInjectResourceDetectionStrategy(
+            ConfigurationInjectResourceDetectionStrategy item, Map<String, Object> props) {
         resourceDetectionStrategies.unbind(item, props);
     }
 
@@ -70,5 +79,4 @@ public class ConfigurationInjectResourceDetectionStrategyMultiplexerImpl impleme
         }
         return null;
     }
-
 }

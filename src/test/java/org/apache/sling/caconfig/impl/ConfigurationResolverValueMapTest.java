@@ -18,16 +18,12 @@
  */
 package org.apache.sling.caconfig.impl;
 
-import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.caconfig.ConfigurationResolveException;
@@ -40,8 +36,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test {@link ConfigurationResolver} with ValueMap for reading the config.
@@ -70,7 +69,7 @@ public class ConfigurationResolverValueMapTest {
         ValueMap props = underTest.get(site1Page1).name("sampleName").asValueMap();
 
         assertNull(props.get("stringParam", String.class));
-        assertEquals(0, (int)props.get("intParam", 0));
+        assertEquals(0, (int) props.get("intParam", 0));
         assertEquals(false, props.get("boolParam", false));
 
         assertFalse(underTest.get(site1Page1).has("sampleName"));
@@ -78,7 +77,8 @@ public class ConfigurationResolverValueMapTest {
 
     @Test
     public void testNonExistingConfigCollection() {
-        Collection<ValueMap> propsList = underTest.get(site1Page1).name("sampleList").asValueMapCollection();
+        Collection<ValueMap> propsList =
+                underTest.get(site1Page1).name("sampleList").asValueMapCollection();
         assertTrue(propsList.isEmpty());
 
         assertFalse(underTest.get(site1Page1).has("sampleList"));
@@ -86,15 +86,20 @@ public class ConfigurationResolverValueMapTest {
 
     @Test
     public void testConfig() {
-        context.build().resource("/conf/content/site1/sling:configs/sampleName",
-                "stringParam", "configValue1",
-                "intParam", 111,
-                "boolParam", true);
+        context.build()
+                .resource(
+                        "/conf/content/site1/sling:configs/sampleName",
+                        "stringParam",
+                        "configValue1",
+                        "intParam",
+                        111,
+                        "boolParam",
+                        true);
 
         ValueMap props = underTest.get(site1Page1).name("sampleName").asValueMap();
 
         assertEquals("configValue1", props.get("stringParam", String.class));
-        assertEquals(111, (int)props.get("intParam", 0));
+        assertEquals(111, (int) props.get("intParam", 0));
         assertEquals(true, props.get("boolParam", false));
 
         assertTrue(underTest.get(site1Page1).has("sampleName"));
@@ -102,13 +107,15 @@ public class ConfigurationResolverValueMapTest {
 
     @Test
     public void testConfigCollection() {
-        context.build().resource("/conf/content/site1/sling:configs/sampleList")
-            .siblingsMode()
-            .resource("1", "stringParam", "configValue1.1")
-            .resource("2", "stringParam", "configValue1.2")
-            .resource("3", "stringParam", "configValue1.3");
+        context.build()
+                .resource("/conf/content/site1/sling:configs/sampleList")
+                .siblingsMode()
+                .resource("1", "stringParam", "configValue1.1")
+                .resource("2", "stringParam", "configValue1.2")
+                .resource("3", "stringParam", "configValue1.3");
 
-        Collection<ValueMap> propsList = underTest.get(site1Page1).name("sampleList").asValueMapCollection();
+        Collection<ValueMap> propsList =
+                underTest.get(site1Page1).name("sampleList").asValueMapCollection();
 
         Iterator<ValueMap> propsIterator = propsList.iterator();
         assertEquals("configValue1.1", propsIterator.next().get("stringParam", String.class));
@@ -120,16 +127,19 @@ public class ConfigurationResolverValueMapTest {
 
     @Test
     public void testConfigWithDefaultValues() {
-        context.registerService(ConfigurationMetadataProvider.class, new DummyConfigurationMetadataProvider("sampleName",
-                ImmutableMap.<String, Object>of("stringParam", "defValue1", "intParam", 999), false));
+        context.registerService(
+                ConfigurationMetadataProvider.class,
+                new DummyConfigurationMetadataProvider(
+                        "sampleName",
+                        ImmutableMap.<String, Object>of("stringParam", "defValue1", "intParam", 999),
+                        false));
 
-        context.build().resource("/conf/content/site1/sling:configs/sampleName",
-                "boolParam", true);
+        context.build().resource("/conf/content/site1/sling:configs/sampleName", "boolParam", true);
 
         ValueMap props = underTest.get(site1Page1).name("sampleName").asValueMap();
 
         assertEquals("defValue1", props.get("stringParam", String.class));
-        assertEquals(999, (int)props.get("intParam", 0));
+        assertEquals(999, (int) props.get("intParam", 0));
         assertEquals(true, props.get("boolParam", false));
 
         assertTrue(underTest.get(site1Page1).has("sampleName"));
@@ -137,41 +147,52 @@ public class ConfigurationResolverValueMapTest {
 
     @Test
     public void testConfigCollectionWithDefaultValues() {
-        context.registerService(ConfigurationMetadataProvider.class, new DummyConfigurationMetadataProvider("sampleList",
-                ImmutableMap.<String, Object>of("intParam", 999), true));
+        context.registerService(
+                ConfigurationMetadataProvider.class,
+                new DummyConfigurationMetadataProvider(
+                        "sampleList", ImmutableMap.<String, Object>of("intParam", 999), true));
 
-        context.build().resource("/conf/content/site1/sling:configs/sampleList")
-            .siblingsMode()
-            .resource("1", "stringParam", "configValue1.1")
-            .resource("2", "stringParam", "configValue1.2")
-            .resource("3", "stringParam", "configValue1.3");
+        context.build()
+                .resource("/conf/content/site1/sling:configs/sampleList")
+                .siblingsMode()
+                .resource("1", "stringParam", "configValue1.1")
+                .resource("2", "stringParam", "configValue1.2")
+                .resource("3", "stringParam", "configValue1.3");
 
-        List<ValueMap> propsList = ImmutableList.copyOf(underTest.get(site1Page1).name("sampleList").asValueMapCollection());
+        List<ValueMap> propsList = ImmutableList.copyOf(
+                underTest.get(site1Page1).name("sampleList").asValueMapCollection());
 
         assertEquals("configValue1.1", propsList.get(0).get("stringParam", String.class));
-        assertEquals(999, (int)propsList.get(0).get("intParam", 0));
+        assertEquals(999, (int) propsList.get(0).get("intParam", 0));
         assertEquals("configValue1.2", propsList.get(1).get("stringParam", String.class));
-        assertEquals(999, (int)propsList.get(1).get("intParam", 0));
+        assertEquals(999, (int) propsList.get(1).get("intParam", 0));
         assertEquals("configValue1.3", propsList.get(2).get("stringParam", String.class));
-        assertEquals(999, (int)propsList.get(2).get("intParam", 0));
+        assertEquals(999, (int) propsList.get(2).get("intParam", 0));
 
         assertTrue(underTest.get(site1Page1).has("sampleList"));
     }
 
     @Test
     public void testConfigWithOverride() {
-        context.registerService(ConfigurationOverrideProvider.class, new DummyConfigurationOverrideProvider(
-                "[/content]sampleName={\"stringParam\":\"override1\",\"intParam\":222}"));
+        context.registerService(
+                ConfigurationOverrideProvider.class,
+                new DummyConfigurationOverrideProvider(
+                        "[/content]sampleName={\"stringParam\":\"override1\",\"intParam\":222}"));
 
-        context.build().resource("/conf/content/site1/sling:configs/sampleName",
-                "stringParam", "configValue1",
-                "intParam", 111,
-                "boolParam", true);
+        context.build()
+                .resource(
+                        "/conf/content/site1/sling:configs/sampleName",
+                        "stringParam",
+                        "configValue1",
+                        "intParam",
+                        111,
+                        "boolParam",
+                        true);
 
         ValueMap props = underTest.get(site1Page1).name("sampleName").asValueMap();
 
         assertEquals("override1", props.get("stringParam", String.class));
-        assertEquals(222, (int)props.get("intParam", 0));
+        assertEquals(222, (int) props.get("intParam", 0));
         assertEquals(false, props.get("boolParam", false));
 
         assertTrue(underTest.get(site1Page1).has("sampleName"));
@@ -182,13 +203,15 @@ public class ConfigurationResolverValueMapTest {
      */
     @Test
     public void testConfigWithOverride_NoExistingConfig() {
-        context.registerService(ConfigurationOverrideProvider.class, new DummyConfigurationOverrideProvider(
-                "[/content]sampleName={\"stringParam\":\"override1\",\"intParam\":222}"));
+        context.registerService(
+                ConfigurationOverrideProvider.class,
+                new DummyConfigurationOverrideProvider(
+                        "[/content]sampleName={\"stringParam\":\"override1\",\"intParam\":222}"));
 
         ValueMap props = underTest.get(site1Page1).name("sampleName").asValueMap();
 
         assertEquals("override1", props.get("stringParam", String.class));
-        assertEquals(222, (int)props.get("intParam", 0));
+        assertEquals(222, (int) props.get("intParam", 0));
         assertEquals(false, props.get("boolParam", false));
 
         assertFalse(underTest.get(site1Page1).has("sampleName"));
@@ -196,16 +219,19 @@ public class ConfigurationResolverValueMapTest {
 
     @Test
     public void testConfigCollectionWithOverride() {
-        context.registerService(ConfigurationOverrideProvider.class, new DummyConfigurationOverrideProvider(
-                "[/content]sampleList/stringParam=\"override1\""));
+        context.registerService(
+                ConfigurationOverrideProvider.class,
+                new DummyConfigurationOverrideProvider("[/content]sampleList/stringParam=\"override1\""));
 
-        context.build().resource("/conf/content/site1/sling:configs/sampleList")
-            .siblingsMode()
-            .resource("1", "stringParam", "configValue1.1")
-            .resource("2", "stringParam", "configValue1.2")
-            .resource("3", "stringParam", "configValue1.3");
+        context.build()
+                .resource("/conf/content/site1/sling:configs/sampleList")
+                .siblingsMode()
+                .resource("1", "stringParam", "configValue1.1")
+                .resource("2", "stringParam", "configValue1.2")
+                .resource("3", "stringParam", "configValue1.3");
 
-        Collection<ValueMap> propsList = underTest.get(site1Page1).name("sampleList").asValueMapCollection();
+        Collection<ValueMap> propsList =
+                underTest.get(site1Page1).name("sampleList").asValueMapCollection();
 
         Iterator<ValueMap> propsIterator = propsList.iterator();
         assertEquals("override1", propsIterator.next().get("stringParam", String.class));
@@ -220,7 +246,7 @@ public class ConfigurationResolverValueMapTest {
         ValueMap props = underTest.get(null).name("sampleName").asValueMap();
 
         assertNull(props.get("stringParam", String.class));
-        assertEquals(0, (int)props.get("intParam", 0));
+        assertEquals(0, (int) props.get("intParam", 0));
         assertEquals(false, props.get("boolParam", false));
 
         assertFalse(underTest.get(null).has("sampleName"));
@@ -233,24 +259,23 @@ public class ConfigurationResolverValueMapTest {
         assertFalse(underTest.get(null).has("sampleList"));
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testNullConfigName() {
         underTest.get(site1Page1).name(null).asValueMap();
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testInvalidConfigName() {
         underTest.get(site1Page1).name("/a/b/c").asValueMap();
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testInvalidConfigName2() {
         underTest.get(site1Page1).name("../a/b/c").asValueMap();
     }
 
-    @Test(expected=ConfigurationResolveException.class)
+    @Test(expected = ConfigurationResolveException.class)
     public void testWithoutConfigName() {
         underTest.get(site1Page1).asValueMap();
     }
-
 }

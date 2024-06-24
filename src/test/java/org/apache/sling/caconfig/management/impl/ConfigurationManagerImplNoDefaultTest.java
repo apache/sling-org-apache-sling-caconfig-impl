@@ -18,15 +18,10 @@
  */
 package org.apache.sling.caconfig.management.impl;
 
-import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
-
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.impl.ConfigurationTestUtils;
 import org.apache.sling.caconfig.management.ConfigurationData;
@@ -42,8 +37,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
 
 /**
  * Test {@link ConfigurationManagerImpl} with no default implementation of the multiplexed services.
@@ -72,22 +71,28 @@ public class ConfigurationManagerImplNoDefaultTest {
         ConfigurationTestUtils.registerConfigurationResolverWithoutDefaultImpl(context);
         underTest = context.registerInjectActivateService(new ConfigurationManagerImpl());
 
-        contextResourceNoConfig = context.create().resource("/content/testNoConfig",
-                PROPERTY_CONFIG_REF, "/conf/testNoConfig");
+        contextResourceNoConfig =
+                context.create().resource("/content/testNoConfig", PROPERTY_CONFIG_REF, "/conf/testNoConfig");
 
-        configMetadata = new ConfigurationMetadata(CONFIG_NAME, ImmutableList.<PropertyMetadata<?>>of(
-                new PropertyMetadata<>("prop1", "defValue"),
-                new PropertyMetadata<>("prop2", String.class),
-                new PropertyMetadata<>("prop3", 5)),
+        configMetadata = new ConfigurationMetadata(
+                CONFIG_NAME,
+                ImmutableList.<PropertyMetadata<?>>of(
+                        new PropertyMetadata<>("prop1", "defValue"),
+                        new PropertyMetadata<>("prop2", String.class),
+                        new PropertyMetadata<>("prop3", 5)),
                 false);
-        when(configurationMetadataProvider.getConfigurationMetadata(CONFIG_NAME)).thenReturn(configMetadata);
+        when(configurationMetadataProvider.getConfigurationMetadata(CONFIG_NAME))
+                .thenReturn(configMetadata);
 
-        configMetadata = new ConfigurationMetadata(CONFIG_COL_NAME, ImmutableList.<PropertyMetadata<?>>of(
-                new PropertyMetadata<>("prop1", "defValue"),
-                new PropertyMetadata<>("prop2", String.class),
-                new PropertyMetadata<>("prop3", 5)),
+        configMetadata = new ConfigurationMetadata(
+                CONFIG_COL_NAME,
+                ImmutableList.<PropertyMetadata<?>>of(
+                        new PropertyMetadata<>("prop1", "defValue"),
+                        new PropertyMetadata<>("prop2", String.class),
+                        new PropertyMetadata<>("prop3", 5)),
                 true);
-        when(configurationMetadataProvider.getConfigurationMetadata(CONFIG_COL_NAME)).thenReturn(configMetadata);
+        when(configurationMetadataProvider.getConfigurationMetadata(CONFIG_COL_NAME))
+                .thenReturn(configMetadata);
     }
 
     protected String getConfigPropertiesPath(String path) {
@@ -101,7 +106,7 @@ public class ConfigurationManagerImplNoDefaultTest {
 
         assertEquals(ImmutableSet.of("prop1", "prop2", "prop3"), configData.getPropertyNames());
         assertNull(configData.getValues().get("prop1", String.class));
-        assertEquals((Integer)5, configData.getEffectiveValues().get("prop3", 0));
+        assertEquals((Integer) 5, configData.getEffectiveValues().get("prop3", 0));
 
         assertFalse(configData.getValueInfo("prop1").isInherited());
         assertFalse(configData.getValueInfo("prop3").isInherited());
@@ -109,7 +114,8 @@ public class ConfigurationManagerImplNoDefaultTest {
 
     @Test
     public void testGet_NoConfigResource_NoConfigMetadata() {
-        when(configurationMetadataProvider.getConfigurationMetadata(CONFIG_NAME)).thenReturn(null);
+        when(configurationMetadataProvider.getConfigurationMetadata(CONFIG_NAME))
+                .thenReturn(null);
 
         ConfigurationData configData = underTest.getConfiguration(contextResourceNoConfig, CONFIG_NAME);
         assertNull(configData);
@@ -117,15 +123,20 @@ public class ConfigurationManagerImplNoDefaultTest {
 
     @Test
     public void testGetCollection_NoConfigResources() {
-        List<ConfigurationData> configDatas = ImmutableList.copyOf(underTest.getConfigurationCollection(contextResourceNoConfig, CONFIG_COL_NAME).getItems());
+        List<ConfigurationData> configDatas = ImmutableList.copyOf(underTest
+                .getConfigurationCollection(contextResourceNoConfig, CONFIG_COL_NAME)
+                .getItems());
         assertEquals(0, configDatas.size());
     }
 
     @Test
     public void testGetCollection_NoConfigResources_NoConfigMetadata() {
-        when(configurationMetadataProvider.getConfigurationMetadata(CONFIG_COL_NAME)).thenReturn(null);
+        when(configurationMetadataProvider.getConfigurationMetadata(CONFIG_COL_NAME))
+                .thenReturn(null);
 
-        List<ConfigurationData> configDatas = ImmutableList.copyOf(underTest.getConfigurationCollection(contextResourceNoConfig, CONFIG_COL_NAME).getItems());
+        List<ConfigurationData> configDatas = ImmutableList.copyOf(underTest
+                .getConfigurationCollection(contextResourceNoConfig, CONFIG_COL_NAME)
+                .getItems());
         assertEquals(0, configDatas.size());
     }
 
@@ -133,15 +144,15 @@ public class ConfigurationManagerImplNoDefaultTest {
     public void testNewCollectionItem() {
         ConfigurationData newItem = underTest.newCollectionItem(contextResourceNoConfig, CONFIG_COL_NAME);
         assertNotNull(newItem);
-        assertEquals((Integer)5, newItem.getEffectiveValues().get("prop3", 0));
+        assertEquals((Integer) 5, newItem.getEffectiveValues().get("prop3", 0));
     }
 
     @Test
     public void testNewCollectionItem_NoConfigMetadata() {
-        when(configurationMetadataProvider.getConfigurationMetadata(CONFIG_COL_NAME)).thenReturn(null);
+        when(configurationMetadataProvider.getConfigurationMetadata(CONFIG_COL_NAME))
+                .thenReturn(null);
 
         ConfigurationData newItem = underTest.newCollectionItem(contextResourceNoConfig, CONFIG_COL_NAME);
         assertNull(newItem);
     }
-
 }

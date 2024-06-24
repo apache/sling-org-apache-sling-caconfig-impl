@@ -35,24 +35,28 @@ public interface ConfigurationData {
      * Get configuration name.
      * @return Configuration name
      */
-    @NotNull String getConfigName();
+    @NotNull
+    String getConfigName();
 
     /**
      * In case of configuration resource collection, this returns the collection item resource name.
      * @return Item resource name or null if it is a singleton resource.
      */
-    @Nullable String getCollectionItemName();
+    @Nullable
+    String getCollectionItemName();
 
     /**
      * @return Path of the configuration resource or null if it cannot be determined.
      */
-    @Nullable String getResourcePath();
+    @Nullable
+    String getResourcePath();
 
     /**
      * List of effective property names defined in configuration metadata or values are defined for.
      * @return Property names
      */
-    @NotNull Set<String> getPropertyNames();
+    @NotNull
+    Set<String> getPropertyNames();
 
     /**
      * Configuration values stored for the given context path. No inherited values. No default values.
@@ -60,20 +64,23 @@ public interface ConfigurationData {
      * If this resources does not exist, the map is empty.
      * @return Values
      */
-    @NotNull ValueMap getValues();
+    @NotNull
+    ValueMap getValues();
 
     /**
      * Configuration values stored for the given context path merged with inherited values and default values.
      * @return Values
      */
-    @NotNull ValueMap getEffectiveValues();
+    @NotNull
+    ValueMap getEffectiveValues();
 
     /**
      * Get detailed metadata information about the property value.
      * @param propertyName Property name
      * @return Value information. Null if neither property metadata nor an existing value exists.
      */
-    @Nullable ValueInfo<?> getValueInfo(String propertyName);
+    @Nullable
+    ValueInfo<?> getValueInfo(String propertyName);
 
     /**
      * @return true if the whole configuration is inherited.
@@ -84,5 +91,4 @@ public interface ConfigurationData {
      * @return true if the whole configuration is overridden by an configuration override provider.
      */
     boolean isOverridden();
-
 }

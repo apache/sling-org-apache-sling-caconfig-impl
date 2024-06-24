@@ -18,13 +18,11 @@
  */
 package org.apache.sling.caconfig.management.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Collection;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.apache.sling.caconfig.management.ConfigurationCollectionData;
 import org.apache.sling.caconfig.management.ConfigurationData;
 import org.apache.sling.caconfig.management.ConfigurationManagementSettings;
@@ -37,8 +35,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigurationCollectionDataImplTest {
@@ -48,32 +47,38 @@ public class ConfigurationCollectionDataImplTest {
 
     @Mock
     private Collection<ConfigurationData> items;
+
     private ConfigurationManagementSettings configurationManagementSettings;
 
     @Before
     public void setUp() {
-        configurationManagementSettings = context.registerInjectActivateService(new ConfigurationManagementSettingsImpl());
+        configurationManagementSettings =
+                context.registerInjectActivateService(new ConfigurationManagementSettingsImpl());
     }
 
     @Test
     public void testProperties() {
-        Map<String,Object> props = ImmutableMap.<String,Object>of("jcr:primaryType", "test", "prop1", "value1");
-        ConfigurationCollectionData underTest = new ConfigurationCollectionDataImpl("name1", items, "/path1", props, configurationManagementSettings);
+        Map<String, Object> props = ImmutableMap.<String, Object>of("jcr:primaryType", "test", "prop1", "value1");
+        ConfigurationCollectionData underTest =
+                new ConfigurationCollectionDataImpl("name1", items, "/path1", props, configurationManagementSettings);
 
         assertEquals("name1", underTest.getConfigName());
         assertSame(items, underTest.getItems());
         assertEquals("/path1", underTest.getResourcePath());
-        assertEquals(ImmutableMap.<String,Object>of("prop1", "value1"), underTest.getProperties());
+        assertEquals(ImmutableMap.<String, Object>of("prop1", "value1"), underTest.getProperties());
     }
 
     @Test
     public void testEmpty() {
-        ConfigurationCollectionData underTest = new ConfigurationCollectionDataImpl("name1", ImmutableList.<ConfigurationData>of(), "/path1", null, configurationManagementSettings);
+        ConfigurationCollectionData underTest = new ConfigurationCollectionDataImpl(
+                "name1", ImmutableList.<ConfigurationData>of(), "/path1", null, configurationManagementSettings);
 
         assertEquals("name1", underTest.getConfigName());
         assertTrue(underTest.getItems().isEmpty());
         assertEquals("/path1", underTest.getResourcePath());
-        assertEquals(ImmutableMap.<String,Object>of(ConfigurationResourceNameConstants.PROPERTY_CONFIG_COLLECTION_INHERIT, true), underTest.getProperties());
+        assertEquals(
+                ImmutableMap.<String, Object>of(
+                        ConfigurationResourceNameConstants.PROPERTY_CONFIG_COLLECTION_INHERIT, true),
+                underTest.getProperties());
     }
-
 }

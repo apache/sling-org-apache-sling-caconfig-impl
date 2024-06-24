@@ -18,23 +18,22 @@
  */
 package org.apache.sling.caconfig.impl.override;
 
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import org.junit.Test;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Test;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 public class OverrideStringParserTest {
 
-    private static final Map<String,Object> BASICTYPES_MAP = ImmutableMap.<String,Object>builder()
+    private static final Map<String, Object> BASICTYPES_MAP = ImmutableMap.<String, Object>builder()
             .put("param1", "value1")
             .put("param2", "value2")
             .put("param3", 555L)
@@ -42,12 +41,12 @@ public class OverrideStringParserTest {
             .put("param5", true)
             .build();
 
-    private static final Map<String,Object> BASICTYPES_ARRAY_MAP = ImmutableMap.<String,Object>builder()
-            .put("param1", new String[] { "v1a", "v1b" })
-            .put("param2", new String[] { "v2a", "v2b" })
-            .put("param3", new Long[] { 555L, 666L })
-            .put("param4", new Double[] { 1.23d, 2.34d })
-            .put("param5", new Boolean[] { true, false })
+    private static final Map<String, Object> BASICTYPES_ARRAY_MAP = ImmutableMap.<String, Object>builder()
+            .put("param1", new String[] {"v1a", "v1b"})
+            .put("param2", new String[] {"v2a", "v2b"})
+            .put("param3", new Long[] {555L, 666L})
+            .put("param4", new Double[] {1.23d, 2.34d})
+            .put("param5", new Boolean[] {true, false})
             .put("param6", new String[0])
             .build();
 
@@ -88,16 +87,16 @@ public class OverrideStringParserTest {
         OverrideItem item = result.get(0);
         assertNull(item.getPath());
         assertEquals("config.name", item.getConfigName());
-        for (Map.Entry<String,Object> entry : item.getProperties().entrySet()) {
-            assertArrayEquals("array " + entry.getKey(), (Object[])BASICTYPES_ARRAY_MAP.get(entry.getKey()), (Object[])item.getProperties().get(entry.getKey()));
+        for (Map.Entry<String, Object> entry : item.getProperties().entrySet()) {
+            assertArrayEquals("array " + entry.getKey(), (Object[]) BASICTYPES_ARRAY_MAP.get(entry.getKey()), (Object[])
+                    item.getProperties().get(entry.getKey()));
         }
         assertFalse(item.isAllProperties());
     }
 
     @Test
     public void testBasicTypesJson() {
-        List<OverrideItem> result = parse(
-                "configName={\"param1\":\"value1\","
+        List<OverrideItem> result = parse("configName={\"param1\":\"value1\","
                 + "\"param2\":\"value2\","
                 + "\"param3\":555,"
                 + "\"param4\":1.23,"
@@ -113,8 +112,7 @@ public class OverrideStringParserTest {
 
     @Test
     public void testBasicTypesJsonArray() {
-        List<OverrideItem> result = parse(
-                "configName={\"param1\":[\"v1a\",\"v1b\"],"
+        List<OverrideItem> result = parse("configName={\"param1\":[\"v1a\",\"v1b\"],"
                 + "\"param2\":[\"v2a\",\"v2b\"],"
                 + "\"param3\":[555,666],"
                 + "\"param4\":[1.23,2.34],"
@@ -125,17 +123,17 @@ public class OverrideStringParserTest {
         OverrideItem item = result.get(0);
         assertNull(item.getPath());
         assertEquals("configName", item.getConfigName());
-        for (Map.Entry<String,Object> entry : item.getProperties().entrySet()) {
-            assertArrayEquals("array " + entry.getKey(), (Object[])BASICTYPES_ARRAY_MAP.get(entry.getKey()), (Object[])item.getProperties().get(entry.getKey()));
+        for (Map.Entry<String, Object> entry : item.getProperties().entrySet()) {
+            assertArrayEquals("array " + entry.getKey(), (Object[]) BASICTYPES_ARRAY_MAP.get(entry.getKey()), (Object[])
+                    item.getProperties().get(entry.getKey()));
         }
         assertTrue(item.isAllProperties());
     }
 
     @Test
     public void testWithPath() {
-        List<OverrideItem> result = parse(
-                "[/a/b]configName/sub1/param1=\"value1\"",
-                "configName/sub2/param2=\"value2\"");
+        List<OverrideItem> result =
+                parse("[/a/b]configName/sub1/param1=\"value1\"", "configName/sub2/param2=\"value2\"");
 
         assertEquals(2, result.size());
 
@@ -221,5 +219,4 @@ public class OverrideStringParserTest {
     private List<OverrideItem> parse(String... values) {
         return ImmutableList.copyOf(OverrideStringParser.parse(ImmutableList.copyOf(values)));
     }
-
 }

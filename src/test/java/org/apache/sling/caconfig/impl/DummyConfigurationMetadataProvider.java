@@ -23,21 +23,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
+import com.google.common.collect.ImmutableSortedSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
 import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
 import org.jetbrains.annotations.NotNull;
 
-import com.google.common.collect.ImmutableSortedSet;
-
 class DummyConfigurationMetadataProvider implements ConfigurationMetadataProvider {
 
     private final String configName;
-    private final Map<String,Object> defaultValues;
+    private final Map<String, Object> defaultValues;
     private final boolean collection;
 
-    public DummyConfigurationMetadataProvider(String configName, Map<String, Object> defaultValues, boolean collection) {
+    public DummyConfigurationMetadataProvider(
+            String configName, Map<String, Object> defaultValues, boolean collection) {
         this.configName = configName;
         this.defaultValues = defaultValues;
         this.collection = collection;
@@ -59,5 +59,4 @@ class DummyConfigurationMetadataProvider implements ConfigurationMetadataProvide
         }
         return new ConfigurationMetadata(configName, properties, collection);
     }
-
 }

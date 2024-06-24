@@ -66,5 +66,4 @@ public class PathParentExpandIterator implements Iterator<String> {
     public void remove() {
         throw new UnsupportedOperationException();
     }
-
 }

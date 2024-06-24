@@ -27,8 +27,9 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
 
-@Component(service=AdapterFactory.class,
-        property={
+@Component(
+        service = AdapterFactory.class,
+        property = {
             AdapterFactory.ADAPTER_CLASSES + "=org.apache.sling.caconfig.ConfigurationBuilder",
             AdapterFactory.ADAPTABLE_CLASSES + "=org.apache.sling.api.resource.Resource"
         })
@@ -38,12 +39,12 @@ public class ConfigurationBuilderAdapterFactory implements AdapterFactory {
     private ConfigurationResolver resolver;
 
     @Override
-    @SuppressWarnings({ "unchecked", "null" })
-    public <AdapterType> AdapterType getAdapter(@NotNull final Object adaptable, @NotNull final Class<AdapterType> type) {
+    @SuppressWarnings({"unchecked", "null"})
+    public <AdapterType> AdapterType getAdapter(
+            @NotNull final Object adaptable, @NotNull final Class<AdapterType> type) {
         if (adaptable instanceof Resource && type == ConfigurationBuilder.class) {
             return (AdapterType) resolver.get((Resource) adaptable);
         }
         return null;
     }
-
 }

@@ -36,7 +36,7 @@ class BundleConfigurationMapping {
 
     private final Bundle bundle;
     private final String classNamesList;
-    private final AtomicReference<Map<String,ConfigurationMapping>> configMappingsRef = new AtomicReference<>(null);
+    private final AtomicReference<Map<String, ConfigurationMapping>> configMappingsRef = new AtomicReference<>(null);
 
     private static final Logger log = LoggerFactory.getLogger(BundleConfigurationMapping.class);
 
@@ -53,18 +53,16 @@ class BundleConfigurationMapping {
      * Thread-safe lazy initialization of configuration mappings.
      * @return Configuration mappings
      */
-    private Map<String,ConfigurationMapping> getConfigMappings() {
-        Map<String,ConfigurationMapping> configMappings = configMappingsRef.get();
+    private Map<String, ConfigurationMapping> getConfigMappings() {
+        Map<String, ConfigurationMapping> configMappings = configMappingsRef.get();
         if (configMappings == null) {
             configMappings = initializeConfigMappings();
             if (configMappingsRef.compareAndSet(null, configMappings)) {
                 return configMappings;
-            }
-            else {
+            } else {
                 return configMappingsRef.get();
             }
-        }
-        else {
+        } else {
             return configMappings;
         }
     }
@@ -73,8 +71,8 @@ class BundleConfigurationMapping {
      * Parse all annotation classes
      * @return
      */
-    private Map<String,ConfigurationMapping> initializeConfigMappings() {
-        Map<String,ConfigurationMapping> configMappings = new HashMap<>();
+    private Map<String, ConfigurationMapping> initializeConfigMappings() {
+        Map<String, ConfigurationMapping> configMappings = new HashMap<>();
 
         String[] classNames = StringUtils.split(StringUtils.deleteWhitespace(classNamesList), ",");
         for (String className : classNames) {
@@ -87,12 +85,10 @@ class BundleConfigurationMapping {
                     if (!hasMappingConflict(configMapping, configMappings)) {
                         configMappings.put(configMapping.getConfigName(), configMapping);
                     }
-                }
-                else {
+                } else {
                     log.warn("Ignoring invalid configuration class: {}", className);
                 }
-            }
-            catch (ClassNotFoundException ex) {
+            } catch (ClassNotFoundException ex) {
                 log.warn("Unable to load class: " + className, ex);
             }
         }
@@ -100,18 +96,18 @@ class BundleConfigurationMapping {
         return configMappings;
     }
 
-    private boolean hasMappingConflict(ConfigurationMapping newConfigMapping,
-            Map<String,ConfigurationMapping> configMappings) {
+    private boolean hasMappingConflict(
+            ConfigurationMapping newConfigMapping, Map<String, ConfigurationMapping> configMappings) {
         ConfigurationMapping conflictingConfigMapping = configMappings.get(newConfigMapping.getConfigName());
         if (conflictingConfigMapping != null) {
-            log.warn("Configuration name conflict in bundle {}: Both configuration classes {} and {} define the configuration name '{}', ignoring the latter.",
+            log.warn(
+                    "Configuration name conflict in bundle {}: Both configuration classes {} and {} define the configuration name '{}', ignoring the latter.",
                     bundle.getSymbolicName(),
                     conflictingConfigMapping.getConfigClass().getName(),
                     newConfigMapping.getConfigClass().getName(),
                     newConfigMapping.getConfigName());
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -128,5 +124,4 @@ class BundleConfigurationMapping {
     public String toString() {
         return "Classes from bundle '" + bundle.getSymbolicName() + "': " + classNamesList;
     }
-
 }

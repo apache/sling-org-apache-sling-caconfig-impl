@@ -33,6 +33,6 @@ public interface ConfigurationResourceResolverConfig {
      * All bucket names starting with sling:configs and the alternative ones.
      * @return Bucket names
      */
-    @NotNull Collection<String> configBucketNames();
-
+    @NotNull
+    Collection<String> configBucketNames();
 }

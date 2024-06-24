@@ -24,5 +24,4 @@ package org.apache.sling.caconfig.example;
 public @interface WithoutAnnotationConfig {
 
     String stringParam();
-
 }

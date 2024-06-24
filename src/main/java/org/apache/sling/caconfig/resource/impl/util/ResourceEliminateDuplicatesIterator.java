@@ -38,11 +38,10 @@ public class ResourceEliminateDuplicatesIterator extends FilterIterator<ContextR
 
             @Override
             public boolean evaluate(ContextResource contextResource) {
-                String key = contextResource.getResource().getPath() + "#" + StringUtils.defaultString(contextResource.getConfigRef());
+                String key = contextResource.getResource().getPath() + "#"
+                        + StringUtils.defaultString(contextResource.getConfigRef());
                 return keys.add(key);
             }
-
         });
     }
-
 }

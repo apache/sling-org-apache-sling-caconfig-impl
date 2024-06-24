@@ -21,13 +21,11 @@ package org.apache.sling.caconfig.example;
 import org.apache.sling.caconfig.annotation.Configuration;
 import org.apache.sling.caconfig.annotation.Property;
 
-@Configuration(name = "simpleConfig",
-    label = "Simple configuration",
-    description = "This is a configuration example with additional metadata.",
-    property = {
-            "param1=value1",
-            "param2=123"
-    })
+@Configuration(
+        name = "simpleConfig",
+        label = "Simple configuration",
+        description = "This is a configuration example with additional metadata.",
+        property = {"param1=value1", "param2=123"})
 public @interface MetadataSimpleConfig {
 
     @Property(label = "String Param", description = "Enter strings here.", property = "p1=v1", order = 1)
@@ -38,5 +36,4 @@ public @interface MetadataSimpleConfig {
 
     @Property(order = 3)
     boolean boolParam();
-
 }
