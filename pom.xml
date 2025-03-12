@@ -221,15 +221,6 @@
                         <goals>
                             <goal>bnd-process</goal>
                         </goals>
-                        <configuration>
-                            <bnd>
-                                Import-Package: \
-                                <!-- WebConsole support is optional -->
-                                \
-                              org.apache.felix.webconsole;resolution:=optional,\
-                              *
-                            </bnd>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
