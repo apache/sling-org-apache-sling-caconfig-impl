@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.management.ValueInfo;
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationOverrideMultiplexer;
@@ -123,13 +123,13 @@ final class ValueInfoImpl<T> implements ValueInfo<T> {
             return false;
         } else if (writebackConfigurationResource == null) {
             return true;
-        } else if (!StringUtils.equals(
+        } else if (!Strings.CS.equals(
                 resolvedConfigurationResource.getPath(), writebackConfigurationResource.getPath())) {
             return true;
         } else {
             Resource inheritanceSource = getResourceFromInheritanceChain();
             if (inheritanceSource != null) {
-                return !StringUtils.equals(resolvedConfigurationResource.getPath(), inheritanceSource.getPath());
+                return !Strings.CS.equals(resolvedConfigurationResource.getPath(), inheritanceSource.getPath());
             } else {
                 return false;
             }

@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.ConfigurationResolveException;
 import org.apache.sling.caconfig.ConfigurationResolver;
@@ -177,8 +176,7 @@ public class ConfigurationResolverCustomPersistence2Test {
                 .siblingsMode()
                 .resource("1", "stringParam", "value21");
 
-        List<ListNestedConfig> cfgList =
-                ImmutableList.copyOf(underTest.get(site1Page1).asCollection(ListNestedConfig.class));
+        List<ListNestedConfig> cfgList = List.copyOf(underTest.get(site1Page1).asCollection(ListNestedConfig.class));
 
         assertEquals(3, cfgList.size());
 
@@ -231,7 +229,7 @@ public class ConfigurationResolverCustomPersistence2Test {
                 .resource("1", "stringParam", "value21");
 
         List<ListDoubleNestedConfig> cfgList =
-                ImmutableList.copyOf(underTest.get(site1Page1).asCollection(ListDoubleNestedConfig.class));
+                List.copyOf(underTest.get(site1Page1).asCollection(ListDoubleNestedConfig.class));
 
         assertEquals(3, cfgList.size());
 

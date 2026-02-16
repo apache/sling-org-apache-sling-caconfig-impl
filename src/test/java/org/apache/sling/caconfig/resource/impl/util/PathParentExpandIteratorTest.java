@@ -20,7 +20,7 @@ package org.apache.sling.caconfig.resource.impl.util;
 
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
+import org.apache.commons.collections4.IteratorUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -29,11 +29,11 @@ public class PathParentExpandIteratorTest {
 
     @Test
     public void testIterator() {
-        List<String> list = ImmutableList.of("/conf/a/b/c", "/conf/a/b", "/conf/x/y/z");
+        List<String> list = List.of("/conf/a/b/c", "/conf/a/b", "/conf/x/y/z");
 
-        List<String> result = ImmutableList.copyOf(new PathParentExpandIterator("/conf", list.iterator()));
+        List<String> result = IteratorUtils.toList(new PathParentExpandIterator("/conf", list.iterator()));
         assertEquals(
-                ImmutableList.of(
+                List.of(
                         "/conf/a/b/c",
                         "/conf/a/b",
                         "/conf/a",

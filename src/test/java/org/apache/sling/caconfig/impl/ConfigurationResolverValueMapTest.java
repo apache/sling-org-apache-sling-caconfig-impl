@@ -21,9 +21,8 @@ package org.apache.sling.caconfig.impl;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.caconfig.ConfigurationResolveException;
@@ -130,9 +129,7 @@ public class ConfigurationResolverValueMapTest {
         context.registerService(
                 ConfigurationMetadataProvider.class,
                 new DummyConfigurationMetadataProvider(
-                        "sampleName",
-                        ImmutableMap.<String, Object>of("stringParam", "defValue1", "intParam", 999),
-                        false));
+                        "sampleName", Map.<String, Object>of("stringParam", "defValue1", "intParam", 999), false));
 
         context.build().resource("/conf/content/site1/sling:configs/sampleName", "boolParam", true);
 
@@ -149,8 +146,7 @@ public class ConfigurationResolverValueMapTest {
     public void testConfigCollectionWithDefaultValues() {
         context.registerService(
                 ConfigurationMetadataProvider.class,
-                new DummyConfigurationMetadataProvider(
-                        "sampleList", ImmutableMap.<String, Object>of("intParam", 999), true));
+                new DummyConfigurationMetadataProvider("sampleList", Map.<String, Object>of("intParam", 999), true));
 
         context.build()
                 .resource("/conf/content/site1/sling:configs/sampleList")
@@ -159,8 +155,8 @@ public class ConfigurationResolverValueMapTest {
                 .resource("2", "stringParam", "configValue1.2")
                 .resource("3", "stringParam", "configValue1.3");
 
-        List<ValueMap> propsList = ImmutableList.copyOf(
-                underTest.get(site1Page1).name("sampleList").asValueMapCollection());
+        List<ValueMap> propsList =
+                List.copyOf(underTest.get(site1Page1).name("sampleList").asValueMapCollection());
 
         assertEquals("configValue1.1", propsList.get(0).get("stringParam", String.class));
         assertEquals(999, (int) propsList.get(0).get("intParam", 0));

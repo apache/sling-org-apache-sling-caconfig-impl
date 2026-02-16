@@ -20,7 +20,7 @@ package org.apache.sling.caconfig.resource.impl.util;
 
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
+import org.apache.commons.collections4.IteratorUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -29,9 +29,9 @@ public class PathEliminateDuplicatesIteratorTest {
 
     @Test
     public void testIterator() {
-        List<String> paths = ImmutableList.of("/conf/a", "/conf/a/b", "/conf/a", "/conf/a/b/c");
+        List<String> paths = List.of("/conf/a", "/conf/a/b", "/conf/a", "/conf/a/b/c");
 
-        List<String> result = ImmutableList.copyOf(new PathEliminateDuplicatesIterator(paths.iterator()));
-        assertEquals(ImmutableList.of("/conf/a", "/conf/a/b", "/conf/a/b/c"), result);
+        List<String> result = IteratorUtils.toList(new PathEliminateDuplicatesIterator(paths.iterator()));
+        assertEquals(List.of("/conf/a", "/conf/a/b", "/conf/a/b/c"), result);
     }
 }

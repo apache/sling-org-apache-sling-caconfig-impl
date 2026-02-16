@@ -18,7 +18,8 @@
  */
 package org.apache.sling.caconfig.resource.impl;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
+
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.resource.ConfigurationResourceResolver;
 import org.apache.sling.hamcrest.ResourceCollectionMatchers;
@@ -108,7 +109,7 @@ public class ConfigurationResourceResolverImplTest {
 
     @Test
     public void testGetAllContextPaths() {
-        assertEquals(ImmutableList.of("/content/site1"), underTest.getAllContextPaths(site1Page1));
-        assertEquals(ImmutableList.of("/content/site2"), underTest.getAllContextPaths(site2Page1));
+        assertEquals(List.of("/content/site1"), underTest.getAllContextPaths(site1Page1));
+        assertEquals(List.of("/content/site2"), underTest.getAllContextPaths(site2Page1));
     }
 }

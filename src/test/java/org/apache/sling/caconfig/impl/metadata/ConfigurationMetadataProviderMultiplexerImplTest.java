@@ -19,12 +19,12 @@
 package org.apache.sling.caconfig.impl.metadata;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
 import org.apache.sling.caconfig.impl.def.DefaultConfigurationPersistenceStrategy;
 import org.apache.sling.caconfig.management.impl.ConfigurationManagementSettingsImpl;
 import org.apache.sling.caconfig.management.impl.ConfigurationPersistenceStrategyMultiplexerImpl;
@@ -70,7 +70,7 @@ public class ConfigurationMetadataProviderMultiplexerImplTest {
         registerConfigurationMetadataProvider("test1", "test2");
 
         SortedSet<String> configNames = underTest.getConfigurationNames();
-        assertEquals(ImmutableSortedSet.of("test1", "test2"), configNames);
+        assertEquals(new TreeSet<>(Set.of("test1", "test2")), configNames);
 
         ConfigurationMetadata configMetadata = underTest.getConfigurationMetadata("test1");
         assertEquals("test1", configMetadata.getName());
@@ -85,7 +85,7 @@ public class ConfigurationMetadataProviderMultiplexerImplTest {
         registerConfigurationMetadataProvider("test2");
 
         SortedSet<String> configNames = underTest.getConfigurationNames();
-        assertEquals(ImmutableSortedSet.of("test1", "test2"), configNames);
+        assertEquals(new TreeSet<>(Set.of("test1", "test2")), configNames);
 
         ConfigurationMetadata configMetadata = underTest.getConfigurationMetadata("test1");
         assertEquals("test1", configMetadata.getName());
@@ -97,7 +97,7 @@ public class ConfigurationMetadataProviderMultiplexerImplTest {
     private void registerConfigurationMetadataProvider(String... names) {
         final Map<String, ConfigurationMetadata> metadata = new HashMap<>();
         for (String name : names) {
-            metadata.put(name, new ConfigurationMetadata(name, ImmutableList.<PropertyMetadata<?>>of(), false));
+            metadata.put(name, new ConfigurationMetadata(name, List.<PropertyMetadata<?>>of(), false));
         }
         context.registerService(ConfigurationMetadataProvider.class, new ConfigurationMetadataProvider() {
             @Override

@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
@@ -269,7 +269,7 @@ public class DefaultConfigurationPersistenceStrategy implements ConfigurationPer
     }
 
     private ConfigurationPersistenceException convertPersistenceException(String message, PersistenceException ex) {
-        if (StringUtils.equals(ex.getCause().getClass().getName(), "javax.jcr.AccessDeniedException")) {
+        if (Strings.CS.equals(ex.getCause().getClass().getName(), "javax.jcr.AccessDeniedException")) {
             // detect if commit failed due to read-only access to repository
             return new ConfigurationPersistenceAccessDeniedException("No write access: " + message, ex);
         }

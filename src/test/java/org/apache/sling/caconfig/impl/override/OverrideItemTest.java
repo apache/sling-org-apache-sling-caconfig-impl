@@ -20,7 +20,6 @@ package org.apache.sling.caconfig.impl.override;
 
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,7 +34,7 @@ public class OverrideItemTest {
 
     @Before
     public void setUp() {
-        props = ImmutableMap.<String, Object>of("p1", "abc", "p2", 55);
+        props = Map.<String, Object>of("p1", "abc", "p2", 55);
         underTest = new OverrideItem("/a/b", "c/d", props, true);
     }
 

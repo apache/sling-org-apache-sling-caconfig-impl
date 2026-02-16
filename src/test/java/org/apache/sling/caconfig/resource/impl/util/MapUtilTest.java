@@ -18,7 +18,8 @@
  */
 package org.apache.sling.caconfig.resource.impl.util;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.Map;
+
 import org.junit.Test;
 
 import static org.apache.sling.caconfig.resource.impl.util.MapUtil.traceOutput;
@@ -28,15 +29,15 @@ public class MapUtilTest {
 
     @Test
     public void testTraceOutput() {
-        assertEquals("{}", traceOutput(ImmutableMap.<String, Object>of()));
+        assertEquals("{}", traceOutput(Map.<String, Object>of()));
 
         assertEquals(
                 "{prop1: 'aa', prop2: 5, prop3: true}",
-                traceOutput(ImmutableMap.<String, Object>of("prop1", "aa", "prop2", 5, "prop3", true)));
+                traceOutput(Map.<String, Object>of("prop1", "aa", "prop2", 5, "prop3", true)));
 
         assertEquals(
                 "{prop1: ['aa','bb'], prop2: [5,10], prop3: true}",
-                traceOutput(ImmutableMap.<String, Object>of(
+                traceOutput(Map.<String, Object>of(
                         "prop1", new String[] {"aa", "bb"},
                         "prop2", new Integer[] {5, 10},
                         "prop3", true)));

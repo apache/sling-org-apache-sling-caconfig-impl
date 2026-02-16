@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.management.impl.ContextPathStrategyMultiplexerImpl;
 import org.apache.sling.caconfig.resource.spi.ConfigurationResourceResolvingStrategy;
@@ -242,7 +241,7 @@ public class DefaultConfigurationResourceResolvingStrategyHierarchyTest {
                 .resource("item3");
 
         List<Iterator<Resource>> resources =
-                ImmutableList.copyOf(underTest.getResourceCollectionInheritanceChain(site1Page1, BUCKETS, "cfgCol"));
+                List.copyOf(underTest.getResourceCollectionInheritanceChain(site1Page1, BUCKETS, "cfgCol"));
         assertEquals(4, resources.size());
 
         assertThat(

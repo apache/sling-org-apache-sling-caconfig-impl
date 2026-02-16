@@ -20,12 +20,12 @@ package org.apache.sling.caconfig.impl;
 
 import javax.script.Bindings;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSortedSet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
@@ -44,6 +44,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mock.Strictness;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
@@ -58,20 +59,20 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("unchecked")
 public class ConfigurationBindingsValueProviderTest {
 
-    private static final ValueMap VALUEMAP = new ValueMapDecorator(ImmutableMap.<String, Object>of("param1", "value1"));
+    private static final ValueMap VALUEMAP = new ValueMapDecorator(Map.<String, Object>of("param1", "value1"));
 
-    private static final SortedSet<String> CONFIG_NAMES = ImmutableSortedSet.of("name1", "name.2");
+    private static final SortedSet<String> CONFIG_NAMES = new TreeSet<>(Set.of("name1", "name.2"));
 
     @Rule
     public SlingContext context = new SlingContext();
 
-    @Mock(lenient = true)
+    @Mock(strictness = Strictness.LENIENT)
     private SlingHttpServletRequest request;
 
     @Mock
     private Resource resource;
 
-    @Mock(lenient = true)
+    @Mock(strictness = Strictness.LENIENT)
     private Bindings bindings;
 
     @Mock
@@ -102,12 +103,12 @@ public class ConfigurationBindingsValueProviderTest {
         when(resource.adaptTo(ConfigurationBuilder.class)).thenReturn(configBuilder);
         when(configBuilder.name(anyString())).thenReturn(configBuilder);
         when(configBuilder.asValueMap()).thenReturn(VALUEMAP);
-        when(configBuilder.asValueMapCollection()).thenReturn(ImmutableList.of(VALUEMAP));
+        when(configBuilder.asValueMapCollection()).thenReturn(List.of(VALUEMAP));
 
         when(configMetadataProvider.getConfigurationMetadata("name1"))
-                .thenReturn(new ConfigurationMetadata("name1", ImmutableList.<PropertyMetadata<?>>of(), false));
+                .thenReturn(new ConfigurationMetadata("name1", List.<PropertyMetadata<?>>of(), false));
         when(configMetadataProvider.getConfigurationMetadata("name.2"))
-                .thenReturn(new ConfigurationMetadata("name.2", ImmutableList.<PropertyMetadata<?>>of(), true));
+                .thenReturn(new ConfigurationMetadata("name.2", List.<PropertyMetadata<?>>of(), true));
     }
 
     @Test
@@ -135,7 +136,7 @@ public class ConfigurationBindingsValueProviderTest {
         Map<String, ValueMap> configMap = configMapCaptor.getValue();
         assertEquals(CONFIG_NAMES, configMap.keySet());
         assertEquals(VALUEMAP, configMap.get("name1"));
-        assertEquals(ImmutableList.of(VALUEMAP), configMap.get("name.2"));
+        assertEquals(List.of(VALUEMAP), configMap.get("name.2"));
     }
 
     @Test

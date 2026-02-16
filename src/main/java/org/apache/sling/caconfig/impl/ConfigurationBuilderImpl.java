@@ -31,6 +31,7 @@ import org.apache.commons.collections4.ResettableListIterator;
 import org.apache.commons.collections4.Transformer;
 import org.apache.commons.collections4.iterators.ListIteratorWrapper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.api.resource.ValueMap;
@@ -279,7 +280,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
         ConfigurationMetadata metadata = configurationMetadataProvider.getConfigurationMetadata(configName);
         if (metadata == null) {
             // probably a configuration list - remove item name from end
-            if (StringUtils.contains(configName, "/")) {
+            if (Strings.CS.contains(configName, "/")) {
                 String partialConfigName = StringUtils.substringBeforeLast(configName, "/");
                 metadata = configurationMetadataProvider.getConfigurationMetadata(partialConfigName);
             }

@@ -18,9 +18,10 @@
  */
 package org.apache.sling.caconfig.impl;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.spi.ConfigurationInheritanceStrategy;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
@@ -59,7 +60,7 @@ public class ConfigurationInheritanceStrategyMultiplexerImplTest {
 
     @Before
     public void setUp() {
-        resources = ImmutableList.of(resource1, resource2).iterator();
+        resources = new ArrayList<>(List.of(resource1, resource2)).iterator();
         underTest = context.registerInjectActivateService(new ConfigurationInheritanceStrategyMultiplexerImpl());
     }
 

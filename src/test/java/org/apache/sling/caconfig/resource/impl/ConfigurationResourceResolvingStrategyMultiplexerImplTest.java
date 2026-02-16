@@ -21,11 +21,9 @@ package org.apache.sling.caconfig.resource.impl;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.stream.Collectors;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterators;
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.management.impl.ContextPathStrategyMultiplexerImpl;
 import org.apache.sling.caconfig.resource.impl.def.DefaultConfigurationResourceResolvingStrategy;
@@ -35,7 +33,6 @@ import org.apache.sling.hamcrest.ResourceCollectionMatchers;
 import org.apache.sling.hamcrest.ResourceMatchers;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -150,7 +147,7 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
                             @NotNull Resource resource,
                             @NotNull Collection<String> bucketNames,
                             @NotNull String configName) {
-                        return ImmutableList.copyOf(context.resourceResolver()
+                        return IteratorUtils.toList(context.resourceResolver()
                                 .getResource("/conf/site1/sling:test/feature")
                                 .listChildren());
                     }
@@ -160,7 +157,7 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
                             @NotNull Resource resource,
                             @NotNull Collection<String> bucketNames,
                             @NotNull String configName) {
-                        return Iterators.singletonIterator(getResource(resource, bucketNames, configName));
+                        return IteratorUtils.singletonIterator(getResource(resource, bucketNames, configName));
                     }
 
                     @Override
@@ -168,14 +165,9 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
                             @NotNull Resource resource,
                             @NotNull Collection<String> bucketNames,
                             @NotNull String configName) {
-                        return Collections2.transform(
-                                getResourceCollection(resource, bucketNames, configName),
-                                new Function<Resource, Iterator<Resource>>() {
-                                    @Override
-                                    public Iterator<Resource> apply(@Nullable Resource input) {
-                                        return Iterators.singletonIterator(input);
-                                    }
-                                });
+                        return getResourceCollection(resource, bucketNames, configName).stream()
+                                .map(IteratorUtils::singletonIterator)
+                                .collect(Collectors.toList());
                     }
 
                     @Override
@@ -210,7 +202,7 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
                             @NotNull Resource resource,
                             @NotNull Collection<String> bucketNames,
                             @NotNull String configName) {
-                        return ImmutableList.copyOf(context.resourceResolver()
+                        return IteratorUtils.toList(context.resourceResolver()
                                 .getResource("/libs/conf/sling:test/feature")
                                 .listChildren());
                     }
@@ -220,7 +212,7 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
                             @NotNull Resource resource,
                             @NotNull Collection<String> bucketNames,
                             @NotNull String configName) {
-                        return Iterators.singletonIterator(getResource(resource, bucketNames, configName));
+                        return IteratorUtils.singletonIterator(getResource(resource, bucketNames, configName));
                     }
 
                     @Override
@@ -228,14 +220,9 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
                             @NotNull Resource resource,
                             @NotNull Collection<String> bucketNames,
                             @NotNull String configName) {
-                        return Collections2.transform(
-                                getResourceCollection(resource, bucketNames, configName),
-                                new Function<Resource, Iterator<Resource>>() {
-                                    @Override
-                                    public Iterator<Resource> apply(@Nullable Resource input) {
-                                        return Iterators.singletonIterator(input);
-                                    }
-                                });
+                        return getResourceCollection(resource, bucketNames, configName).stream()
+                                .map(IteratorUtils::singletonIterator)
+                                .collect(Collectors.toList());
                     }
 
                     @Override
@@ -282,13 +269,8 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
     }
 
     private Collection<Resource> first(Collection<Iterator<Resource>> resources) {
-        return Collections2.transform(
-                underTest.getResourceCollectionInheritanceChain(site1Page1, BUCKETS, "feature"),
-                new Function<Iterator<Resource>, Resource>() {
-                    @Override
-                    public Resource apply(@Nullable Iterator<Resource> input) {
-                        return input.next();
-                    }
-                });
+        return underTest.getResourceCollectionInheritanceChain(site1Page1, BUCKETS, "feature").stream()
+                .map(Iterator::next)
+                .collect(Collectors.toList());
     }
 }

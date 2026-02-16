@@ -19,10 +19,9 @@
 package org.apache.sling.caconfig.management.impl;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import org.apache.sling.caconfig.management.ConfigurationCollectionData;
 import org.apache.sling.caconfig.management.ConfigurationData;
 import org.apache.sling.caconfig.management.ConfigurationManagementSettings;
@@ -58,27 +57,26 @@ public class ConfigurationCollectionDataImplTest {
 
     @Test
     public void testProperties() {
-        Map<String, Object> props = ImmutableMap.<String, Object>of("jcr:primaryType", "test", "prop1", "value1");
+        Map<String, Object> props = Map.<String, Object>of("jcr:primaryType", "test", "prop1", "value1");
         ConfigurationCollectionData underTest =
                 new ConfigurationCollectionDataImpl("name1", items, "/path1", props, configurationManagementSettings);
 
         assertEquals("name1", underTest.getConfigName());
         assertSame(items, underTest.getItems());
         assertEquals("/path1", underTest.getResourcePath());
-        assertEquals(ImmutableMap.<String, Object>of("prop1", "value1"), underTest.getProperties());
+        assertEquals(Map.<String, Object>of("prop1", "value1"), underTest.getProperties());
     }
 
     @Test
     public void testEmpty() {
         ConfigurationCollectionData underTest = new ConfigurationCollectionDataImpl(
-                "name1", ImmutableList.<ConfigurationData>of(), "/path1", null, configurationManagementSettings);
+                "name1", List.<ConfigurationData>of(), "/path1", null, configurationManagementSettings);
 
         assertEquals("name1", underTest.getConfigName());
         assertTrue(underTest.getItems().isEmpty());
         assertEquals("/path1", underTest.getResourcePath());
         assertEquals(
-                ImmutableMap.<String, Object>of(
-                        ConfigurationResourceNameConstants.PROPERTY_CONFIG_COLLECTION_INHERIT, true),
+                Map.<String, Object>of(ConfigurationResourceNameConstants.PROPERTY_CONFIG_COLLECTION_INHERIT, true),
                 underTest.getProperties());
     }
 }

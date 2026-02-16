@@ -21,7 +21,7 @@ package org.apache.sling.caconfig.management.impl;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy2;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -106,7 +106,7 @@ public class ConfigurationManagerImplCustomPersistence2Test extends Configuratio
     }
 
     private String replaceBucketName(String path) {
-        return StringUtils.replace(path, "/sling:configs/", "/settings/");
+        return Strings.CS.replace(path, "/sling:configs/", "/settings/");
     }
 
     @Override

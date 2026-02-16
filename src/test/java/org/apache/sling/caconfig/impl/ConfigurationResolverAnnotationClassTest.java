@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.caconfig.ConfigurationResolveException;
@@ -211,8 +210,7 @@ public class ConfigurationResolverAnnotationClassTest {
                 .siblingsMode()
                 .resource("1", "stringParam", "value21");
 
-        List<ListNestedConfig> cfgList =
-                ImmutableList.copyOf(underTest.get(site1Page1).asCollection(ListNestedConfig.class));
+        List<ListNestedConfig> cfgList = List.copyOf(underTest.get(site1Page1).asCollection(ListNestedConfig.class));
 
         assertEquals(3, cfgList.size());
 
@@ -266,7 +264,7 @@ public class ConfigurationResolverAnnotationClassTest {
                 .resource("1", "stringParam", "value21");
 
         List<ListDoubleNestedConfig> cfgList =
-                ImmutableList.copyOf(underTest.get(site1Page1).asCollection(ListDoubleNestedConfig.class));
+                List.copyOf(underTest.get(site1Page1).asCollection(ListDoubleNestedConfig.class));
 
         assertEquals(3, cfgList.size());
 
@@ -316,8 +314,7 @@ public class ConfigurationResolverAnnotationClassTest {
                         PROPERTY_CONFIG_PROPERTY_INHERIT,
                         true);
 
-        List<ListConfig> cfgList =
-                ImmutableList.copyOf(underTest.get(site1Page1).asCollection(ListConfig.class));
+        List<ListConfig> cfgList = List.copyOf(underTest.get(site1Page1).asCollection(ListConfig.class));
 
         assertEquals(3, cfgList.size());
         assertEquals("configValue2.2", cfgList.get(0).stringParam());
