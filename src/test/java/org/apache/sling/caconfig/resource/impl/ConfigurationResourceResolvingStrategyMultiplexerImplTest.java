@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IteratorUtils;
-import org.apache.jackrabbit.guava.common.collect.Iterators;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.management.impl.ContextPathStrategyMultiplexerImpl;
 import org.apache.sling.caconfig.resource.impl.def.DefaultConfigurationResourceResolvingStrategy;
@@ -158,7 +157,7 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
                             @NotNull Resource resource,
                             @NotNull Collection<String> bucketNames,
                             @NotNull String configName) {
-                        return Iterators.singletonIterator(getResource(resource, bucketNames, configName));
+                        return IteratorUtils.singletonIterator(getResource(resource, bucketNames, configName));
                     }
 
                     @Override
@@ -167,7 +166,7 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
                             @NotNull Collection<String> bucketNames,
                             @NotNull String configName) {
                         return getResourceCollection(resource, bucketNames, configName).stream()
-                                .map(r -> Iterators.singletonIterator(r))
+                                .map(r -> IteratorUtils.singletonIterator(r))
                                 .collect(Collectors.toList());
                     }
 
@@ -213,7 +212,7 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
                             @NotNull Resource resource,
                             @NotNull Collection<String> bucketNames,
                             @NotNull String configName) {
-                        return Iterators.singletonIterator(getResource(resource, bucketNames, configName));
+                        return IteratorUtils.singletonIterator(getResource(resource, bucketNames, configName));
                     }
 
                     @Override
@@ -222,7 +221,7 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
                             @NotNull Collection<String> bucketNames,
                             @NotNull String configName) {
                         return getResourceCollection(resource, bucketNames, configName).stream()
-                                .map(r -> Iterators.singletonIterator(r))
+                                .map(r -> IteratorUtils.singletonIterator(r))
                                 .collect(Collectors.toList());
                     }
 
