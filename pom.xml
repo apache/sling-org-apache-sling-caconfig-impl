@@ -23,71 +23,49 @@
     <parent>
         <groupId>org.apache.sling</groupId>
         <artifactId>sling-bundle-parent</artifactId>
-        <version>46</version>
+        <version>62</version>
         <relativePath />
     </parent>
 
     <artifactId>org.apache.sling.caconfig.impl</artifactId>
+    <version>1.7.3-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <version>1.6.1-SNAPSHOT</version>
     <name>Apache Sling Context-Aware Configuration Implementation</name>
     <description>Apache Sling Context-Aware Configuration Implementation</description>
-
-    <properties>
-        <project.build.outputTimestamp>2022-01-03T11:39:49Z</project.build.outputTimestamp>
-    </properties>
 
     <scm>
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-caconfig-impl.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-caconfig-impl.git</developerConnection>
-        <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-caconfig-impl.git</url>
         <tag>HEAD</tag>
+        <url>https://github.com/apache/sling-org-apache-sling-caconfig-impl.git</url>
     </scm>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>biz.aQute.bnd</groupId>
-                <artifactId>bnd-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>bnd-process</id>
-                        <goals>
-                            <goal>bnd-process</goal>
-                        </goals>
-                        <configuration>
-                            <bnd>
-                            Import-Package: \
-                              <!-- WebConsole support is optional -->\
-                              org.apache.felix.webconsole;resolution:=optional,\
-                              <!-- Support XSS API 1.x and 2.x - we use only classes from the API with same signature in both versions -->\
-                              org.apache.sling.xss;version="[1.0.0,3)",\
-                              *
-                            </bnd>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>biz.aQute.bnd</groupId>
-                <artifactId>bnd-baseline-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.rat</groupId>
-                <artifactId>apache-rat-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>dependency-reduced-pom.xml</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <properties>
+        <project.build.outputTimestamp>2025-03-12T12:14:50Z</project.build.outputTimestamp>
+        <sling.java.version>11</sling.java.version>
+        <caconfig.api.version>1.2.0</caconfig.api.version>
+        <caconfig.spi.version>1.4.0</caconfig.spi.version>
+        <!-- integration tests -->
+        <sling.starter.version>14-SNAPSHOT</sling.starter.version>
+        <starter.min.bundles.count>200</starter.min.bundles.count>
+        <it.startTimeoutSeconds>60</it.startTimeoutSeconds>
+        <it.caconfig.log.level>debug</it.caconfig.log.level>
+    </properties>
 
     <dependencies>
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.annotation.versioning</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.util.converter</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -99,14 +77,20 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.caconfig.api</artifactId>
-            <version>1.2.0</version>
+            <version>${caconfig.api.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.caconfig.spi</artifactId>
-            <version>1.4.0</version>
+            <version>${caconfig.spi.version}</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-api</artifactId>
+            <version>2.0.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
@@ -120,13 +104,33 @@
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>osgi.core</artifactId>
+            <artifactId>org.osgi.service.component.annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.metatype.annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.component</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.framework</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.util.tracker</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
-            <version>2.21.0</version>
+            <version>2.25.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -138,7 +142,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.3.2</version>
+            <version>3.18.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -153,12 +157,12 @@
             <version>1.0-alpha-1</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- web console dependencies -->
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.webconsole</artifactId>
-            <version>4.2.0</version>
+            <version>4.9.10</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -168,17 +172,17 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.xss</artifactId>
-            <version>1.0.0</version>
+            <groupId>org.owasp.encoder</groupId>
+            <artifactId>encoder</artifactId>
+            <version>1.2.3</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.sling-mock.junit4</artifactId>
-            <version>3.2.2</version>
+            <version>3.6.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -190,7 +194,7 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.hamcrest</artifactId>
-            <version>1.0.2</version>
+            <version>1.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -201,22 +205,294 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>4.1.0</version>
+            <version>5.21.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.util.converter</artifactId>
-            <version>1.0.8</version>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.json</artifactId>
+            <version>2.0.1</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Integration test dependencies -->
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.util.function</artifactId>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.junit.core</artifactId>
             <version>1.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.testing.rules</artifactId>
+            <version>2.0.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.testing.clients</artifactId>
+            <version>3.1.0</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.junit.teleporter</artifactId>
+            <version>1.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.8.184</version>
             <scope>test</scope>
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Generate IT Test Bundle on the fly via TinyBundles -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.6.3</version>
+                <executions>
+                    <execution>
+                        <id>generate-it-testbundle</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <classpathScope>test</classpathScope>
+                            <mainClass>org.apache.sling.caconfig.it.GenerateTestBundle</mainClass>
+                            <arguments>
+                                <argument>${project.build.directory}/it-testbundle.jar</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>reserve-network-port</id>
+                        <goals>
+                            <goal>reserve-network-port</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <portNames>
+                                <portName>http.port</portName>
+                                <portName>jacoco.port</portName>
+                            </portNames>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>attach-it-testbundle</id>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/it-testbundle.jar</file>
+                                    <type>jar</type>
+                                    <classifier>it-testbundle</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <!--
+                    Record integration test code coverage via jacoco, using TCP server
+                    We cannot rely on the default file-based approach as the sling JVM is stopped forcefully, preventing proper file write on shutdown.
+                    -->
+                    <execution>
+                        <id>prepare-agent-integration-launcher</id>
+                        <goals>
+                            <goal>prepare-agent-integration</goal>
+                        </goals>
+                        <configuration>
+                            <propertyName>jacoco.launcher.command</propertyName>
+                            <output>tcpserver</output>
+                            <address>localhost</address>
+                            <port>${jacoco.port}</port>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>dump-coverage-launcher</id>
+                        <goals>
+                            <goal>dump</goal>
+                        </goals>
+                        <phase>post-integration-test</phase>
+                        <configuration>
+                            <address>localhost</address>
+                            <port>${jacoco.port}</port>
+                            <destFile>${project.build.directory}/jacoco-it.exec</destFile>
+                            <append>true</append>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.sling</groupId>
+                <artifactId>slingfeature-maven-plugin</artifactId>
+                <version>1.9.2</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <features>src/test/it-features</features>
+                    <replacePropertyVariables>caconfig.api.version,caconfig.spi.version,it.caconfig.log.level</replacePropertyVariables>
+                    <skipAddFeatureDependencies>true</skipAddFeatureDependencies>
+                    <aggregates>
+                        <aggregate>
+                            <classifier>it-app</classifier>
+                            <filesInclude>*.json</filesInclude>
+                            <variablesOverrides>
+                                <http.port>${http.port}</http.port>
+                            </variablesOverrides>
+                            <artifactsOverrides>
+                                <artifactsOverride>org.apache.sling:org.apache.sling.caconfig.api:HIGHEST</artifactsOverride>
+                                <artifactsOverride>org.apache.sling:org.apache.sling.caconfig.spi:HIGHEST</artifactsOverride>
+                                <artifactsOverride>org.apache.sling:org.apache.sling.caconfig.impl:HIGHEST</artifactsOverride>
+                            </artifactsOverrides>
+                            <includeArtifact>
+                                <groupId>org.apache.sling</groupId>
+                                <artifactId>org.apache.sling.starter</artifactId>
+                                <classifier>nosample_base</classifier>
+                                <version>${sling.starter.version}</version>
+                                <type>slingosgifeature</type>
+                            </includeArtifact>
+                            <includeArtifact>
+                                <groupId>org.apache.sling</groupId>
+                                <artifactId>org.apache.sling.starter</artifactId>
+                                <classifier>oak_persistence_sns</classifier>
+                                <version>${sling.starter.version}</version>
+                                <type>slingosgifeature</type>
+                            </includeArtifact>
+                            <includeArtifact>
+                                <groupId>org.apache.sling</groupId>
+                                <artifactId>org.apache.sling.starter</artifactId>
+                                <classifier>junit</classifier>
+                                <version>${sling.starter.version}</version>
+                                <type>slingosgifeature</type>
+                            </includeArtifact>
+                        </aggregate>
+                    </aggregates>
+                    <scans>
+                        <scan>
+                            <includeClassifier>it-app</includeClassifier>
+                        </scan>
+                    </scans>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-features</id>
+                        <goals>
+                            <goal>aggregate-features</goal>
+                            <goal>analyse-features</goal>
+                            <goal>attach-features</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.sling</groupId>
+                <artifactId>feature-launcher-maven-plugin</artifactId>
+                <version>1.0.3-SNAPSHOT</version>
+                <configuration>
+                    <launches>
+                        <launch>
+                            <id>sling-starter-oak-tar</id>
+                            <feature>
+                                <groupId>org.apache.sling</groupId>
+                                <artifactId>org.apache.sling.caconfig.impl</artifactId>
+                                <version>${project.version}</version>
+                                <classifier>it-app</classifier>
+                                <type>slingosgifeature</type>
+                            </feature>
+                            <launcherArguments>
+                                <vmOptions>
+                                    <value>--add-opens java.base/java.lang=ALL-UNNAMED</value>
+                                    <value>${jacoco.launcher.command}</value>
+                                </vmOptions>
+                                <frameworkProperties>
+                                    <org.osgi.service.http.port>${http.port}</org.osgi.service.http.port>
+                                    <org.apache.felix.http.jetty.responseBufferSize>5000000</org.apache.felix.http.jetty.responseBufferSize>
+                                </frameworkProperties>
+                            </launcherArguments>
+                            <startTimeoutSeconds>${it.startTimeoutSeconds}</startTimeoutSeconds>
+                        </launch>
+                    </launches>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>launcher-start</id>
+                        <goals>
+                            <goal>start</goal>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <launchpad.http.server.url>http://localhost:${http.port}</launchpad.http.server.url>
+                        <starter.http.test.ports>false:${http.port}</starter.http.test.ports>
+                        <starter.min.bundles.count>${starter.min.bundles.count}</starter.min.bundles.count>
+                        <!-- Comma-separated list of paths to check for 200 status -->
+                        <starter.check.paths>/system/console/bundles,</starter.check.paths>
+                    </systemPropertyVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!--
+          Debugging profile:
+          - Run on port 8080 (not random port)
+          - Waits for user input after tests are completed to allow inspection before shutting down the Sling instance
+          - Sets log level for Sling CAConfig to TRACE
+         -->
+        <profile>
+            <id>it-debug</id>
+            <properties>
+                <http.port>8080</http.port>
+                <feature-launcher.waitForInput>true</feature-launcher.waitForInput>
+                <it.caconfig.log.level>trace</it.caconfig.log.level>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

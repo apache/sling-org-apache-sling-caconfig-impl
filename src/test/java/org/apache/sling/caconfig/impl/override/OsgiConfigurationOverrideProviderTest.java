@@ -18,13 +18,13 @@
  */
 package org.apache.sling.caconfig.impl.override;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.Collection;
 
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
 import org.junit.Rule;
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 public class OsgiConfigurationOverrideProviderTest {
 
@@ -34,11 +34,8 @@ public class OsgiConfigurationOverrideProviderTest {
     @Test
     public void testEnabled() {
         OsgiConfigurationOverrideProvider provider = context.registerInjectActivateService(
-                new OsgiConfigurationOverrideProvider(),
-                "enabled", true,
-                "overrides", new String[] {
-                        "test/param1=value1",
-                        "[/content]test/param2=value2"
+                new OsgiConfigurationOverrideProvider(), "enabled", true, "overrides", new String[] {
+                    "test/param1=value1", "[/content]test/param2=value2"
                 });
 
         Collection<String> overrides = provider.getOverrideStrings();
@@ -49,15 +46,11 @@ public class OsgiConfigurationOverrideProviderTest {
     @Test
     public void testDisabled() {
         OsgiConfigurationOverrideProvider provider = context.registerInjectActivateService(
-                new OsgiConfigurationOverrideProvider(),
-                "enabled", false,
-                "overrides", new String[] {
-                        "test/param1=value1",
-                        "[/content]test/param2=value2"
+                new OsgiConfigurationOverrideProvider(), "enabled", false, "overrides", new String[] {
+                    "test/param1=value1", "[/content]test/param2=value2"
                 });
 
         Collection<String> overrides = provider.getOverrideStrings();
         assertTrue(overrides.isEmpty());
     }
-
 }

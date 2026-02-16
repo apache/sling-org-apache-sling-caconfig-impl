@@ -40,22 +40,29 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  * Detects all {@link ConfigurationInheritanceStrategy} implementations in the container
  * and consolidates their result based on service ranking.
  */
-@Component(service = ConfigurationInheritanceStrategyMultiplexer.class,
-reference={
-        @Reference(name="configurationInheritanceStrategy", service=ConfigurationInheritanceStrategy.class,
-                bind="bindConfigurationInheritanceStrategy", unbind="unbindConfigurationInheritanceStrategy",
-                cardinality=ReferenceCardinality.MULTIPLE,
-                policy=ReferencePolicy.DYNAMIC, policyOption=ReferencePolicyOption.GREEDY)
-})
+@Component(
+        service = ConfigurationInheritanceStrategyMultiplexer.class,
+        reference = {
+            @Reference(
+                    name = "configurationInheritanceStrategy",
+                    service = ConfigurationInheritanceStrategy.class,
+                    bind = "bindConfigurationInheritanceStrategy",
+                    unbind = "unbindConfigurationInheritanceStrategy",
+                    cardinality = ReferenceCardinality.MULTIPLE,
+                    policy = ReferencePolicy.DYNAMIC,
+                    policyOption = ReferencePolicyOption.GREEDY)
+        })
 public class ConfigurationInheritanceStrategyMultiplexerImpl implements ConfigurationInheritanceStrategyMultiplexer {
 
     private RankedServices<ConfigurationInheritanceStrategy> items = new RankedServices<>(Order.DESCENDING);
 
-    protected void bindConfigurationInheritanceStrategy(ConfigurationInheritanceStrategy item, Map<String, Object> props) {
+    protected void bindConfigurationInheritanceStrategy(
+            ConfigurationInheritanceStrategy item, Map<String, Object> props) {
         items.bind(item, props);
     }
 
-    protected void unbindConfigurationInheritanceStrategy(ConfigurationInheritanceStrategy item, Map<String, Object> props) {
+    protected void unbindConfigurationInheritanceStrategy(
+            ConfigurationInheritanceStrategy item, Map<String, Object> props) {
         items.unbind(item, props);
     }
 
@@ -68,23 +75,19 @@ public class ConfigurationInheritanceStrategyMultiplexerImpl implements Configur
         List<ConfigurationInheritanceStrategy> itemList = items.getList();
         if (itemList.isEmpty()) {
             return null;
-        }
-        else if (itemList.size() == 1) {
+        } else if (itemList.size() == 1) {
             return itemList.get(0).getResource(configResources);
-        }
-        else {
+        } else {
             ResettableListIterator resettableConfigResources = new ListIteratorWrapper(configResources);
             for (ConfigurationInheritanceStrategy item : items) {
                 Resource result = item.getResource(resettableConfigResources);
                 if (result != null) {
                     return result;
-                }
-                else {
+                } else {
                     resettableConfigResources.reset();
                 }
             }
             return null;
         }
     }
-
 }

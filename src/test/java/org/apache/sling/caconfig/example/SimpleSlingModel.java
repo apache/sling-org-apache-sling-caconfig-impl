@@ -20,18 +20,18 @@ package org.apache.sling.caconfig.example;
 
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.InjectionStrategy;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 @Model(adaptables = Resource.class)
 public interface SimpleSlingModel {
 
-    @ValueMapValue(name="stringParam")
+    @ValueMapValue(name = "stringParam")
     String getStringParam();
 
-    @ValueMapValue(name="intParam", optional = true)
+    @ValueMapValue(name = "intParam", injectionStrategy = InjectionStrategy.OPTIONAL)
     int getIntParam();
 
-    @ValueMapValue(name="boolParam", optional = true)
+    @ValueMapValue(name = "boolParam", injectionStrategy = InjectionStrategy.OPTIONAL)
     boolean getBoolParam();
-
 }

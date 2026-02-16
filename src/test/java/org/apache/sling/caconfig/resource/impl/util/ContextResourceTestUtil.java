@@ -36,7 +36,7 @@ public final class ContextResourceTestUtil {
         return IteratorUtils.transformedIterator(contextResources, new Transformer() {
             @Override
             public Object transform(Object input) {
-                return ((ContextResource)input).getResource();
+                return ((ContextResource) input).getResource();
             }
         });
     }
@@ -46,7 +46,7 @@ public final class ContextResourceTestUtil {
         return IteratorUtils.transformedIterator(contextResources, new Transformer() {
             @Override
             public Object transform(Object input) {
-                return ((ContextResource)input).getConfigRef();
+                return ((ContextResource) input).getConfigRef();
             }
         });
     }
@@ -56,10 +56,9 @@ public final class ContextResourceTestUtil {
         return IteratorUtils.transformedIterator(resources, new Transformer() {
             @Override
             public Object transform(Object input) {
-                Resource resource = (Resource)input;
+                Resource resource = (Resource) input;
                 return new ContextResource(resource, "/conf-test" + resource.getPath(), 0);
             }
         });
     }
-
 }

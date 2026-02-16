@@ -18,15 +18,14 @@
  */
 package org.apache.sling.caconfig.resource.impl.util;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableList;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ConfigNameUtilTest {
 
@@ -37,18 +36,18 @@ public class ConfigNameUtilTest {
         assertTrue(ConfigNameUtil.isValid("a/b/c"));
         assertTrue(ConfigNameUtil.isValid("a/jcr:content/b/c"));
 
-        assertTrue(ConfigNameUtil.isValid(ImmutableList.<String>of()));
-        assertTrue(ConfigNameUtil.isValid(ImmutableList.of("a")));
-        assertTrue(ConfigNameUtil.isValid(ImmutableList.of("a", "a/b", "a/b/c")));
+        assertTrue(ConfigNameUtil.isValid(List.<String>of()));
+        assertTrue(ConfigNameUtil.isValid(List.of("a")));
+        assertTrue(ConfigNameUtil.isValid(List.of("a", "a/b", "a/b/c")));
 
-        assertFalse(ConfigNameUtil.isValid((String)null));
+        assertFalse(ConfigNameUtil.isValid((String) null));
         assertFalse(ConfigNameUtil.isValid(""));
         assertFalse(ConfigNameUtil.isValid("/a"));
         assertFalse(ConfigNameUtil.isValid("/a/b/c"));
         assertFalse(ConfigNameUtil.isValid("a/b/../c"));
 
-        assertFalse(ConfigNameUtil.isValid((Collection<String>)null));
-        assertFalse(ConfigNameUtil.isValid(ImmutableList.of("a", "/a")));
+        assertFalse(ConfigNameUtil.isValid((Collection<String>) null));
+        assertFalse(ConfigNameUtil.isValid(List.of("a", "/a")));
     }
 
     @Test
@@ -56,8 +55,8 @@ public class ConfigNameUtilTest {
         assertArrayEquals(new String[0], ConfigNameUtil.getAllPartialConfigNameVariations(""));
         assertArrayEquals(new String[0], ConfigNameUtil.getAllPartialConfigNameVariations("a"));
         assertArrayEquals(new String[] {"a"}, ConfigNameUtil.getAllPartialConfigNameVariations("a/b"));
-        assertArrayEquals(new String[] {"a","a/b"}, ConfigNameUtil.getAllPartialConfigNameVariations("a/b/c"));
-        assertArrayEquals(new String[] {"a","a/b","a/b/c"}, ConfigNameUtil.getAllPartialConfigNameVariations("a/b/c/d"));
+        assertArrayEquals(new String[] {"a", "a/b"}, ConfigNameUtil.getAllPartialConfigNameVariations("a/b/c"));
+        assertArrayEquals(
+                new String[] {"a", "a/b", "a/b/c"}, ConfigNameUtil.getAllPartialConfigNameVariations("a/b/c/d"));
     }
-
 }

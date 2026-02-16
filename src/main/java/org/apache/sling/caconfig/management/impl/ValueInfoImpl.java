@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.management.ValueInfo;
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationOverrideMultiplexer;
@@ -46,10 +46,17 @@ final class ValueInfoImpl<T> implements ValueInfo<T> {
     private final boolean isAllOverridden;
 
     @SuppressWarnings("null")
-    public ValueInfoImpl(String name, T value, T effectiveValue, PropertyMetadata<T> propertyMetadata,
-            Resource resolvedConfigurationResource, Resource writebackConfigurationResource,
+    public ValueInfoImpl(
+            String name,
+            T value,
+            T effectiveValue,
+            PropertyMetadata<T> propertyMetadata,
+            Resource resolvedConfigurationResource,
+            Resource writebackConfigurationResource,
             List<Resource> configurationResourceInheritanceChain,
-            Resource contextResource, String configName, ConfigurationOverrideMultiplexer configurationOverrideMultiplexer,
+            Resource contextResource,
+            String configName,
+            ConfigurationOverrideMultiplexer configurationOverrideMultiplexer,
             boolean isAllOverridden) {
         this.name = name;
         this.value = value;
@@ -103,8 +110,7 @@ final class ValueInfoImpl<T> implements ValueInfo<T> {
         }
         if (resolvedConfigurationResource == null) {
             return true;
-        }
-        else {
+        } else {
             return !resolvedConfigurationResource.getValueMap().containsKey(name);
         }
     }
@@ -113,22 +119,18 @@ final class ValueInfoImpl<T> implements ValueInfo<T> {
     public boolean isInherited() {
         if (isDefault() || effectiveValue == null) {
             return false;
-        }
-        else if (resolvedConfigurationResource == null || resolvedConfigurationResource.getPath() == null) {
+        } else if (resolvedConfigurationResource == null || resolvedConfigurationResource.getPath() == null) {
             return false;
-        }
-        else if (writebackConfigurationResource == null) {
+        } else if (writebackConfigurationResource == null) {
             return true;
-        }
-        else if (!StringUtils.equals(resolvedConfigurationResource.getPath(), writebackConfigurationResource.getPath())) {
+        } else if (!Strings.CS.equals(
+                resolvedConfigurationResource.getPath(), writebackConfigurationResource.getPath())) {
             return true;
-        }
-        else {
+        } else {
             Resource inheritanceSource = getResourceFromInheritanceChain();
             if (inheritanceSource != null) {
-                return !StringUtils.equals(resolvedConfigurationResource.getPath(), inheritanceSource.getPath());
-            }
-            else {
+                return !Strings.CS.equals(resolvedConfigurationResource.getPath(), inheritanceSource.getPath());
+            } else {
                 return false;
             }
         }
@@ -162,15 +164,12 @@ final class ValueInfoImpl<T> implements ValueInfo<T> {
         if (isAllOverridden) {
             return true;
         }
-        Map<String,Object> overrideProperties = configurationOverrideMultiplexer.overrideProperties(
-                    contextResource.getPath(), configName, Collections.<String,Object>emptyMap());
+        Map<String, Object> overrideProperties = configurationOverrideMultiplexer.overrideProperties(
+                contextResource.getPath(), configName, Collections.<String, Object>emptyMap());
         if (overrideProperties != null) {
-            return overrideProperties.containsKey(name)
-                    || (getValue() != null && effectiveValue == null);
-        }
-        else {
+            return overrideProperties.containsKey(name) || (getValue() != null && effectiveValue == null);
+        } else {
             return false;
         }
     }
-
 }

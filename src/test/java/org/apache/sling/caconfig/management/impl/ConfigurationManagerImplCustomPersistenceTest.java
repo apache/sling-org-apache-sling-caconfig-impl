@@ -18,7 +18,7 @@
  */
 package org.apache.sling.caconfig.management.impl;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy2;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -34,8 +34,11 @@ public class ConfigurationManagerImplCustomPersistenceTest extends Configuration
     @Before
     public void setUpCustomPersistence() {
         // custom strategy which redirects all config resources to a jcr:content subnode
-        context.registerService(ConfigurationPersistenceStrategy2.class,
-                new CustomConfigurationPersistenceStrategy(), Constants.SERVICE_RANKING, 2000);
+        context.registerService(
+                ConfigurationPersistenceStrategy2.class,
+                new CustomConfigurationPersistenceStrategy(),
+                Constants.SERVICE_RANKING,
+                2000);
     }
 
     @Override
@@ -69,12 +72,11 @@ public class ConfigurationManagerImplCustomPersistenceTest extends Configuration
     }
 
     private String replaceBucketName(String path) {
-        return StringUtils.replace(path, "/sling:configs/", "/settings/");
+        return Strings.CS.replace(path, "/sling:configs/", "/settings/");
     }
 
     @Override
     protected String[] getAlternativeBucketNames() {
-        return new String[] { "settings" };
+        return new String[] {"settings"};
     }
-
 }

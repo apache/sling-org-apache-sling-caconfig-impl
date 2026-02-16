@@ -26,7 +26,8 @@ import org.osgi.annotation.versioning.ProviderType;
  * and consolidates their result based on service ranking.
  */
 @ProviderType
-public interface ConfigurationInjectResourceDetectionStrategyMultiplexer extends ConfigurationInjectResourceDetectionStrategy {
+public interface ConfigurationInjectResourceDetectionStrategyMultiplexer
+        extends ConfigurationInjectResourceDetectionStrategy {
 
     // inherits all methods from {@link ConfigurationInjectResourceDetectionStrategy}
 

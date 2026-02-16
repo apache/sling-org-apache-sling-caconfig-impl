@@ -42,14 +42,15 @@ import org.slf4j.LoggerFactory;
 public class AnnotationClassConfigurationMetadataProvider implements ConfigurationMetadataProvider {
 
     private BundleTracker<BundleConfigurationMapping> bundleTracker;
-    private ConcurrentSkipListMap<Bundle,BundleConfigurationMapping> bundleMappings = new ConcurrentSkipListMap<>();
+    private ConcurrentSkipListMap<Bundle, BundleConfigurationMapping> bundleMappings = new ConcurrentSkipListMap<>();
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationClassConfigurationMetadataProvider.class);
 
     @Activate
     private void activate(BundleContext bundleContext) {
         ConfigClassBundleTackerCustomizer bundlerTrackerCustomizer = new ConfigClassBundleTackerCustomizer(this);
-        bundleTracker = new BundleTracker<BundleConfigurationMapping>(bundleContext, Bundle.ACTIVE, bundlerTrackerCustomizer);
+        bundleTracker =
+                new BundleTracker<BundleConfigurationMapping>(bundleContext, Bundle.ACTIVE, bundlerTrackerCustomizer);
         bundleTracker.open();
     }
 
@@ -73,8 +74,7 @@ public class AnnotationClassConfigurationMetadataProvider implements Configurati
         ConfigurationMapping mapping = getConfigurationMapping(configName);
         if (mapping != null) {
             return mapping.getConfigMetadata();
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -97,11 +97,11 @@ public class AnnotationClassConfigurationMetadataProvider implements Configurati
                 if (matchingConfigMapping == null) {
                     matchingConfigMapping = configMapping;
                     matchingBundleMapping = bundleMapping;
-                }
-                else {
+                } else {
                     // conflict in name mapping across bundles found
-                    log.warn("Configuration name conflict: Both configuration classes {} (Bundle {}) "
-                            + "and {} (Bundle {}) define the configuration name '{}', ignoring the latter.",
+                    log.warn(
+                            "Configuration name conflict: Both configuration classes {} (Bundle {}) "
+                                    + "and {} (Bundle {}) define the configuration name '{}', ignoring the latter.",
                             matchingConfigMapping.getConfigClass().getName(),
                             matchingBundleMapping.getBundle().getSymbolicName(),
                             configMapping.getConfigClass().getName(),
@@ -122,5 +122,4 @@ public class AnnotationClassConfigurationMetadataProvider implements Configurati
         log.debug("Remove bundle mapping: {}", bundleMapping);
         bundleMappings.remove(bundleMapping.getBundle());
     }
-
 }

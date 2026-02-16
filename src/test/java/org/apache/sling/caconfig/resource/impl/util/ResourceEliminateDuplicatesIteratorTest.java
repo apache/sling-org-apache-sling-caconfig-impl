@@ -18,9 +18,6 @@
  */
 package org.apache.sling.caconfig.resource.impl.util;
 
-import static org.apache.sling.caconfig.resource.impl.util.ContextResourceTestUtil.toResourceIterator;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,7 +29,8 @@ import org.apache.sling.testing.mock.sling.junit.SlingContext;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableList;
+import static org.apache.sling.caconfig.resource.impl.util.ContextResourceTestUtil.toResourceIterator;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 @SuppressWarnings("null")
 public class ResourceEliminateDuplicatesIteratorTest {
@@ -42,13 +40,10 @@ public class ResourceEliminateDuplicatesIteratorTest {
 
     @Test
     public void testIterator() {
-        context.build()
-            .resource("/content/a")
-            .resource("/content/a/b")
-            .resource("/content/a/b/c");
+        context.build().resource("/content/a").resource("/content/a/b").resource("/content/a/b/c");
 
         ResourceResolver rr = context.resourceResolver();
-        List<ContextResource> list = ImmutableList.of(
+        List<ContextResource> list = List.of(
                 new ContextResource(rr.getResource("/content/a"), "/conf/a", 0),
                 new ContextResource(rr.getResource("/content/a/b"), "/conf/a/b", 0),
                 new ContextResource(rr.getResource("/content/a"), "/conf/a", 0),
@@ -56,11 +51,7 @@ public class ResourceEliminateDuplicatesIteratorTest {
                 new ContextResource(rr.getResource("/content/a/b/c"), "/conf/a/b", 0));
 
         Iterator<Resource> result = toResourceIterator(new ResourceEliminateDuplicatesIterator(list.iterator()));
-        assertThat(result, ResourceIteratorMatchers.paths(
-                "/content/a",
-                "/content/a/b",
-                "/content/a",
-                "/content/a/b/c"));
+        assertThat(
+                result, ResourceIteratorMatchers.paths("/content/a", "/content/a/b", "/content/a", "/content/a/b/c"));
     }
-
 }

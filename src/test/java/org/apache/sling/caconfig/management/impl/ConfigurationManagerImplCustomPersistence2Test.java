@@ -18,18 +18,18 @@
  */
 package org.apache.sling.caconfig.management.impl;
 
-import static org.apache.sling.caconfig.management.impl.CustomConfigurationPersistenceStrategy2.containsJcrContent;
-
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.caconfig.spi.ConfigurationPersistenceStrategy2;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.osgi.framework.Constants;
 import org.osgi.service.cm.ConfigurationAdmin;
+
+import static org.apache.sling.caconfig.management.impl.CustomConfigurationPersistenceStrategy2.containsJcrContent;
 
 /**
  * Test {@link ConfigurationManagerImpl} with custom persistence.
@@ -42,25 +42,28 @@ public class ConfigurationManagerImplCustomPersistence2Test extends Configuratio
     protected void provideCustomOsgiConfig() throws Exception {
         // provide custom lookup resource name for collection properties
         ConfigurationAdmin configAdmin = context.getService(ConfigurationAdmin.class);
-        org.osgi.service.cm.Configuration mgmtSettingsConfig = configAdmin.getConfiguration(ConfigurationManagementSettingsImpl.class.getName());
+        org.osgi.service.cm.Configuration mgmtSettingsConfig =
+                configAdmin.getConfiguration(ConfigurationManagementSettingsImpl.class.getName());
         Dictionary<String, Object> mgmtSettings = new Hashtable<>();
-        mgmtSettings.put("configCollectionPropertiesResourceNames", new String[] { "colPropsResource", "." });
+        mgmtSettings.put("configCollectionPropertiesResourceNames", new String[] {"colPropsResource", "."});
         mgmtSettingsConfig.update(mgmtSettings);
     }
 
     @Before
     public void setUpCustomPersistence() {
         // custom strategy which redirects all config resources to a jcr:content subnode
-        context.registerService(ConfigurationPersistenceStrategy2.class,
-                new CustomConfigurationPersistenceStrategy2(), Constants.SERVICE_RANKING, 2000);
+        context.registerService(
+                ConfigurationPersistenceStrategy2.class,
+                new CustomConfigurationPersistenceStrategy2(),
+                Constants.SERVICE_RANKING,
+                2000);
     }
 
     @Override
     protected String getConfigResolvePath(String path) {
         if (containsJcrContent(path)) {
             return replaceBucketName(path);
-        }
-        else {
+        } else {
             return replaceBucketName(path) + "/jcr:content";
         }
     }
@@ -69,8 +72,7 @@ public class ConfigurationManagerImplCustomPersistence2Test extends Configuratio
     protected String getConfigPersistPath(String path) {
         if (containsJcrContent(path)) {
             return path;
-        }
-        else {
+        } else {
             return path + "/jcr:content";
         }
     }
@@ -79,8 +81,7 @@ public class ConfigurationManagerImplCustomPersistence2Test extends Configuratio
     protected String getConfigCollectionParentResolvePath(String path) {
         if (containsJcrContent(path)) {
             return replaceBucketName(path);
-        }
-        else {
+        } else {
             return replaceBucketName(path) + "/jcr:content";
         }
     }
@@ -89,8 +90,7 @@ public class ConfigurationManagerImplCustomPersistence2Test extends Configuratio
     protected String getConfigCollectionParentPersistPath(String path) {
         if (containsJcrContent(path)) {
             return path;
-        }
-        else {
+        } else {
             return path + "/jcr:content";
         }
     }
@@ -106,12 +106,11 @@ public class ConfigurationManagerImplCustomPersistence2Test extends Configuratio
     }
 
     private String replaceBucketName(String path) {
-        return StringUtils.replace(path, "/sling:configs/", "/settings/");
+        return Strings.CS.replace(path, "/sling:configs/", "/settings/");
     }
 
     @Override
     protected String[] getAlternativeBucketNames() {
-        return new String[] { "settings" };
+        return new String[] {"settings"};
     }
-
 }

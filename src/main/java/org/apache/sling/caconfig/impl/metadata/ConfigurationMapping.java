@@ -44,5 +44,4 @@ class ConfigurationMapping {
     public ConfigurationMetadata getConfigMetadata() {
         return configMetadata;
     }
-
 }

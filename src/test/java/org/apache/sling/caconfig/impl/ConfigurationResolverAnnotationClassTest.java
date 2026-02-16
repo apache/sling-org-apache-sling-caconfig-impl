@@ -18,15 +18,6 @@
  */
 package org.apache.sling.caconfig.impl;
 
-import static org.apache.sling.caconfig.impl.def.ConfigurationDefNameConstants.PROPERTY_CONFIG_PROPERTY_INHERIT;
-import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_COLLECTION_INHERIT;
-import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.Iterator;
@@ -46,7 +37,14 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableList;
+import static org.apache.sling.caconfig.impl.def.ConfigurationDefNameConstants.PROPERTY_CONFIG_PROPERTY_INHERIT;
+import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_COLLECTION_INHERIT;
+import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test {@link ConfigurationResolver} with annotation classes for reading the config.
@@ -101,13 +99,17 @@ public class ConfigurationResolverAnnotationClassTest {
         assertFalse(underTest.get(site1Page1).has(NestedConfig.class));
     }
 
-
     @Test
     public void testConfig_Simple() {
-        context.build().resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.SimpleConfig",
-                "stringParam", "configValue1",
-                "intParam", 111,
-                "boolParam", true);
+        context.build()
+                .resource(
+                        "/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.SimpleConfig",
+                        "stringParam",
+                        "configValue1",
+                        "intParam",
+                        111,
+                        "boolParam",
+                        true);
 
         SimpleConfig cfg = underTest.get(site1Page1).as(SimpleConfig.class);
 
@@ -121,14 +123,22 @@ public class ConfigurationResolverAnnotationClassTest {
     @Test
     public void testConfig_Simple_PropertyInheritance() {
         context.build()
-            .resource("/conf/global/sling:configs/org.apache.sling.caconfig.example.SimpleConfig",
-                "stringParam", "configValue1",
-                "intParam", 111)
-            .resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.SimpleConfig",
-                "stringParam", "configValue2",
-                "intParam", 222,
-                "boolParam", true,
-                PROPERTY_CONFIG_PROPERTY_INHERIT, true);
+                .resource(
+                        "/conf/global/sling:configs/org.apache.sling.caconfig.example.SimpleConfig",
+                        "stringParam",
+                        "configValue1",
+                        "intParam",
+                        111)
+                .resource(
+                        "/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.SimpleConfig",
+                        "stringParam",
+                        "configValue2",
+                        "intParam",
+                        222,
+                        "boolParam",
+                        true,
+                        PROPERTY_CONFIG_PROPERTY_INHERIT,
+                        true);
 
         SimpleConfig cfg = underTest.get(site1Page1).as(SimpleConfig.class);
 
@@ -141,10 +151,15 @@ public class ConfigurationResolverAnnotationClassTest {
 
     @Test
     public void testConfig_SimpleWithName() {
-        context.build().resource("/conf/content/site1/sling:configs/sampleName",
-                "stringParam", "configValue1.1",
-                "intParam", 1111,
-                "boolParam", true);
+        context.build()
+                .resource(
+                        "/conf/content/site1/sling:configs/sampleName",
+                        "stringParam",
+                        "configValue1.1",
+                        "intParam",
+                        1111,
+                        "boolParam",
+                        true);
 
         SimpleConfig cfg = underTest.get(site1Page1).name("sampleName").as(SimpleConfig.class);
 
@@ -157,11 +172,12 @@ public class ConfigurationResolverAnnotationClassTest {
 
     @Test
     public void testConfig_List() {
-        context.build().resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListConfig")
-            .siblingsMode()
-            .resource("1", "stringParam", "value1")
-            .resource("2", "stringParam", "value2")
-            .resource("3", "stringParam", "value3");
+        context.build()
+                .resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListConfig")
+                .siblingsMode()
+                .resource("1", "stringParam", "value1")
+                .resource("2", "stringParam", "value2")
+                .resource("3", "stringParam", "value3");
 
         Collection<ListConfig> cfgList = underTest.get(site1Page1).asCollection(ListConfig.class);
 
@@ -176,20 +192,25 @@ public class ConfigurationResolverAnnotationClassTest {
 
     @Test
     public void testConfig_List_Nested() {
-        context.build().resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListNestedConfig")
-            .siblingsMode()
-            .resource("1", "stringParam", "value1")
-            .resource("2", "stringParam", "value2")
-            .resource("3", "stringParam", "value3");
-        context.build().resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListNestedConfig/1/subListConfig")
-            .siblingsMode()
-            .resource("1", "stringParam", "value11")
-            .resource("2", "stringParam", "value12");
-        context.build().resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListNestedConfig/2/subListConfig")
-            .siblingsMode()
-            .resource("1", "stringParam", "value21");
+        context.build()
+                .resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListNestedConfig")
+                .siblingsMode()
+                .resource("1", "stringParam", "value1")
+                .resource("2", "stringParam", "value2")
+                .resource("3", "stringParam", "value3");
+        context.build()
+                .resource(
+                        "/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListNestedConfig/1/subListConfig")
+                .siblingsMode()
+                .resource("1", "stringParam", "value11")
+                .resource("2", "stringParam", "value12");
+        context.build()
+                .resource(
+                        "/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListNestedConfig/2/subListConfig")
+                .siblingsMode()
+                .resource("1", "stringParam", "value21");
 
-        List<ListNestedConfig> cfgList = ImmutableList.copyOf(underTest.get(site1Page1).asCollection(ListNestedConfig.class));
+        List<ListNestedConfig> cfgList = List.copyOf(underTest.get(site1Page1).asCollection(ListNestedConfig.class));
 
         assertEquals(3, cfgList.size());
 
@@ -213,27 +234,37 @@ public class ConfigurationResolverAnnotationClassTest {
 
     @Test
     public void testConfig_List_DoubleNested() {
-        context.build().resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListDoubleNestedConfig")
-            .siblingsMode()
-            .resource("1", "stringParam", "value1")
-            .resource("2", "stringParam", "value2")
-            .resource("3", "stringParam", "value3");
-        context.build().resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListDoubleNestedConfig/1/subListNestedConfig")
-            .siblingsMode()
-            .resource("1", "stringParam", "value11")
-            .resource("2", "stringParam", "value12");
-        context.build().resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListDoubleNestedConfig/1/subListNestedConfig/1/subListConfig")
-            .siblingsMode()
-            .resource("1", "stringParam", "value111")
-            .resource("2", "stringParam", "value112");
-        context.build().resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListDoubleNestedConfig/1/subListNestedConfig/2/subListConfig")
-            .siblingsMode()
-            .resource("1", "stringParam", "value121");
-        context.build().resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListDoubleNestedConfig/2/subListNestedConfig")
-            .siblingsMode()
-            .resource("1", "stringParam", "value21");
+        context.build()
+                .resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListDoubleNestedConfig")
+                .siblingsMode()
+                .resource("1", "stringParam", "value1")
+                .resource("2", "stringParam", "value2")
+                .resource("3", "stringParam", "value3");
+        context.build()
+                .resource(
+                        "/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListDoubleNestedConfig/1/subListNestedConfig")
+                .siblingsMode()
+                .resource("1", "stringParam", "value11")
+                .resource("2", "stringParam", "value12");
+        context.build()
+                .resource(
+                        "/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListDoubleNestedConfig/1/subListNestedConfig/1/subListConfig")
+                .siblingsMode()
+                .resource("1", "stringParam", "value111")
+                .resource("2", "stringParam", "value112");
+        context.build()
+                .resource(
+                        "/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListDoubleNestedConfig/1/subListNestedConfig/2/subListConfig")
+                .siblingsMode()
+                .resource("1", "stringParam", "value121");
+        context.build()
+                .resource(
+                        "/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListDoubleNestedConfig/2/subListNestedConfig")
+                .siblingsMode()
+                .resource("1", "stringParam", "value21");
 
-        List<ListDoubleNestedConfig> cfgList = ImmutableList.copyOf(underTest.get(site1Page1).asCollection(ListDoubleNestedConfig.class));
+        List<ListDoubleNestedConfig> cfgList =
+                List.copyOf(underTest.get(site1Page1).asCollection(ListDoubleNestedConfig.class));
 
         assertEquals(3, cfgList.size());
 
@@ -264,17 +295,26 @@ public class ConfigurationResolverAnnotationClassTest {
     @Test
     public void testConfig_List_CollectionPropertyInheritance() {
         context.build()
-            .resource("/conf/global/sling:configs/org.apache.sling.caconfig.example.ListConfig")
+                .resource("/conf/global/sling:configs/org.apache.sling.caconfig.example.ListConfig")
                 .siblingsMode()
                 .resource("1", "stringParam", "configValue1.1", "intParam", "111")
                 .resource("2", "stringParam", "configValue1.2", "intParam", "222")
-            .resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListConfig",
-                    PROPERTY_CONFIG_COLLECTION_INHERIT, true)
+                .resource(
+                        "/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.ListConfig",
+                        PROPERTY_CONFIG_COLLECTION_INHERIT,
+                        true)
                 .siblingsMode()
                 .resource("2", "stringParam", "configValue2.2", PROPERTY_CONFIG_PROPERTY_INHERIT, true)
-                .resource("3", "stringParam", "configValue2.3", "intParam", "333", PROPERTY_CONFIG_PROPERTY_INHERIT, true);
+                .resource(
+                        "3",
+                        "stringParam",
+                        "configValue2.3",
+                        "intParam",
+                        "333",
+                        PROPERTY_CONFIG_PROPERTY_INHERIT,
+                        true);
 
-        List<ListConfig> cfgList = ImmutableList.copyOf(underTest.get(site1Page1).asCollection(ListConfig.class));
+        List<ListConfig> cfgList = List.copyOf(underTest.get(site1Page1).asCollection(ListConfig.class));
 
         assertEquals(3, cfgList.size());
         assertEquals("configValue2.2", cfgList.get(0).stringParam());
@@ -289,13 +329,16 @@ public class ConfigurationResolverAnnotationClassTest {
 
     @Test
     public void testConfig_Nested() {
-        context.build().resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.NestedConfig",
-                "stringParam", "configValue3")
-            .siblingsMode()
-            .resource("subConfig", "stringParam", "configValue4", "intParam", 444, "boolParam", true)
-            .hierarchyMode()
-            .resource("subListConfig")
-            .siblingsMode()
+        context.build()
+                .resource(
+                        "/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.NestedConfig",
+                        "stringParam",
+                        "configValue3")
+                .siblingsMode()
+                .resource("subConfig", "stringParam", "configValue4", "intParam", 444, "boolParam", true)
+                .hierarchyMode()
+                .resource("subListConfig")
+                .siblingsMode()
                 .resource("1", "stringParam", "configValue2.1")
                 .resource("2", "stringParam", "configValue2.2")
                 .resource("3", "stringParam", "configValue2.3");
@@ -321,10 +364,12 @@ public class ConfigurationResolverAnnotationClassTest {
     @Test
     public void testConfig_Nested_PropertyInheritance() {
         context.build()
-            .resource("/conf/global/sling:configs/org.apache.sling.caconfig.example.NestedConfig")
+                .resource("/conf/global/sling:configs/org.apache.sling.caconfig.example.NestedConfig")
                 .resource("subConfig", "stringParam", "configValue1", "intParam", 111, "boolParam", true)
-            .resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.NestedConfig",
-                    "stringParam", "configValue3")
+                .resource(
+                        "/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.NestedConfig",
+                        "stringParam",
+                        "configValue3")
                 .resource("subConfig", "stringParam", "configValue4", PROPERTY_CONFIG_PROPERTY_INHERIT, true);
 
         NestedConfig cfg = underTest.get(site1Page1).as(NestedConfig.class);
@@ -339,7 +384,7 @@ public class ConfigurationResolverAnnotationClassTest {
         assertTrue(underTest.get(site1Page1).has(NestedConfig.class));
     }
 
-    @Test(expected=ConfigurationResolveException.class)
+    @Test(expected = ConfigurationResolveException.class)
     public void testInvalidClassConversion() {
         // test with class not supported for configuration mapping
         underTest.get(site1Page1).as(Rectangle2D.class);
@@ -365,17 +410,19 @@ public class ConfigurationResolverAnnotationClassTest {
 
     @Test
     public void testConfigAdaptMultipleTimes() {
-        context.build().resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.SimpleConfig",
-                "stringParam", "configValue1");
-        context.build().resource("/conf/content/site1/sling:configs/config2",
-                "stringParam", "configValue2");
+        context.build()
+                .resource(
+                        "/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.SimpleConfig",
+                        "stringParam",
+                        "configValue1");
+        context.build().resource("/conf/content/site1/sling:configs/config2", "stringParam", "configValue2");
 
-        SimpleConfig cfg2 = site1Page1.adaptTo(ConfigurationBuilder.class).name("config2").as(SimpleConfig.class);
+        SimpleConfig cfg2 =
+                site1Page1.adaptTo(ConfigurationBuilder.class).name("config2").as(SimpleConfig.class);
         assertEquals("configValue2", cfg2.stringParam());
 
         // make sure the config name from first call is not cached in the ConfigurationBuilder instance
         SimpleConfig cfg = site1Page1.adaptTo(ConfigurationBuilder.class).as(SimpleConfig.class);
         assertEquals("configValue1", cfg.stringParam());
     }
-
 }

@@ -47,10 +47,10 @@ public final class ConfigurationResourceTestUtils {
      * without the default implementations of the multiplexed services.
      * @param context Sling context
      */
-    public static ConfigurationResourceResolver registerConfigurationResourceResolverWithoutDefaultImpl(SlingContext context) {
+    public static ConfigurationResourceResolver registerConfigurationResourceResolverWithoutDefaultImpl(
+            SlingContext context) {
         context.registerInjectActivateService(new ContextPathStrategyMultiplexerImpl());
         context.registerInjectActivateService(new ConfigurationResourceResolvingStrategyMultiplexerImpl());
         return context.registerInjectActivateService(new ConfigurationResourceResolverImpl());
     }
-
 }

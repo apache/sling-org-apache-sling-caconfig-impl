@@ -46,17 +46,23 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  * Bridges services implementing the deprecated {@link ConfigurationPersistenceStrategy} interface
  * to the {@link ConfigurationPersistenceStrategy2} interface for backwards compatibility.
  */
-@Component(reference={
-        @Reference(name="configurationPersistenceStrategy", service=ConfigurationPersistenceStrategy.class,
-                bind="bindConfigurationPersistenceStrategy", unbind="unbindConfigurationPersistenceStrategy",
-                cardinality=ReferenceCardinality.MULTIPLE,
-                policy=ReferencePolicy.DYNAMIC, policyOption=ReferencePolicyOption.GREEDY)
-})
+@Component(
+        reference = {
+            @Reference(
+                    name = "configurationPersistenceStrategy",
+                    service = ConfigurationPersistenceStrategy.class,
+                    bind = "bindConfigurationPersistenceStrategy",
+                    unbind = "unbindConfigurationPersistenceStrategy",
+                    cardinality = ReferenceCardinality.MULTIPLE,
+                    policy = ReferencePolicy.DYNAMIC,
+                    policyOption = ReferencePolicyOption.GREEDY)
+        })
 @SuppressWarnings("deprecation")
 public final class ConfigurationPersistenceStrategyBridge {
 
     private volatile BundleContext bundleContext;
-    private final ConcurrentMap<Comparable<Object>, ServiceRegistration<ConfigurationPersistenceStrategy2>> services = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Comparable<Object>, ServiceRegistration<ConfigurationPersistenceStrategy2>> services =
+            new ConcurrentHashMap<>();
     private final ConcurrentMap<Comparable<Object>, ServiceInfo> preActivateServices = new ConcurrentHashMap<>();
 
     void bindConfigurationPersistenceStrategy(ConfigurationPersistenceStrategy item, Map<String, Object> props) {
@@ -64,13 +70,13 @@ public final class ConfigurationPersistenceStrategyBridge {
         Comparable<Object> key = ServiceUtil.getComparableForServiceRanking(props, Order.ASCENDING);
         if (bundleContext != null) {
             services.put(key, registerBridgeService(serviceInfo));
-        }
-        else {
+        } else {
             preActivateServices.put(key, serviceInfo);
         }
     }
 
-    protected void unbindConfigurationPersistenceStrategy(ConfigurationPersistenceStrategy item, Map<String, Object> props) {
+    protected void unbindConfigurationPersistenceStrategy(
+            ConfigurationPersistenceStrategy item, Map<String, Object> props) {
         Comparable<Object> key = ServiceUtil.getComparableForServiceRanking(props, Order.ASCENDING);
         unregisterBridgeService(services.remove(key));
     }
@@ -81,8 +87,10 @@ public final class ConfigurationPersistenceStrategyBridge {
      * @return Service registration
      */
     private ServiceRegistration<ConfigurationPersistenceStrategy2> registerBridgeService(ServiceInfo serviceInfo) {
-        return bundleContext.registerService(ConfigurationPersistenceStrategy2.class,
-                new Adapter(serviceInfo.getService()), new Hashtable<>(serviceInfo.getProps()));
+        return bundleContext.registerService(
+                ConfigurationPersistenceStrategy2.class,
+                new Adapter(serviceInfo.getService()),
+                new Hashtable<>(serviceInfo.getProps()));
     }
 
     /**
@@ -103,23 +111,23 @@ public final class ConfigurationPersistenceStrategyBridge {
         }
     }
 
-
     private static class ServiceInfo {
         private final ConfigurationPersistenceStrategy service;
-        private final Map<String,Object> props;
+        private final Map<String, Object> props;
 
         public ServiceInfo(ConfigurationPersistenceStrategy service, Map<String, Object> props) {
             this.service = service;
             this.props = props;
         }
+
         public ConfigurationPersistenceStrategy getService() {
             return service;
         }
+
         public Map<String, Object> getProps() {
             return props;
         }
     }
-
 
     /**
      * Adapter which delegates {@link ConfigurationPersistenceStrategy2} methods to a {@link ConfigurationPersistenceStrategy} service.
@@ -187,22 +195,25 @@ public final class ConfigurationPersistenceStrategyBridge {
         }
 
         @Override
-        public boolean persistConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath,
+        public boolean persistConfiguration(
+                @NotNull ResourceResolver resourceResolver,
+                @NotNull String configResourcePath,
                 @NotNull ConfigurationPersistData data) {
             return delegate.persistConfiguration(resourceResolver, configResourcePath, data);
         }
 
         @Override
-        public boolean persistConfigurationCollection(@NotNull ResourceResolver resourceResolver,
-                @NotNull String configResourceCollectionParentPath, @NotNull ConfigurationCollectionPersistData data) {
+        public boolean persistConfigurationCollection(
+                @NotNull ResourceResolver resourceResolver,
+                @NotNull String configResourceCollectionParentPath,
+                @NotNull ConfigurationCollectionPersistData data) {
             return delegate.persistConfigurationCollection(resourceResolver, configResourceCollectionParentPath, data);
         }
 
         @Override
-        public boolean deleteConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath) {
+        public boolean deleteConfiguration(
+                @NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath) {
             return delegate.deleteConfiguration(resourceResolver, configResourcePath);
         }
-
     }
-
 }

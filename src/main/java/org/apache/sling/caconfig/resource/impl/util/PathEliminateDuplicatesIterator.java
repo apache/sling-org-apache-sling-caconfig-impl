@@ -38,8 +38,6 @@ public class PathEliminateDuplicatesIterator extends FilterIterator<String> {
             public boolean evaluate(String object) {
                 return resourcePaths.add(object);
             }
-
         });
     }
-
 }

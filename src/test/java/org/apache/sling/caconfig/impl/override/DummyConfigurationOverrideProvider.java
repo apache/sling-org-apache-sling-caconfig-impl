@@ -18,25 +18,23 @@
  */
 package org.apache.sling.caconfig.impl.override;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.sling.caconfig.spi.ConfigurationOverrideProvider;
 import org.jetbrains.annotations.NotNull;
 
-import com.google.common.collect.ImmutableList;
-
 public class DummyConfigurationOverrideProvider implements ConfigurationOverrideProvider {
 
     private final List<String> overrideStrings;
 
     public DummyConfigurationOverrideProvider(String... overrideStrings) {
-        this.overrideStrings = ImmutableList.copyOf(overrideStrings);
+        this.overrideStrings = Arrays.asList(overrideStrings);
     }
 
     @Override
     public @NotNull Collection<String> getOverrideStrings() {
         return overrideStrings;
     }
-
 }

@@ -40,5 +40,4 @@ public interface ConfigurationManagementSettings {
      * @return Config collection parent properties resource names.
      */
     Collection<String> getConfigCollectionPropertiesResourceNames();
-
 }

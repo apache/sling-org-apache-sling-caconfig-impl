@@ -31,7 +31,10 @@ import org.osgi.framework.ServiceReference;
 class ConfigurationOverridePrinter implements ServiceConfigurationPrinter<ConfigurationOverrideProvider> {
 
     @Override
-    public void printConfiguration(PrintWriter pw, ServiceReference<ConfigurationOverrideProvider> serviceReference, BundleContext bundleContext) {
+    public void printConfiguration(
+            PrintWriter pw,
+            ServiceReference<ConfigurationOverrideProvider> serviceReference,
+            BundleContext bundleContext) {
         ConfigurationOverrideProvider service = bundleContext.getService(serviceReference);
 
         for (String overrideString : service.getOverrideStrings()) {
@@ -45,5 +48,4 @@ class ConfigurationOverridePrinter implements ServiceConfigurationPrinter<Config
 
         bundleContext.ungetService(serviceReference);
     }
-
 }

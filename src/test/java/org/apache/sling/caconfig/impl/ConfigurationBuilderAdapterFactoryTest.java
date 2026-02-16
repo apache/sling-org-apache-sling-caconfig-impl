@@ -18,9 +18,6 @@
  */
 package org.apache.sling.caconfig.impl;
 
-import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
-import static org.junit.Assert.assertEquals;
-
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.caconfig.example.SimpleConfig;
@@ -28,6 +25,9 @@ import org.apache.sling.testing.mock.sling.junit.SlingContext;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
+import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
+import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings("null")
 public class ConfigurationBuilderAdapterFactoryTest {
@@ -43,10 +43,15 @@ public class ConfigurationBuilderAdapterFactoryTest {
         context.registerInjectActivateService(new ConfigurationBuilderAdapterFactory());
 
         // config resource
-        context.build().resource("/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.SimpleConfig",
-                "stringParam", "configValue1",
-                "intParam", 111,
-                "boolParam", true);
+        context.build()
+                .resource(
+                        "/conf/content/site1/sling:configs/org.apache.sling.caconfig.example.SimpleConfig",
+                        "stringParam",
+                        "configValue1",
+                        "intParam",
+                        111,
+                        "boolParam",
+                        true);
 
         // content resources
         context.build().resource("/content/site1", PROPERTY_CONFIG_REF, "/conf/content/site1");
@@ -62,5 +67,4 @@ public class ConfigurationBuilderAdapterFactoryTest {
         assertEquals(111, cfg.intParam());
         assertEquals(true, cfg.boolParam());
     }
-
 }

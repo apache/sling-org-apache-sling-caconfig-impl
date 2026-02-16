@@ -18,17 +18,17 @@
  */
 package org.apache.sling.caconfig.impl;
 
+import javax.script.Bindings;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.script.Bindings;
-
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.scripting.LazyBindings;
+import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationInjectResourceDetectionStrategyMultiplexer;
 import org.apache.sling.caconfig.management.multiplexer.ConfigurationMetadataProviderMultiplexer;
@@ -58,16 +58,18 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
      */
     public static final String BINDING_VARIABLE = "caconfig";
 
-    @ObjectClassDefinition(name = "Apache Sling Context-Aware Configuration Bindings Value Provider",
+    @ObjectClassDefinition(
+            name = "Apache Sling Context-Aware Configuration Bindings Value Provider",
             description = "Binds a script variable '" + BINDING_VARIABLE + "' to the scripting context.")
     static @interface Config {
 
         @AttributeDefinition(name = "Enabled", description = "Enable provider.")
         boolean enabled() default true;
 
-        @AttributeDefinition(name = "Scripting Engines", description = "Enable bindings value provider for the given scripting engines.")
-        String[] javax_script_name() default { "sightly" };
-
+        @AttributeDefinition(
+                name = "Scripting Engines",
+                description = "Enable bindings value provider for the given scripting engines.")
+        String[] javax_script_name() default {"sightly"};
     }
 
     @Reference
@@ -83,10 +85,11 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
         if (!enabled) {
             return;
         }
+
         if (bindings instanceof LazyBindings) {
             // it's ok if the Supplier returns null, because Bindings.get(key) is allowed to return null
             // both when the key is not available and when the value is null.
-            bindings.put(BINDING_VARIABLE, (LazyBindings.Supplier)() -> {
+            bindings.put(BINDING_VARIABLE, (LazyBindings.Supplier) () -> {
                 Resource resource = detectResourceForInjection(bindings);
                 if (resource == null) {
                     return null;
@@ -99,17 +102,17 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
                 return;
             }
 
-            Map<String,Object> configMap = new ConfigMap(resource, configMetadataProvider);
+            Map<String, Object> configMap = new ConfigMap(resource, configMetadataProvider);
             bindings.put(BINDING_VARIABLE, configMap);
         }
     }
 
     private Resource detectResourceForInjection(Bindings bindings) {
-        SlingHttpServletRequest request = (SlingHttpServletRequest)bindings.get(SlingBindings.REQUEST);
+        SlingHttpServletRequest request = (SlingHttpServletRequest) bindings.get(SlingBindings.REQUEST);
         if (request != null) {
             return configurationInjectResourceDetectionStrategy.detectResource(request);
         }
-        return (Resource)bindings.get(SlingBindings.RESOURCE);
+        return (Resource) bindings.get(SlingBindings.RESOURCE);
     }
 
     @Activate
@@ -126,7 +129,7 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
         private final Resource resource;
         private final ConfigurationMetadataProvider configMetadataProvider;
         private Set<String> configNamesCache;
-        private Map<String,Object> valuesCache = new HashMap<>();
+        private Map<String, Object> valuesCache = new HashMap<>();
 
         ConfigMap(Resource resource, ConfigurationMetadataProvider configMetadataProvider) {
             this.resource = resource;
@@ -159,9 +162,9 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
         public Object get(Object key) {
             Object value = valuesCache.get(key);
             if (value == null) {
-                value = getConfigValue((String)key);
+                value = getConfigValue((String) key);
                 if (value != null) {
-                    valuesCache.put((String)key, value);
+                    valuesCache.put((String) key, value);
                 }
             }
             return value;
@@ -169,11 +172,11 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
 
         private Object getConfigValue(String configName) {
             @SuppressWarnings("null")
-            ConfigurationBuilder configBuilder = resource.adaptTo(ConfigurationBuilder.class).name(configName);
+            ConfigurationBuilder configBuilder =
+                    resource.adaptTo(ConfigurationBuilder.class).name(configName);
             if (isCollection(configName)) {
                 return configBuilder.asValueMapCollection();
-            }
-            else {
+            } else {
                 return configBuilder.asValueMap();
             }
         }
@@ -182,8 +185,7 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
             ConfigurationMetadata configMetadata = configMetadataProvider.getConfigurationMetadata(configName);
             if (configMetadata != null) {
                 return configMetadata.isCollection();
-            }
-            else {
+            } else {
                 return false;
             }
         }
@@ -227,7 +229,5 @@ public class ConfigurationBindingsValueProvider implements BindingsValuesProvide
         public Set<java.util.Map.Entry<String, Object>> entrySet() {
             throw new UnsupportedOperationException();
         }
-
     }
-
 }

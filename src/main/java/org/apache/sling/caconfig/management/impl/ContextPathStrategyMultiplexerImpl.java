@@ -44,14 +44,23 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  * and consolidates their result based on service ranking.
  */
 @SuppressWarnings("deprecation")
-@Component(service = { ContextPathStrategyMultiplexer.class, org.apache.sling.caconfig.management.ContextPathStrategyMultiplexer.class },
-reference={
-        @Reference(name="contextPathStrategy", service=ContextPathStrategy.class,
-                bind="bindContextPathStrategy", unbind="unbindContextPathStrategy",
-                cardinality=ReferenceCardinality.MULTIPLE,
-                policy=ReferencePolicy.DYNAMIC, policyOption=ReferencePolicyOption.GREEDY)
-})
-public class ContextPathStrategyMultiplexerImpl implements ContextPathStrategyMultiplexer, org.apache.sling.caconfig.management.ContextPathStrategyMultiplexer {
+@Component(
+        service = {
+            ContextPathStrategyMultiplexer.class,
+            org.apache.sling.caconfig.management.ContextPathStrategyMultiplexer.class
+        },
+        reference = {
+            @Reference(
+                    name = "contextPathStrategy",
+                    service = ContextPathStrategy.class,
+                    bind = "bindContextPathStrategy",
+                    unbind = "unbindContextPathStrategy",
+                    cardinality = ReferenceCardinality.MULTIPLE,
+                    policy = ReferencePolicy.DYNAMIC,
+                    policyOption = ReferencePolicyOption.GREEDY)
+        })
+public class ContextPathStrategyMultiplexerImpl
+        implements ContextPathStrategyMultiplexer, org.apache.sling.caconfig.management.ContextPathStrategyMultiplexer {
 
     private RankedServices<ContextPathStrategy> items = new RankedServices<>(Order.DESCENDING);
 
@@ -103,9 +112,6 @@ public class ContextPathStrategyMultiplexerImpl implements ContextPathStrategyMu
      * @return Merged result
      */
     private Iterator<ContextResource> mergeResults(List<Iterator<ContextResource>> allResults) {
-        return new ResourceEliminateDuplicatesIterator(
-                new ResourcePathCollatingIterator(allResults)
-        );
+        return new ResourceEliminateDuplicatesIterator(new ResourcePathCollatingIterator(allResults));
     }
-
 }

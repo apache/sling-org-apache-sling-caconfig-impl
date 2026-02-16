@@ -18,9 +18,6 @@
  */
 package org.apache.sling.caconfig.impl.override;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import java.util.Map;
 
 import org.apache.sling.caconfig.spi.ConfigurationOverrideProvider;
@@ -30,7 +27,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.osgi.framework.Constants;
 
-import com.google.common.collect.ImmutableMap;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class ConfigurationOverrideMultiplexerImplTest {
 
@@ -46,52 +44,60 @@ public class ConfigurationOverrideMultiplexerImplTest {
 
     @Test
     public void testWithNoProviders() {
-        assertOverride("/a/b", "test",
-                ImmutableMap.<String,Object>of("param1", "initialValue"),
-                null);
+        assertOverride("/a/b", "test", Map.<String, Object>of("param1", "initialValue"), null);
     }
 
     @Test
     public void testWithMultipleProviders() {
 
         // 1st provider
-        context.registerService(ConfigurationOverrideProvider.class, new DummyConfigurationOverrideProvider(
-                "test/globalParam1=\"globalValue1\"",
-                "[/a/b]test/param1=\"value1\""), Constants.SERVICE_RANKING, 200);
+        context.registerService(
+                ConfigurationOverrideProvider.class,
+                new DummyConfigurationOverrideProvider(
+                        "test/globalParam1=\"globalValue1\"", "[/a/b]test/param1=\"value1\""),
+                Constants.SERVICE_RANKING,
+                200);
 
         // 2nd provider (may overwrite 1st one)
-        context.registerService(ConfigurationOverrideProvider.class, new DummyConfigurationOverrideProvider(
-                "test/globalParam1=\"globalValue1a\"",
-                "[/a/b/c]test={\"param1\":\"value2\"}"), Constants.SERVICE_RANKING, 100);
+        context.registerService(
+                ConfigurationOverrideProvider.class,
+                new DummyConfigurationOverrideProvider(
+                        "test/globalParam1=\"globalValue1a\"", "[/a/b/c]test={\"param1\":\"value2\"}"),
+                Constants.SERVICE_RANKING,
+                100);
 
-        assertOverride("/a", "test",
-                ImmutableMap.<String,Object>of("param1", "initialValue"),
-                ImmutableMap.<String,Object>of("param1", "initialValue", "globalParam1", "globalValue1a"));
+        assertOverride(
+                "/a",
+                "test",
+                Map.<String, Object>of("param1", "initialValue"),
+                Map.<String, Object>of("param1", "initialValue", "globalParam1", "globalValue1a"));
 
-        assertOverride("/a/b", "test",
-                ImmutableMap.<String,Object>of("param1", "initialValue"),
-                ImmutableMap.<String,Object>of("param1", "value1", "globalParam1", "globalValue1a"));
+        assertOverride(
+                "/a/b",
+                "test",
+                Map.<String, Object>of("param1", "initialValue"),
+                Map.<String, Object>of("param1", "value1", "globalParam1", "globalValue1a"));
 
-        assertOverride("/a/b/c", "test",
-                ImmutableMap.<String,Object>of("param1", "initialValue"),
-                ImmutableMap.<String,Object>of("param1", "value2"));
+        assertOverride(
+                "/a/b/c",
+                "test",
+                Map.<String, Object>of("param1", "initialValue"),
+                Map.<String, Object>of("param1", "value2"));
 
-        assertOverride("/a/b/c/d", "test",
-                ImmutableMap.<String,Object>of("param1", "initialValue"),
-                ImmutableMap.<String,Object>of("param1", "value2"));
+        assertOverride(
+                "/a/b/c/d",
+                "test",
+                Map.<String, Object>of("param1", "initialValue"),
+                Map.<String, Object>of("param1", "value2"));
 
-        assertOverride("/a/b", "test2",
-                ImmutableMap.<String,Object>of("param1", "initialValue"),
-                null);
+        assertOverride("/a/b", "test2", Map.<String, Object>of("param1", "initialValue"), null);
     }
 
-    private void assertOverride(String path, String configName, Map<String,Object> input, Map<String,Object> output) {
+    private void assertOverride(String path, String configName, Map<String, Object> input, Map<String, Object> output) {
         if (output == null) {
             assertNull(underTest.overrideProperties(path, configName, input));
-        }
-        else {
+        } else {
             assertEquals(output, underTest.overrideProperties(path, configName, input));
         }
     }
-
 }

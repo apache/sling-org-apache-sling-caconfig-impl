@@ -42,7 +42,8 @@ public interface ConfigurationManager {
      * @param configName Configuration name
      * @return Configuration data. Is null when no configuration resource found and no configuration metadata exists.
      */
-    @Nullable ConfigurationData getConfiguration(@NotNull Resource resource, @NotNull String configName);
+    @Nullable
+    ConfigurationData getConfiguration(@NotNull Resource resource, @NotNull String configName);
 
     /**
      * Get configuration data collection for the given context resource and configuration name.
@@ -50,7 +51,8 @@ public interface ConfigurationManager {
      * @param configName Configuration name
      * @return Configuration data collection. Is empty when no configuration resources found.
      */
-    @NotNull ConfigurationCollectionData getConfigurationCollection(@NotNull Resource resource, @NotNull String configName);
+    @NotNull
+    ConfigurationCollectionData getConfigurationCollection(@NotNull Resource resource, @NotNull String configName);
 
     /**
      * Write configuration data to repository using the inner-most context path as reference.
@@ -58,8 +60,8 @@ public interface ConfigurationManager {
      * @param configName Configuration name
      * @param data Configuration data to be stored. All existing properties are erased and replaced with the new ones.
      */
-    void persistConfiguration(@NotNull Resource resource, @NotNull String configName,
-            @NotNull ConfigurationPersistData data);
+    void persistConfiguration(
+            @NotNull Resource resource, @NotNull String configName, @NotNull ConfigurationPersistData data);
 
     /**
      * Write configuration data collection using the inner-most context path as reference.
@@ -67,8 +69,8 @@ public interface ConfigurationManager {
      * @param configName Configuration name
      * @param data Configuration collection data to be stored. All existing collection entries on this context path level are erased and replaced with the new ones.
      */
-    void persistConfigurationCollection(@NotNull Resource resource, @NotNull String configName,
-            @NotNull ConfigurationCollectionPersistData data);
+    void persistConfigurationCollection(
+            @NotNull Resource resource, @NotNull String configName, @NotNull ConfigurationCollectionPersistData data);
 
     /**
      * Creates a new empty configuration data item for a configuration data collection for the given configuration name.
@@ -76,7 +78,8 @@ public interface ConfigurationManager {
      * @param configName Configuration name
      * @return Configuration data. Is null when no configuration metadata exists.
      */
-    @Nullable ConfigurationData newCollectionItem(@NotNull Resource resource, @NotNull String configName);
+    @Nullable
+    ConfigurationData newCollectionItem(@NotNull Resource resource, @NotNull String configName);
 
     /**
      * Delete configuration or configuration collection data from repository using the inner-most context path as reference.
@@ -90,14 +93,16 @@ public interface ConfigurationManager {
      * The results of all configuration metadata provider implementations are merged.
      * @return Configuration names
      */
-    @NotNull SortedSet<String> getConfigurationNames();
+    @NotNull
+    SortedSet<String> getConfigurationNames();
 
     /**
      * Get configuration metadata from any configuration metadata provider.
      * @param configName Configuration name
      * @return Configuration metadata or null if none exists for the given name.
      */
-    @Nullable ConfigurationMetadata getConfigurationMetadata(@NotNull String configName);
+    @Nullable
+    ConfigurationMetadata getConfigurationMetadata(@NotNull String configName);
 
     /**
      * Rewrite given resource path or configuration name according to current persistence strategies.
@@ -106,6 +111,6 @@ public interface ConfigurationManager {
      * @deprecated Please use {@link org.apache.sling.caconfig.management.multiplexer.ConfigurationPersistenceStrategyMultiplexer} instead.
      */
     @Deprecated
-    @Nullable String getPersistenceResourcePath(@NotNull String configResourcePath);
-
+    @Nullable
+    String getPersistenceResourcePath(@NotNull String configResourcePath);
 }

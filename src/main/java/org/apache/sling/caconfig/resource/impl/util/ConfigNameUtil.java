@@ -22,6 +22,7 @@ import java.util.Collection;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * Helper methods for configuration names.
@@ -39,8 +40,8 @@ public final class ConfigNameUtil {
      */
     public static boolean isValid(final String configName) {
         return !StringUtils.isBlank(configName)
-                && !StringUtils.startsWith(configName, "/")
-                && !StringUtils.contains(configName, "../");
+                && !Strings.CS.startsWith(configName, "/")
+                && !Strings.CS.contains(configName, "../");
     }
 
     /**
@@ -87,5 +88,4 @@ public final class ConfigNameUtil {
         }
         return partialConfigNameVariations;
     }
-
 }

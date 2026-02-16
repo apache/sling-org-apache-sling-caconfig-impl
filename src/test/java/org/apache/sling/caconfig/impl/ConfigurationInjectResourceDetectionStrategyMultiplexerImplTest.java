@@ -18,14 +18,6 @@
  */
 package org.apache.sling.caconfig.impl;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.spi.ConfigurationInjectResourceDetectionStrategy;
@@ -37,6 +29,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigurationInjectResourceDetectionStrategyMultiplexerImplTest {
 
@@ -45,8 +45,10 @@ public class ConfigurationInjectResourceDetectionStrategyMultiplexerImplTest {
 
     @Mock
     private SlingHttpServletRequest request;
+
     @Mock
     private Resource resource1;
+
     @Mock
     private Resource resource2;
 
@@ -54,7 +56,8 @@ public class ConfigurationInjectResourceDetectionStrategyMultiplexerImplTest {
 
     @Before
     public void setUp() {
-        underTest = context.registerInjectActivateService(new ConfigurationInjectResourceDetectionStrategyMultiplexerImpl());
+        underTest = context.registerInjectActivateService(
+                new ConfigurationInjectResourceDetectionStrategyMultiplexerImpl());
     }
 
     @Test
@@ -65,7 +68,8 @@ public class ConfigurationInjectResourceDetectionStrategyMultiplexerImplTest {
     @Test
     @SuppressWarnings("null")
     public void testWithOneStrategy() {
-        ConfigurationInjectResourceDetectionStrategy strategy = mock(ConfigurationInjectResourceDetectionStrategy.class);
+        ConfigurationInjectResourceDetectionStrategy strategy =
+                mock(ConfigurationInjectResourceDetectionStrategy.class);
         when(strategy.detectResource(request)).thenReturn(resource1);
         context.registerService(ConfigurationInjectResourceDetectionStrategy.class, strategy);
 
@@ -75,9 +79,12 @@ public class ConfigurationInjectResourceDetectionStrategyMultiplexerImplTest {
     @Test
     @SuppressWarnings("null")
     public void testWithMultipleStrategies() {
-        ConfigurationInjectResourceDetectionStrategy strategy1 = mock(ConfigurationInjectResourceDetectionStrategy.class);
-        ConfigurationInjectResourceDetectionStrategy strategy2 = mock(ConfigurationInjectResourceDetectionStrategy.class);
-        ConfigurationInjectResourceDetectionStrategy strategy3 = mock(ConfigurationInjectResourceDetectionStrategy.class);
+        ConfigurationInjectResourceDetectionStrategy strategy1 =
+                mock(ConfigurationInjectResourceDetectionStrategy.class);
+        ConfigurationInjectResourceDetectionStrategy strategy2 =
+                mock(ConfigurationInjectResourceDetectionStrategy.class);
+        ConfigurationInjectResourceDetectionStrategy strategy3 =
+                mock(ConfigurationInjectResourceDetectionStrategy.class);
 
         when(strategy1.detectResource(request)).thenReturn(null);
         when(strategy2.detectResource(request)).thenReturn(resource2);
@@ -92,5 +99,4 @@ public class ConfigurationInjectResourceDetectionStrategyMultiplexerImplTest {
         verify(strategy2, times(1)).detectResource(request);
         verifyNoMoreInteractions(strategy3);
     }
-
 }

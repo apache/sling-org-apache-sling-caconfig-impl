@@ -30,5 +30,4 @@ public @interface NestedConfig {
     ListConfig[] subListConfig();
 
     WithoutAnnotationConfig subConfigWithoutAnnotation();
-
 }

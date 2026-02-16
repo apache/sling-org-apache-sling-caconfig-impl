@@ -18,8 +18,6 @@
  */
 package org.apache.sling.caconfig.resource.impl.def;
 
-import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_COLLECTION_INHERIT;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,6 +37,7 @@ import org.apache.commons.collections4.iterators.ArrayIterator;
 import org.apache.commons.collections4.iterators.FilterIterator;
 import org.apache.commons.collections4.iterators.IteratorChain;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
@@ -66,31 +65,39 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component(service=ConfigurationResourceResolvingStrategy.class)
-@Designate(ocd=DefaultConfigurationResourceResolvingStrategy.Config.class)
+import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_COLLECTION_INHERIT;
+
+@Component(service = ConfigurationResourceResolvingStrategy.class)
+@Designate(ocd = DefaultConfigurationResourceResolvingStrategy.Config.class)
 public class DefaultConfigurationResourceResolvingStrategy implements ConfigurationResourceResolvingStrategy {
 
-    @ObjectClassDefinition(name="Apache Sling Context-Aware Configuration Default Resource Resolving Strategy",
-                           description="Standardized access to configurations in the resource tree.")
+    @ObjectClassDefinition(
+            name = "Apache Sling Context-Aware Configuration Default Resource Resolving Strategy",
+            description = "Standardized access to configurations in the resource tree.")
     public static @interface Config {
 
-        @AttributeDefinition(name="Enabled",
-                description = "Enable this configuration resource resolving strategy.")
+        @AttributeDefinition(name = "Enabled", description = "Enable this configuration resource resolving strategy.")
         boolean enabled() default true;
 
-        @AttributeDefinition(name="Configurations path",
-                             description = "Paths where the configurations are stored in.")
+        @AttributeDefinition(
+                name = "Configurations path",
+                description = "Paths where the configurations are stored in.")
         String configPath() default "/conf";
 
-        @AttributeDefinition(name="Fallback paths",
-                description = "Global fallback configurations, ordered from most specific (checked first) to least specific.")
+        @AttributeDefinition(
+                name = "Fallback paths",
+                description =
+                        "Global fallback configurations, ordered from most specific (checked first) to least specific.")
         String[] fallbackPaths() default {"/conf/global", "/apps/conf", "/libs/conf"};
 
-        @AttributeDefinition(name="Config collection inheritance property names",
-                description = "Additional property names to " + PROPERTY_CONFIG_COLLECTION_INHERIT + " to handle configuration inheritance. The names are used in the order defined, "
-                            + "always starting with " + PROPERTY_CONFIG_COLLECTION_INHERIT + ". Once a property with a value is found, that value is used and the following property names are skipped.")
+        @AttributeDefinition(
+                name = "Config collection inheritance property names",
+                description =
+                        "Additional property names to " + PROPERTY_CONFIG_COLLECTION_INHERIT
+                                + " to handle configuration inheritance. The names are used in the order defined, "
+                                + "always starting with " + PROPERTY_CONFIG_COLLECTION_INHERIT
+                                + ". Once a property with a value is found, that value is used and the following property names are skipped.")
         String[] configCollectionInheritancePropertyNames();
-
     }
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConfigurationResourceResolvingStrategy.class);
@@ -100,9 +107,10 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
     @Reference
     private ContextPathStrategyMultiplexer contextPathStrategy;
 
-    @Reference(cardinality=ReferenceCardinality.MULTIPLE,
-            policy=ReferencePolicy.DYNAMIC,
-            fieldOption=FieldOption.REPLACE)
+    @Reference(
+            cardinality = ReferenceCardinality.MULTIPLE,
+            policy = ReferencePolicy.DYNAMIC,
+            fieldOption = FieldOption.REPLACE)
     private volatile List<CollectionInheritanceDecider> collectionInheritanceDeciders;
 
     @Activate
@@ -118,11 +126,10 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
     @SuppressWarnings("unchecked")
     Iterator<String> getResolvePaths(final Resource contentResource, final Collection<String> bucketNames) {
         return new IteratorChain(
-            // add all config references found in resource hierarchy
-            findConfigRefs(contentResource, bucketNames),
-            // finally add the global fallbacks
-            new ArrayIterator(this.config.fallbackPaths())
-        );
+                // add all config references found in resource hierarchy
+                findConfigRefs(contentResource, bucketNames),
+                // finally add the global fallbacks
+                new ArrayIterator(this.config.fallbackPaths()));
     }
 
     /**
@@ -134,11 +141,11 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
     private Iterator<String> findConfigRefs(final Resource startResource, final Collection<String> bucketNames) {
 
         // collect all context path resources (but filter out those without config reference)
-        final Iterator<ContextResource> contextResources = new FilterIterator(contextPathStrategy.findContextResources(startResource),
-                new Predicate() {
+        final Iterator<ContextResource> contextResources =
+                new FilterIterator(contextPathStrategy.findContextResources(startResource), new Predicate() {
                     @Override
                     public boolean evaluate(Object object) {
-                        ContextResource contextResource = (ContextResource)object;
+                        ContextResource contextResource = (ContextResource) object;
                         return StringUtils.isNotBlank(contextResource.getConfigRef());
                     }
                 });
@@ -154,14 +161,20 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
 
             private String seek() {
                 String val = null;
-                while ( val == null && (useFromRelativePathsWith != null || contextResources.hasNext()) ) {
-                    if ( useFromRelativePathsWith != null ) {
+                while (val == null && (useFromRelativePathsWith != null || contextResources.hasNext())) {
+                    if (useFromRelativePathsWith != null) {
                         final ContextResource contextResource = relativePaths.remove(relativePaths.size() - 1);
-                        val = checkPath(contextResource, useFromRelativePathsWith + "/" + contextResource.getConfigRef(), bucketNames);
+                        val = checkPath(
+                                contextResource,
+                                useFromRelativePathsWith + "/" + contextResource.getConfigRef(),
+                                bucketNames);
                         if (val != null) {
-                            log.trace("+ Found reference for context path {}: {}", contextResource.getResource().getPath(), val);
+                            log.trace(
+                                    "+ Found reference for context path {}: {}",
+                                    contextResource.getResource().getPath(),
+                                    val);
                         }
-                        if ( relativePaths.isEmpty() ) {
+                        if (relativePaths.isEmpty()) {
                             useFromRelativePathsWith = null;
                         }
                     } else {
@@ -175,21 +188,24 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
 
                         if (val != null) {
                             final boolean isAbsolute = val.startsWith("/");
-                            if ( isAbsolute && !relativePaths.isEmpty() ) {
+                            if (isAbsolute && !relativePaths.isEmpty()) {
                                 useFromRelativePathsWith = val;
                                 val = null;
-                            } else if ( !isAbsolute ) {
+                            } else if (!isAbsolute) {
                                 relativePaths.add(0, contextResource);
                                 val = null;
                             }
                         }
 
                         if (val != null) {
-                            log.trace("+ Found reference for context path {}: {}", contextResource.getResource().getPath(), val);
+                            log.trace(
+                                    "+ Found reference for context path {}: {}",
+                                    contextResource.getResource().getPath(),
+                                    val);
                         }
                     }
                 }
-                if ( val == null && !relativePaths.isEmpty() ) {
+                if (val == null && !relativePaths.isEmpty()) {
                     log.error("Relative references not used as no absolute reference was found: {}", relativePaths);
                 }
                 return val;
@@ -202,7 +218,7 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
 
             @Override
             public String next() {
-                if ( next == null ) {
+                if (next == null) {
                     throw new NoSuchElementException();
                 }
                 final String result = next;
@@ -227,21 +243,28 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
         for (String bucketName : bucketNames) {
             String notAllowedPostfix = "/" + bucketName;
             if (ref != null && ref.endsWith(notAllowedPostfix)) {
-                log.debug("Ignoring reference to {} from {} - Probably misconfigured as it ends with '{}'",
-                        contextResource.getConfigRef(), contextResource.getResource().getPath(), notAllowedPostfix);
+                log.debug(
+                        "Ignoring reference to {} from {} - Probably misconfigured as it ends with '{}'",
+                        contextResource.getConfigRef(),
+                        contextResource.getResource().getPath(),
+                        notAllowedPostfix);
                 ref = null;
             }
         }
 
         if (ref != null && !isAllowedConfigPath(ref)) {
-            log.debug("Ignoring reference to {} from {} - not in allowed paths.",
-                    contextResource.getConfigRef(), contextResource.getResource().getPath());
+            log.debug(
+                    "Ignoring reference to {} from {} - not in allowed paths.",
+                    contextResource.getConfigRef(),
+                    contextResource.getResource().getPath());
             ref = null;
         }
 
         if (ref != null && isFallbackConfigPath(ref)) {
-            log.debug("Ignoring reference to {} from {} - already a fallback path.",
-                    contextResource.getConfigRef(), contextResource.getResource().getPath());
+            log.debug(
+                    "Ignoring reference to {} from {} - already a fallback path.",
+                    contextResource.getConfigRef(),
+                    contextResource.getResource().getPath());
             ref = null;
         }
 
@@ -253,16 +276,20 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
     }
 
     private boolean isFallbackConfigPath(final String ref) {
-        for(final String path : this.config.fallbackPaths()) {
-            if (StringUtils.equals(ref, path) || StringUtils.startsWith(ref, path + "/")) {
+        for (final String path : this.config.fallbackPaths()) {
+            if (Strings.CS.equals(ref, path) || Strings.CS.startsWith(ref, path + "/")) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean isEnabledAndParamsValid(final Resource contentResource, final Collection<String> bucketNames, final String configName) {
-        return config.enabled() && contentResource != null && ConfigNameUtil.isValid(bucketNames) && ConfigNameUtil.isValid(configName);
+    private boolean isEnabledAndParamsValid(
+            final Resource contentResource, final Collection<String> bucketNames, final String configName) {
+        return config.enabled()
+                && contentResource != null
+                && ConfigNameUtil.isValid(bucketNames)
+                && ConfigNameUtil.isValid(configName);
     }
 
     private String buildResourcePath(String path, String name) {
@@ -270,7 +297,10 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
     }
 
     @Override
-    public Resource getResource(@NotNull final Resource contentResource, @NotNull final Collection<String> bucketNames, @NotNull final String configName) {
+    public Resource getResource(
+            @NotNull final Resource contentResource,
+            @NotNull final Collection<String> bucketNames,
+            @NotNull final String configName) {
         Iterator<Resource> resources = getResourceInheritanceChain(contentResource, bucketNames, configName);
         if (resources != null && resources.hasNext()) {
             return resources.next();
@@ -279,14 +309,17 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
     }
 
     @SuppressWarnings("unchecked")
-    private Iterator<Resource> getResourceInheritanceChainInternal(final Collection<String> bucketNames, final String configName,
-            final Iterator<String> paths, final ResourceResolver resourceResolver) {
+    private Iterator<Resource> getResourceInheritanceChainInternal(
+            final Collection<String> bucketNames,
+            final String configName,
+            final Iterator<String> paths,
+            final ResourceResolver resourceResolver) {
 
         // find all matching items among all configured paths
         Iterator<Resource> matchingResources = IteratorUtils.transformedIterator(paths, new Transformer() {
             @Override
             public Object transform(Object input) {
-                String path = (String)input;
+                String path = (String) input;
                 for (String bucketName : bucketNames) {
                     final String name = bucketName + "/" + configName;
                     final String configPath = buildResourcePath(path, name);
@@ -294,15 +327,15 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
                     if (resource != null) {
                         log.trace("+ Found matching config resource for inheritance chain: {}", configPath);
                         return resource;
-                    }
-                    else {
+                    } else {
                         log.trace("- No matching config resource for inheritance chain: {}", configPath);
                     }
                 }
                 return null;
             }
         });
-        Iterator<Resource> result = IteratorUtils.filteredIterator(matchingResources, PredicateUtils.notNullPredicate());
+        Iterator<Resource> result =
+                IteratorUtils.filteredIterator(matchingResources, PredicateUtils.notNullPredicate());
         if (result.hasNext()) {
             return result;
         }
@@ -310,7 +343,8 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
     }
 
     @Override
-    public Iterator<Resource> getResourceInheritanceChain(@NotNull Resource contentResource, @NotNull Collection<String> bucketNames, @NotNull String configName) {
+    public Iterator<Resource> getResourceInheritanceChain(
+            @NotNull Resource contentResource, @NotNull Collection<String> bucketNames, @NotNull String configName) {
         if (!isEnabledAndParamsValid(contentResource, bucketNames, configName)) {
             return null;
         }
@@ -320,22 +354,29 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
         return getResourceInheritanceChainInternal(bucketNames, configName, paths, resourceResolver);
     }
 
-    private boolean include(final List<CollectionInheritanceDecider> deciders,
+    private boolean include(
+            final List<CollectionInheritanceDecider> deciders,
             final String bucketName,
             final Resource resource,
             final Set<String> blockedItems) {
         boolean result = !blockedItems.contains(resource.getName());
-        if ( result && deciders != null && !deciders.isEmpty() ) {
-            for(int i=deciders.size()-1;i>=0;i--) {
+        if (result && deciders != null && !deciders.isEmpty()) {
+            for (int i = deciders.size() - 1; i >= 0; i--) {
                 final InheritanceDecision decision = deciders.get(i).decide(resource, bucketName);
-                if ( decision == InheritanceDecision.EXCLUDE ) {
-                    log.trace("- Block resource collection inheritance for bucket {}, resource {} because {} retruned EXCLUDE.",
-                            bucketName, resource.getPath(), deciders.get(i));
+                if (decision == InheritanceDecision.EXCLUDE) {
+                    log.trace(
+                            "- Block resource collection inheritance for bucket {}, resource {} because {} retruned EXCLUDE.",
+                            bucketName,
+                            resource.getPath(),
+                            deciders.get(i));
                     result = false;
                     break;
-                } else if ( decision == InheritanceDecision.BLOCK ) {
-                    log.trace("- Block resource collection inheritance for bucket {}, resource {} because {} retruned BLOCK.",
-                            bucketName, resource.getPath(), deciders.get(i));
+                } else if (decision == InheritanceDecision.BLOCK) {
+                    log.trace(
+                            "- Block resource collection inheritance for bucket {}, resource {} because {} retruned BLOCK.",
+                            bucketName,
+                            resource.getPath(),
+                            deciders.get(i));
                     result = false;
                     blockedItems.add(resource.getName());
                     break;
@@ -345,10 +386,13 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
         return result;
     }
 
-    private Collection<Resource> getResourceCollectionInternal(final Collection<String> bucketNames, final String configName,
-            Iterator<String> paths, ResourceResolver resourceResolver) {
+    private Collection<Resource> getResourceCollectionInternal(
+            final Collection<String> bucketNames,
+            final String configName,
+            Iterator<String> paths,
+            ResourceResolver resourceResolver) {
 
-        final Map<String,Resource> result = new LinkedHashMap<>();
+        final Map<String, Resource> result = new LinkedHashMap<>();
         final List<CollectionInheritanceDecider> deciders = this.collectionInheritanceDeciders;
         final Set<String> blockedItems = new HashSet<>();
 
@@ -365,8 +409,7 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
                 if (item != null) {
                     bucketNameUsed = bucketName;
                     break;
-                }
-                else {
+                } else {
                     log.trace("- No collection parent resource found: {}", configPath);
                 }
             }
@@ -380,13 +423,15 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
                                 && include(deciders, bucketNameUsed, child, blockedItems)) {
                             log.trace("+ Found collection resource item {}", child.getPath());
                             result.put(child.getName(), child);
-                       }
+                        }
                     }
                 }
 
                 // check collection inheritance mode on current level - should we check on next-highest level as well?
                 final ValueMap valueMap = item.getValueMap();
-                inherit = PropertyUtil.getBooleanValueAdditionalKeys(valueMap, PROPERTY_CONFIG_COLLECTION_INHERIT,
+                inherit = PropertyUtil.getBooleanValueAdditionalKeys(
+                        valueMap,
+                        PROPERTY_CONFIG_COLLECTION_INHERIT,
                         config.configCollectionInheritancePropertyNames());
                 if (!inherit) {
                     break;
@@ -398,24 +443,29 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
     }
 
     @Override
-    public Collection<Resource> getResourceCollection(@NotNull final Resource contentResource, @NotNull final Collection<String> bucketNames, @NotNull final String configName) {
+    public Collection<Resource> getResourceCollection(
+            @NotNull final Resource contentResource,
+            @NotNull final Collection<String> bucketNames,
+            @NotNull final String configName) {
         if (!isEnabledAndParamsValid(contentResource, bucketNames, configName)) {
             return null;
         }
         Iterator<String> paths = getResolvePaths(contentResource, bucketNames);
-        Collection<Resource> result = getResourceCollectionInternal(bucketNames, configName, paths, contentResource.getResourceResolver());
+        Collection<Resource> result =
+                getResourceCollectionInternal(bucketNames, configName, paths, contentResource.getResourceResolver());
         if (!result.isEmpty()) {
             return result;
-        }
-        else {
+        } else {
             return null;
         }
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Collection<Iterator<Resource>> getResourceCollectionInheritanceChain(@NotNull final Resource contentResource,
-            @NotNull final Collection<String> bucketNames, @NotNull final String configName) {
+    public Collection<Iterator<Resource>> getResourceCollectionInheritanceChain(
+            @NotNull final Resource contentResource,
+            @NotNull final Collection<String> bucketNames,
+            @NotNull final String configName) {
         if (!isEnabledAndParamsValid(contentResource, bucketNames, configName)) {
             return null;
         }
@@ -423,32 +473,35 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
         final List<String> paths = IteratorUtils.toList(getResolvePaths(contentResource, bucketNames));
 
         // get resource collection with respect to collection inheritance
-        Collection<Resource> resourceCollection = getResourceCollectionInternal(bucketNames, configName, paths.iterator(), resourceResolver);
+        Collection<Resource> resourceCollection =
+                getResourceCollectionInternal(bucketNames, configName, paths.iterator(), resourceResolver);
 
         // get inheritance chain for each item found
         // yes, this resolves the closest item twice, but is the easiest solution to combine both logic aspects
-        Iterator<Iterator<Resource>> result = IteratorUtils.transformedIterator(resourceCollection.iterator(), new Transformer() {
-            @Override
-            public Object transform(Object input) {
-                Resource item = (Resource)input;
-                return getResourceInheritanceChainInternal(bucketNames, configName + "/" + item.getName(), paths.iterator(), resourceResolver);
-            }
-        });
+        Iterator<Iterator<Resource>> result =
+                IteratorUtils.transformedIterator(resourceCollection.iterator(), new Transformer() {
+                    @Override
+                    public Object transform(Object input) {
+                        Resource item = (Resource) input;
+                        return getResourceInheritanceChainInternal(
+                                bucketNames, configName + "/" + item.getName(), paths.iterator(), resourceResolver);
+                    }
+                });
         if (result.hasNext()) {
             return IteratorUtils.toList(result);
-        }
-        else {
+        } else {
             return null;
         }
     }
 
     private boolean isValidResourceCollectionItem(Resource resource) {
         // do not include jcr:content nodes in resource collection list
-        return !StringUtils.equals(resource.getName(), "jcr:content");
+        return !Strings.CS.equals(resource.getName(), "jcr:content");
     }
 
     @Override
-    public String getResourcePath(@NotNull Resource contentResource, @NotNull String bucketName, @NotNull String configName) {
+    public String getResourcePath(
+            @NotNull Resource contentResource, @NotNull String bucketName, @NotNull String configName) {
         if (!isEnabledAndParamsValid(contentResource, Collections.singleton(bucketName), configName)) {
             return null;
         }
@@ -457,18 +510,21 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
         Iterator<String> configPaths = this.findConfigRefs(contentResource, Collections.singleton(bucketName));
         if (configPaths.hasNext()) {
             String configPath = buildResourcePath(configPaths.next(), name);
-            log.trace("+ Building configuration path for name '{}' for resource {}: {}", name, contentResource.getPath(), configPath);
+            log.trace(
+                    "+ Building configuration path for name '{}' for resource {}: {}",
+                    name,
+                    contentResource.getPath(),
+                    configPath);
             return configPath;
-        }
-        else {
+        } else {
             log.trace("- No configuration path for name '{}' found for resource {}", name, contentResource.getPath());
             return null;
         }
     }
 
     @Override
-    public String getResourceCollectionParentPath(@NotNull Resource contentResource, @NotNull String bucketName, @NotNull String configName) {
+    public String getResourceCollectionParentPath(
+            @NotNull Resource contentResource, @NotNull String bucketName, @NotNull String configName) {
         return getResourcePath(contentResource, bucketName, configName);
     }
-
 }

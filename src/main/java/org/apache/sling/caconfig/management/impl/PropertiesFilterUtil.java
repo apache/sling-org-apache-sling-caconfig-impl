@@ -37,10 +37,9 @@ public final class PropertiesFilterUtil {
         propertyNames.removeAll(ignoredProperties);
     }
 
-    public static void removeIgnoredProperties(Map<String,Object> props, ConfigurationManagementSettings settings) {
+    public static void removeIgnoredProperties(Map<String, Object> props, ConfigurationManagementSettings settings) {
         for (String propertyName : settings.getIgnoredPropertyNames(props.keySet())) {
             props.remove(propertyName);
         }
     }
-
 }

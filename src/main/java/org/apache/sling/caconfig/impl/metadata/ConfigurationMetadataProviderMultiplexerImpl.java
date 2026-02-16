@@ -38,22 +38,29 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  * Detects all {@link ConfigurationMetadataProvider} implementations in the container
  * and consolidates their result based on service ranking.
  */
-@Component(service = ConfigurationMetadataProviderMultiplexer.class,
-reference={
-        @Reference(name="configurationMetadataProvider", service=ConfigurationMetadataProvider.class,
-                bind="bindConfigurationMetadataProvider", unbind="unbindConfigurationMetadataProvider",
-                cardinality=ReferenceCardinality.MULTIPLE,
-                policy=ReferencePolicy.DYNAMIC, policyOption=ReferencePolicyOption.GREEDY)
-})
+@Component(
+        service = ConfigurationMetadataProviderMultiplexer.class,
+        reference = {
+            @Reference(
+                    name = "configurationMetadataProvider",
+                    service = ConfigurationMetadataProvider.class,
+                    bind = "bindConfigurationMetadataProvider",
+                    unbind = "unbindConfigurationMetadataProvider",
+                    cardinality = ReferenceCardinality.MULTIPLE,
+                    policy = ReferencePolicy.DYNAMIC,
+                    policyOption = ReferencePolicyOption.GREEDY)
+        })
 public class ConfigurationMetadataProviderMultiplexerImpl implements ConfigurationMetadataProviderMultiplexer {
 
     private RankedServices<ConfigurationMetadataProvider> items = new RankedServices<>(Order.DESCENDING);
 
-    protected void bindConfigurationMetadataProvider(ConfigurationMetadataProvider configurationMetadataProvider, Map<String, Object> props) {
+    protected void bindConfigurationMetadataProvider(
+            ConfigurationMetadataProvider configurationMetadataProvider, Map<String, Object> props) {
         items.bind(configurationMetadataProvider, props);
     }
 
-    protected void unbindConfigurationMetadataProvider(ConfigurationMetadataProvider configurationMetadataProvider, Map<String, Object> props) {
+    protected void unbindConfigurationMetadataProvider(
+            ConfigurationMetadataProvider configurationMetadataProvider, Map<String, Object> props) {
         items.unbind(configurationMetadataProvider, props);
     }
 
@@ -82,5 +89,4 @@ public class ConfigurationMetadataProviderMultiplexerImpl implements Configurati
         }
         return null;
     }
-
 }

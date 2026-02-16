@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.caconfig.spi.ConfigurationOverrideProvider;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Activate;
@@ -45,18 +46,18 @@ public final class SystemPropertyConfigurationOverrideProvider implements Config
      */
     public static final String SYSTEM_PROPERTY_PREFIX = "sling.caconfig.override.";
 
-    @ObjectClassDefinition(name = "Apache Sling Context-Aware Configuration Override Provider: System Properties",
+    @ObjectClassDefinition(
+            name = "Apache Sling Context-Aware Configuration Override Provider: System Properties",
             description = "Allows to override configuration property values from system environment properties.")
     public static @interface Config {
 
-        @AttributeDefinition(name = "Enabled",
-                description = "Enable this override provider.")
+        @AttributeDefinition(name = "Enabled", description = "Enable this override provider.")
         boolean enabled() default false;
 
-        @AttributeDefinition(name = "Service Ranking",
+        @AttributeDefinition(
+                name = "Service Ranking",
                 description = "Priority of configuration override providers (higher = higher priority).")
         int service_ranking() default 200;
-
     }
 
     private Collection<String> overrideStrings;
@@ -72,8 +73,9 @@ public final class SystemPropertyConfigurationOverrideProvider implements Config
                 Object keyObject = keys.nextElement();
                 if (keyObject instanceof String) {
                     String key = (String) keyObject;
-                    if (StringUtils.startsWith(key, SYSTEM_PROPERTY_PREFIX)) {
-                        overrides.add(StringUtils.substringAfter(key, SYSTEM_PROPERTY_PREFIX) + "=" + System.getProperty(key));
+                    if (Strings.CS.startsWith(key, SYSTEM_PROPERTY_PREFIX)) {
+                        overrides.add(StringUtils.substringAfter(key, SYSTEM_PROPERTY_PREFIX) + "="
+                                + System.getProperty(key));
                     }
                 }
             }
@@ -86,5 +88,4 @@ public final class SystemPropertyConfigurationOverrideProvider implements Config
     public @NotNull Collection<String> getOverrideStrings() {
         return overrideStrings;
     }
-
 }

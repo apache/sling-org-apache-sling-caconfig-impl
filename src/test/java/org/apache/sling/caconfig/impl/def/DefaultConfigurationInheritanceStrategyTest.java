@@ -18,11 +18,8 @@
  */
 package org.apache.sling.caconfig.impl.def;
 
-import static org.apache.sling.caconfig.impl.def.ConfigurationDefNameConstants.PROPERTY_CONFIG_PROPERTY_INHERIT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
@@ -31,7 +28,9 @@ import org.apache.sling.testing.mock.sling.junit.SlingContext;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableList;
+import static org.apache.sling.caconfig.impl.def.ConfigurationDefNameConstants.PROPERTY_CONFIG_PROPERTY_INHERIT;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 @SuppressWarnings("null")
 public class DefaultConfigurationInheritanceStrategyTest {
@@ -47,11 +46,11 @@ public class DefaultConfigurationInheritanceStrategyTest {
     public void testWithoutPropertyMerging() {
         underTest = context.registerInjectActivateService(new DefaultConfigurationInheritanceStrategy());
 
-        Iterator<Resource> resources = ImmutableList.of(
-                context.create().resource("/conf/resource1", "prop1", "value1a", "prop2", "value2a"),
-                context.create().resource("/conf/resource2", "prop2", "value2b", "prop3", "value3b"),
-                context.create().resource("/conf/resource3", "prop4", "value4b")
-                ).iterator();
+        Iterator<Resource> resources = List.of(
+                        context.create().resource("/conf/resource1", "prop1", "value1a", "prop2", "value2a"),
+                        context.create().resource("/conf/resource2", "prop2", "value2b", "prop3", "value3b"),
+                        context.create().resource("/conf/resource3", "prop4", "value4b"))
+                .iterator();
 
         Resource inherited = underTest.getResource(resources);
         ValueMap props = inherited.getValueMap();
@@ -64,13 +63,31 @@ public class DefaultConfigurationInheritanceStrategyTest {
 
     @Test
     public void testWithPropertyMerging() {
-        underTest = context.registerInjectActivateService(new DefaultConfigurationInheritanceStrategy(),
-                "configPropertyInheritancePropertyNames", PROPERTY_CONFIG_PROPERTY_INHERIT_CUSTOM);
-        Iterator<Resource> resources = ImmutableList.of(
-                context.create().resource("/conf/resource1", "prop1", "value1a", "prop2", "value2a", PROPERTY_CONFIG_PROPERTY_INHERIT, true),
-                context.create().resource("/conf/resource2", "prop2", "value2b", "prop3", "value3b", PROPERTY_CONFIG_PROPERTY_INHERIT_CUSTOM, true),
-                context.create().resource("/conf/resource3", "prop4", "value4b")
-                ).iterator();
+        underTest = context.registerInjectActivateService(
+                new DefaultConfigurationInheritanceStrategy(),
+                "configPropertyInheritancePropertyNames",
+                PROPERTY_CONFIG_PROPERTY_INHERIT_CUSTOM);
+        Iterator<Resource> resources = List.of(
+                        context.create()
+                                .resource(
+                                        "/conf/resource1",
+                                        "prop1",
+                                        "value1a",
+                                        "prop2",
+                                        "value2a",
+                                        PROPERTY_CONFIG_PROPERTY_INHERIT,
+                                        true),
+                        context.create()
+                                .resource(
+                                        "/conf/resource2",
+                                        "prop2",
+                                        "value2b",
+                                        "prop3",
+                                        "value3b",
+                                        PROPERTY_CONFIG_PROPERTY_INHERIT_CUSTOM,
+                                        true),
+                        context.create().resource("/conf/resource3", "prop4", "value4b"))
+                .iterator();
 
         Resource inherited = underTest.getResource(resources);
         ValueMap props = inherited.getValueMap();
@@ -85,11 +102,19 @@ public class DefaultConfigurationInheritanceStrategyTest {
     public void testWithPartialPropertyMerging() {
         underTest = context.registerInjectActivateService(new DefaultConfigurationInheritanceStrategy());
 
-        Iterator<Resource> resources = ImmutableList.of(
-                context.create().resource("/conf/resource1", "prop1", "value1a", "prop2", "value2a", PROPERTY_CONFIG_PROPERTY_INHERIT, true),
-                context.create().resource("/conf/resource2", "prop2", "value2b", "prop3", "value3b"),
-                context.create().resource("/conf/resource3", "prop4", "value4b")
-                ).iterator();
+        Iterator<Resource> resources = List.of(
+                        context.create()
+                                .resource(
+                                        "/conf/resource1",
+                                        "prop1",
+                                        "value1a",
+                                        "prop2",
+                                        "value2a",
+                                        PROPERTY_CONFIG_PROPERTY_INHERIT,
+                                        true),
+                        context.create().resource("/conf/resource2", "prop2", "value2b", "prop3", "value3b"),
+                        context.create().resource("/conf/resource3", "prop4", "value4b"))
+                .iterator();
 
         Resource inherited = underTest.getResource(resources);
         ValueMap props = inherited.getValueMap();
@@ -102,17 +127,32 @@ public class DefaultConfigurationInheritanceStrategyTest {
 
     @Test
     public void testDisabled() {
-        underTest = context.registerInjectActivateService(new DefaultConfigurationInheritanceStrategy(),
-                "enabled", false);
+        underTest =
+                context.registerInjectActivateService(new DefaultConfigurationInheritanceStrategy(), "enabled", false);
 
-        Iterator<Resource> resources = ImmutableList.of(
-                context.create().resource("/conf/resource1", "prop1", "value1a", "prop2", "value2a", PROPERTY_CONFIG_PROPERTY_INHERIT, true),
-                context.create().resource("/conf/resource2", "prop2", "value2b", "prop3", "value3b", PROPERTY_CONFIG_PROPERTY_INHERIT, true),
-                context.create().resource("/conf/resource3", "prop4", "value4b")
-                ).iterator();
+        Iterator<Resource> resources = List.of(
+                        context.create()
+                                .resource(
+                                        "/conf/resource1",
+                                        "prop1",
+                                        "value1a",
+                                        "prop2",
+                                        "value2a",
+                                        PROPERTY_CONFIG_PROPERTY_INHERIT,
+                                        true),
+                        context.create()
+                                .resource(
+                                        "/conf/resource2",
+                                        "prop2",
+                                        "value2b",
+                                        "prop3",
+                                        "value3b",
+                                        PROPERTY_CONFIG_PROPERTY_INHERIT,
+                                        true),
+                        context.create().resource("/conf/resource3", "prop4", "value4b"))
+                .iterator();
 
         Resource inherited = underTest.getResource(resources);
         assertNull(inherited);
     }
-
 }

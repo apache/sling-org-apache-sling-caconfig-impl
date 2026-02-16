@@ -33,12 +33,15 @@ final class ConfigurationCollectionDataImpl implements ConfigurationCollectionDa
     private final String configName;
     private final Collection<ConfigurationData> items;
     private final String resourcePath;
-    private final Map<String,Object> properties;
+    private final Map<String, Object> properties;
     private final ConfigurationManagementSettings configurationManagementSettings;
-    private Map<String,Object> filteredPropertiesCache;
+    private Map<String, Object> filteredPropertiesCache;
 
-    public ConfigurationCollectionDataImpl(String configName, Collection<ConfigurationData> items,
-            String resourcePath, Map<String, Object> properties,
+    public ConfigurationCollectionDataImpl(
+            String configName,
+            Collection<ConfigurationData> items,
+            String resourcePath,
+            Map<String, Object> properties,
             ConfigurationManagementSettings configurationManagementSettings) {
         this.configName = configName;
         this.items = items;
@@ -69,12 +72,11 @@ final class ConfigurationCollectionDataImpl implements ConfigurationCollectionDa
             if (properties != null) {
                 filteredPropertiesCache.putAll(properties);
                 PropertiesFilterUtil.removeIgnoredProperties(filteredPropertiesCache, configurationManagementSettings);
-            }
-            else {
-                filteredPropertiesCache.put(ConfigurationResourceNameConstants.PROPERTY_CONFIG_COLLECTION_INHERIT, true);
+            } else {
+                filteredPropertiesCache.put(
+                        ConfigurationResourceNameConstants.PROPERTY_CONFIG_COLLECTION_INHERIT, true);
             }
         }
         return filteredPropertiesCache;
     }
-
 }

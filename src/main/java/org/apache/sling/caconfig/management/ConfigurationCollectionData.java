@@ -35,21 +35,24 @@ public interface ConfigurationCollectionData {
      * Get configuration name.
      * @return Configuration name
      */
-    @NotNull String getConfigName();
+    @NotNull
+    String getConfigName();
 
     /**
      * @return Configuration collection items
      */
-    @NotNull Collection<ConfigurationData> getItems();
+    @NotNull
+    Collection<ConfigurationData> getItems();
 
     /**
      * @return Path of the configuration collection resource parent path or null if it cannot be determined.
      */
-    @Nullable String getResourcePath();
+    @Nullable
+    String getResourcePath();
 
     /**
      * @return Properties for the configuration collection itself. Does not contain configuration data, but control data e.g. for enabling collection inheritance.
      */
-    @NotNull Map<String, Object> getProperties();
-
+    @NotNull
+    Map<String, Object> getProperties();
 }

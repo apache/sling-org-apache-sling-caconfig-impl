@@ -18,8 +18,6 @@
  */
 package org.apache.sling.caconfig.impl.metadata;
 
-import static org.apache.sling.caconfig.impl.ConfigurationNameConstants.CONFIGURATION_CLASSES_HEADER;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +39,8 @@ import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
+
+import static org.apache.sling.caconfig.impl.ConfigurationNameConstants.CONFIGURATION_CLASSES_HEADER;
 
 /**
  * Helper methods for simulating events when deploying bundles with configuration annotation classes.
@@ -68,7 +68,7 @@ final class BundleEventUtil {
      * Simulate a bundle STARTED event with a given set of classes simulated to be found in the bundle's classpath.
      */
     public static void stopDummyBundle(Bundle bundle) {
-        ((DummyBundle)bundle).setState(Bundle.RESOLVED);
+        ((DummyBundle) bundle).setState(Bundle.RESOLVED);
         BundleEvent event = new BundleEvent(BundleEvent.STOPPED, bundle);
         MockOsgi.sendBundleEvent(bundle.getBundleContext(), event);
     }
@@ -103,8 +103,8 @@ final class BundleEventUtil {
         }
 
         @Override
-        public Dictionary<String,String> getHeaders() {
-            Dictionary<String,String> headers = new Hashtable<>();
+        public Dictionary<String, String> getHeaders() {
+            Dictionary<String, String> headers = new Hashtable<>();
             headers.put(CONFIGURATION_CLASSES_HEADER, classNames);
             return headers;
         }
@@ -115,8 +115,7 @@ final class BundleEventUtil {
             for (int i = 0; i < classes.length; i++) {
                 try {
                     urls.add(new URL("file:/" + classes[i].getName().replace('.', '/') + ".class"));
-                }
-                catch (MalformedURLException ex) {
+                } catch (MalformedURLException ex) {
                     throw new RuntimeException("Malformed URL.", ex);
                 }
             }
@@ -199,7 +198,7 @@ final class BundleEventUtil {
         }
 
         @Override
-        public Dictionary<String,String> getHeaders(String locale) {
+        public Dictionary<String, String> getHeaders(String locale) {
             return null;
         }
 
@@ -231,7 +230,7 @@ final class BundleEventUtil {
         @Override
         public int compareTo(Bundle obj) {
             if (obj instanceof DummyBundle) {
-                return bundleId.compareTo(((DummyBundle)obj).bundleId);
+                return bundleId.compareTo(((DummyBundle) obj).bundleId);
             }
             return -1;
         }
@@ -265,7 +264,7 @@ final class BundleEventUtil {
         @Override
         public boolean equals(Object obj) {
             if (obj instanceof DummyBundle) {
-                return bundleId.equals(((DummyBundle)obj).bundleId);
+                return bundleId.equals(((DummyBundle) obj).bundleId);
             }
             return false;
         }
@@ -274,7 +273,5 @@ final class BundleEventUtil {
         public String toString() {
             return getSymbolicName();
         }
-
     }
-
 }

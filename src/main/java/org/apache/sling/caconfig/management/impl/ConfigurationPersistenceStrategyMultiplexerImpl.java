@@ -43,22 +43,29 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  * Detects all {@link ConfigurationPersistenceStrategy2} implementations in the container
  * and consolidates their result based on service ranking.
  */
-@Component(service = ConfigurationPersistenceStrategyMultiplexer.class,
-reference={
-        @Reference(name="configurationPersistenceStrategy", service=ConfigurationPersistenceStrategy2.class,
-                bind="bindConfigurationPersistenceStrategy", unbind="unbindConfigurationPersistenceStrategy",
-                cardinality=ReferenceCardinality.MULTIPLE,
-                policy=ReferencePolicy.DYNAMIC, policyOption=ReferencePolicyOption.GREEDY)
-})
+@Component(
+        service = ConfigurationPersistenceStrategyMultiplexer.class,
+        reference = {
+            @Reference(
+                    name = "configurationPersistenceStrategy",
+                    service = ConfigurationPersistenceStrategy2.class,
+                    bind = "bindConfigurationPersistenceStrategy",
+                    unbind = "unbindConfigurationPersistenceStrategy",
+                    cardinality = ReferenceCardinality.MULTIPLE,
+                    policy = ReferencePolicy.DYNAMIC,
+                    policyOption = ReferencePolicyOption.GREEDY)
+        })
 public class ConfigurationPersistenceStrategyMultiplexerImpl implements ConfigurationPersistenceStrategyMultiplexer {
 
     private RankedServices<ConfigurationPersistenceStrategy2> items = new RankedServices<>(Order.DESCENDING);
 
-    protected void bindConfigurationPersistenceStrategy(ConfigurationPersistenceStrategy2 configurationPersistenceStrategy, Map<String, Object> props) {
+    protected void bindConfigurationPersistenceStrategy(
+            ConfigurationPersistenceStrategy2 configurationPersistenceStrategy, Map<String, Object> props) {
         items.bind(configurationPersistenceStrategy, props);
     }
 
-    protected void unbindConfigurationPersistenceStrategy(ConfigurationPersistenceStrategy2 configurationPersistenceStrategy, Map<String, Object> props) {
+    protected void unbindConfigurationPersistenceStrategy(
+            ConfigurationPersistenceStrategy2 configurationPersistenceStrategy, Map<String, Object> props) {
         items.unbind(configurationPersistenceStrategy, props);
     }
 
@@ -204,7 +211,9 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
      * Persist configuration data with the first implementation that accepts it.
      */
     @Override
-    public boolean persistConfiguration(@NotNull ResourceResolver resourceResolver, @NotNull String configResourcePath,
+    public boolean persistConfiguration(
+            @NotNull ResourceResolver resourceResolver,
+            @NotNull String configResourcePath,
             @NotNull ConfigurationPersistData data) {
         for (ConfigurationPersistenceStrategy2 item : items) {
             if (item.persistConfiguration(resourceResolver, configResourcePath, data)) {
@@ -218,7 +227,9 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
      * Persist configuration data with the first implementation that accepts it.
      */
     @Override
-    public boolean persistConfigurationCollection(@NotNull ResourceResolver resourceResolver, @NotNull String configResourceCollectionParentPath,
+    public boolean persistConfigurationCollection(
+            @NotNull ResourceResolver resourceResolver,
+            @NotNull String configResourceCollectionParentPath,
             @NotNull ConfigurationCollectionPersistData data) {
         for (ConfigurationPersistenceStrategy2 item : items) {
             if (item.persistConfigurationCollection(resourceResolver, configResourceCollectionParentPath, data)) {
@@ -237,5 +248,4 @@ public class ConfigurationPersistenceStrategyMultiplexerImpl implements Configur
         }
         return false;
     }
-
 }

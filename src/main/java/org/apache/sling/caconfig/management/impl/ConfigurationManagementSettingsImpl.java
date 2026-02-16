@@ -18,8 +18,6 @@
  */
 package org.apache.sling.caconfig.management.impl;
 
-import static org.apache.sling.api.resource.ResourceResolver.PROPERTY_RESOURCE_TYPE;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,26 +37,29 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.sling.api.resource.ResourceResolver.PROPERTY_RESOURCE_TYPE;
+
 @Component(service = ConfigurationManagementSettings.class)
-@Designate(ocd=ConfigurationManagementSettingsImpl.Config.class)
+@Designate(ocd = ConfigurationManagementSettingsImpl.Config.class)
 public class ConfigurationManagementSettingsImpl implements ConfigurationManagementSettings {
 
-    @ObjectClassDefinition(name="Apache Sling Context-Aware Configuration Management Settings",
-            description="Management settings for reading and writing configurations.")
+    @ObjectClassDefinition(
+            name = "Apache Sling Context-Aware Configuration Management Settings",
+            description = "Management settings for reading and writing configurations.")
     static @interface Config {
 
-        @AttributeDefinition(name="Ignore Property Regex",
-                      description = "List of regular expressions with property names that should be ignored when reading or writing configuration data properties.")
-        String[] ignorePropertyNameRegex() default {
-            "^jcr:.+$",
-            "^" + PROPERTY_RESOURCE_TYPE + "$"
-        };
+        @AttributeDefinition(
+                name = "Ignore Property Regex",
+                description =
+                        "List of regular expressions with property names that should be ignored when reading or writing configuration data properties.")
+        String[] ignorePropertyNameRegex() default {"^jcr:.+$", "^" + PROPERTY_RESOURCE_TYPE + "$"};
 
-        @AttributeDefinition(name="Config collection parent properties resource names",
-                description = "Names of resource to try to look up configuration collection properties in. If list is empty only the collection parent resource is checked." +
-                              " If the list is not empty than only those listed resources are used for look up. If you want to include the collection parent resource you can use a dot for the value.")
+        @AttributeDefinition(
+                name = "Config collection parent properties resource names",
+                description =
+                        "Names of resource to try to look up configuration collection properties in. If list is empty only the collection parent resource is checked."
+                                + " If the list is not empty than only those listed resources are used for look up. If you want to include the collection parent resource you can use a dot for the value.")
         String[] configCollectionPropertiesResourceNames();
-
     }
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationManagementSettingsImpl.class);
@@ -66,26 +67,25 @@ public class ConfigurationManagementSettingsImpl implements ConfigurationManagem
     private Pattern[] ignorePropertyNameRegex;
     private Collection<String> configCollectionPropertiesResourceNames;
 
-
     @Activate
     private void activate(Config config) {
         List<Pattern> patterns = new ArrayList<>();
         for (String patternString : config.ignorePropertyNameRegex()) {
-           try {
-               patterns.add(Pattern.compile(patternString));
-           }
-           catch (PatternSyntaxException ex) {
-               log.warn("Ignoring invalid regex pattern: " + patternString, ex);
-           }
+            try {
+                patterns.add(Pattern.compile(patternString));
+            } catch (PatternSyntaxException ex) {
+                log.warn("Ignoring invalid regex pattern: " + patternString, ex);
+            }
         }
 
         this.ignorePropertyNameRegex = patterns.toArray(new Pattern[patterns.size()]);
 
         String[] configCollectionPropertiesResourceNames = config.configCollectionPropertiesResourceNames();
         if (configCollectionPropertiesResourceNames == null || configCollectionPropertiesResourceNames.length == 0) {
-            configCollectionPropertiesResourceNames = new String[] { "." };
+            configCollectionPropertiesResourceNames = new String[] {"."};
         }
-        this.configCollectionPropertiesResourceNames = Collections.unmodifiableList(Arrays.asList(configCollectionPropertiesResourceNames));
+        this.configCollectionPropertiesResourceNames =
+                Collections.unmodifiableList(Arrays.asList(configCollectionPropertiesResourceNames));
     }
 
     @Override
@@ -106,5 +106,4 @@ public class ConfigurationManagementSettingsImpl implements ConfigurationManagem
     public Collection<String> getConfigCollectionPropertiesResourceNames() {
         return configCollectionPropertiesResourceNames;
     }
-
 }

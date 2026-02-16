@@ -25,12 +25,13 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.api.resource.ValueMap;
@@ -65,20 +66,25 @@ final class ConfigurationDataImpl implements ConfigurationData {
     private ValueMap valuesCache;
     private ValueMap effectiveValuesCache;
 
-    public ConfigurationDataImpl(ConfigurationMetadata configMetadata,
-            Resource resolvedConfigurationResource, Resource writebackConfigurationResource,
+    public ConfigurationDataImpl(
+            ConfigurationMetadata configMetadata,
+            Resource resolvedConfigurationResource,
+            Resource writebackConfigurationResource,
             Iterator<Resource> configurationResourceInheritanceChain,
-            Resource contextResource, String configName,
+            Resource contextResource,
+            String configName,
             ConfigurationManager configurationManager,
             ConfigurationManagementSettings configurationManagementSettings,
             ConfigurationOverrideMultiplexer configurationOverrideMultiplexer,
             ConfigurationPersistenceStrategy2 configurationPersistenceStrategy,
-            boolean configResourceCollection, String collectionItemName) {
+            boolean configResourceCollection,
+            String collectionItemName) {
         this.configMetadata = configMetadata;
         this.resolvedConfigurationResource = resolvedConfigurationResource;
         this.writebackConfigurationResource = writebackConfigurationResource;
         this.configurationResourceInheritanceChain = configurationResourceInheritanceChain != null
-                ? IteratorUtils.toList(configurationResourceInheritanceChain) : null;
+                ? IteratorUtils.toList(configurationResourceInheritanceChain)
+                : null;
         this.contextResource = contextResource;
         this.configName = configName;
         this.configurationManager = configurationManager;
@@ -87,23 +93,33 @@ final class ConfigurationDataImpl implements ConfigurationData {
         this.configurationPersistenceStrategy = configurationPersistenceStrategy;
         this.configResourceCollection = configResourceCollection;
         this.collectionItemName = collectionItemName;
-        this.isAllOverridden = contextResource != null ? configurationOverrideMultiplexer.isAllOverridden(contextResource.getPath(), configName) : false;
+        this.isAllOverridden = contextResource != null
+                ? configurationOverrideMultiplexer.isAllOverridden(contextResource.getPath(), configName)
+                : false;
     }
 
-    public ConfigurationDataImpl(ConfigurationMetadata configMetadata,
-            Resource contextResource, String configName,
+    public ConfigurationDataImpl(
+            ConfigurationMetadata configMetadata,
+            Resource contextResource,
+            String configName,
             ConfigurationManager configurationManager,
             ConfigurationManagementSettings configurationManagementSettings,
             ConfigurationOverrideMultiplexer configurationOverrideMultiplexer,
             ConfigurationPersistenceStrategy2 configurationPersistenceStrategy,
             boolean configResourceCollection) {
-        this(configMetadata, null, null, null,
-                contextResource, configName,
+        this(
+                configMetadata,
+                null,
+                null,
+                null,
+                contextResource,
+                configName,
                 configurationManager,
                 configurationManagementSettings,
                 configurationOverrideMultiplexer,
                 configurationPersistenceStrategy,
-                configResourceCollection, null);
+                configResourceCollection,
+                null);
     }
 
     @Override
@@ -135,7 +151,8 @@ final class ConfigurationDataImpl implements ConfigurationData {
                 propertyNamesCache.addAll(configMetadata.getPropertyMetadata().keySet());
             }
             if (resolvedConfigurationResource != null) {
-                propertyNamesCache.addAll(new TreeSet<>(ResourceUtil.getValueMap(resolvedConfigurationResource).keySet()));
+                propertyNamesCache.addAll(new TreeSet<>(
+                        ResourceUtil.getValueMap(resolvedConfigurationResource).keySet()));
             }
             PropertiesFilterUtil.removeIgnoredProperties(propertyNamesCache, configurationManagementSettings);
         }
@@ -145,7 +162,7 @@ final class ConfigurationDataImpl implements ConfigurationData {
     @Override
     public @NotNull ValueMap getValues() {
         if (valuesCache == null) {
-            Map<String,Object> props = new HashMap<>();
+            Map<String, Object> props = new HashMap<>();
             if (writebackConfigurationResource != null) {
                 props.putAll(ResourceUtil.getValueMap(writebackConfigurationResource));
             }
@@ -159,9 +176,10 @@ final class ConfigurationDataImpl implements ConfigurationData {
     @Override
     public @NotNull ValueMap getEffectiveValues() {
         if (effectiveValuesCache == null) {
-            Map<String,Object> props = new HashMap<>();
+            Map<String, Object> props = new HashMap<>();
             if (configMetadata != null) {
-                for (PropertyMetadata<?> propertyMetadata : configMetadata.getPropertyMetadata().values()) {
+                for (PropertyMetadata<?> propertyMetadata :
+                        configMetadata.getPropertyMetadata().values()) {
                     if (propertyMetadata.getDefaultValue() != null) {
                         props.put(propertyMetadata.getName(), propertyMetadata.getDefaultValue());
                     }
@@ -177,31 +195,39 @@ final class ConfigurationDataImpl implements ConfigurationData {
         return effectiveValuesCache;
     }
 
-    private void resolveNestedConfigs(Map<String,Object> props) {
+    private void resolveNestedConfigs(Map<String, Object> props) {
         if (configMetadata == null) {
             return;
         }
-        for (PropertyMetadata<?> propertyMetadata : configMetadata.getPropertyMetadata().values()) {
+        for (PropertyMetadata<?> propertyMetadata :
+                configMetadata.getPropertyMetadata().values()) {
             if (propertyMetadata.isNestedConfiguration()) {
                 ConfigurationMetadata nestedConfigMetadata = propertyMetadata.getConfigurationMetadata();
-                String relatedConfigPath = resolvedConfigurationResource != null ? resolvedConfigurationResource.getPath() : null;
+                String relatedConfigPath =
+                        resolvedConfigurationResource != null ? resolvedConfigurationResource.getPath() : null;
                 String nestedConfigName;
                 if (configResourceCollection) {
-                    String nestedCollectionItemName = StringUtils.defaultString(getCollectionItemName(), "newItem");
+                    String nestedCollectionItemName = Objects.toString(getCollectionItemName(), "newItem");
                     nestedConfigName = configurationPersistenceStrategy.getCollectionItemConfigName(
-                            configurationPersistenceStrategy.getCollectionParentConfigName(configName, relatedConfigPath) + "/" + nestedCollectionItemName, relatedConfigPath)
+                                    configurationPersistenceStrategy.getCollectionParentConfigName(
+                                                    configName, relatedConfigPath)
+                                            + "/" + nestedCollectionItemName,
+                                    relatedConfigPath)
+                            + "/" + nestedConfigMetadata.getName();
+                } else {
+                    nestedConfigName = configurationPersistenceStrategy.getConfigName(configName, relatedConfigPath)
                             + "/" + nestedConfigMetadata.getName();
                 }
-                else {
-                    nestedConfigName = configurationPersistenceStrategy.getConfigName(configName, relatedConfigPath) + "/" + nestedConfigMetadata.getName();
-                }
                 if (propertyMetadata.getType().equals(ConfigurationMetadata.class)) {
-                    ConfigurationData configData = configurationManager.getConfiguration(contextResource, nestedConfigName);
+                    ConfigurationData configData =
+                            configurationManager.getConfiguration(contextResource, nestedConfigName);
                     props.put(propertyMetadata.getName(), configData);
-                }
-                else if (propertyMetadata.getType().equals(ConfigurationMetadata[].class)) {
-                    Collection<ConfigurationData> configDatas = configurationManager.getConfigurationCollection(contextResource, nestedConfigName).getItems();
-                    props.put(propertyMetadata.getName(), configDatas.toArray(new ConfigurationData[configDatas.size()]));
+                } else if (propertyMetadata.getType().equals(ConfigurationMetadata[].class)) {
+                    Collection<ConfigurationData> configDatas = configurationManager
+                            .getConfigurationCollection(contextResource, nestedConfigName)
+                            .getItems();
+                    props.put(
+                            propertyMetadata.getName(), configDatas.toArray(new ConfigurationData[configDatas.size()]));
                 }
             }
         }
@@ -217,21 +243,22 @@ final class ConfigurationDataImpl implements ConfigurationData {
             Class<?> type = propertyMetadata.getType();
             if (type == ConfigurationMetadata.class) {
                 type = ConfigurationData.class;
-            }
-            else if (type == ConfigurationMetadata[].class) {
+            } else if (type == ConfigurationMetadata[].class) {
                 type = ConfigurationData[].class;
-            }
-            else {
+            } else {
                 type = primitiveToWrapper(type);
             }
             value = getValues().get(propertyName, type);
             effectiveValue = getEffectiveValues().get(propertyName, type);
-        }
-        else {
+        } else {
             value = getValues().get(propertyName);
             effectiveValue = getEffectiveValues().get(propertyName);
         }
-        return new ValueInfoImpl(propertyName, value, effectiveValue, propertyMetadata,
+        return new ValueInfoImpl(
+                propertyName,
+                value,
+                effectiveValue,
+                propertyMetadata,
                 resolvedConfigurationResource,
                 writebackConfigurationResource,
                 configurationResourceInheritanceChain,
@@ -243,9 +270,9 @@ final class ConfigurationDataImpl implements ConfigurationData {
 
     private Class<?> primitiveToWrapper(Class<?> type) {
         if (type.isArray()) {
-            return Array.newInstance(ClassUtils.primitiveToWrapper(type.getComponentType()), 0).getClass();
-        }
-        else {
+            return Array.newInstance(ClassUtils.primitiveToWrapper(type.getComponentType()), 0)
+                    .getClass();
+        } else {
             return ClassUtils.primitiveToWrapper(type);
         }
     }
@@ -253,8 +280,7 @@ final class ConfigurationDataImpl implements ConfigurationData {
     private PropertyMetadata<?> getPropertyMetadata(String propertyName) {
         if (configMetadata == null) {
             return null;
-        }
-        else {
+        } else {
             return configMetadata.getPropertyMetadata().get(propertyName);
         }
     }
@@ -265,9 +291,9 @@ final class ConfigurationDataImpl implements ConfigurationData {
         if (resolvedConfigurationResource != null && resolvedConfigurationResource.getPath() != null) {
             if (writebackConfigurationResource == null) {
                 return true;
-            }
-            else {
-                return !StringUtils.equals(writebackConfigurationResource.getPath(), resolvedConfigurationResource.getPath());
+            } else {
+                return !Strings.CS.equals(
+                        writebackConfigurationResource.getPath(), resolvedConfigurationResource.getPath());
             }
         }
         return false;
@@ -277,5 +303,4 @@ final class ConfigurationDataImpl implements ConfigurationData {
     public boolean isOverridden() {
         return isAllOverridden;
     }
-
 }

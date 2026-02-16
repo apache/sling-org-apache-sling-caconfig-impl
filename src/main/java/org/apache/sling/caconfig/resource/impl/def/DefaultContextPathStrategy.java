@@ -18,8 +18,6 @@
  */
 package org.apache.sling.caconfig.resource.impl.def;
 
-import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -38,31 +36,41 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
+
 @Component(service = ContextPathStrategy.class)
-@Designate(ocd=DefaultContextPathStrategy.Config.class)
+@Designate(ocd = DefaultContextPathStrategy.Config.class)
 public class DefaultContextPathStrategy implements ContextPathStrategy {
 
-    @ObjectClassDefinition(name="Apache Sling Context-Aware Configuration Default Context Path Strategy",
-            description="Detects context path by existence of " + PROPERTY_CONFIG_REF + " properties.")
+    @ObjectClassDefinition(
+            name = "Apache Sling Context-Aware Configuration Default Context Path Strategy",
+            description = "Detects context path by existence of " + PROPERTY_CONFIG_REF + " properties.")
     public static @interface Config {
 
-        @AttributeDefinition(name="Enabled",
-                      description = "Enable this context path strategy.")
+        @AttributeDefinition(name = "Enabled", description = "Enable this context path strategy.")
         boolean enabled() default true;
 
-        @AttributeDefinition(name="Config ref. resource names",
-                description = "Names of resource to try to look up " + PROPERTY_CONFIG_REF + " property in. If list is empty only current resource is checked." +
-                              " If the list is not empty than only those listed resources are used for look up. If you want to include the current resource you can use a dot for the value.")
+        @AttributeDefinition(
+                name = "Config ref. resource names",
+                description =
+                        "Names of resource to try to look up " + PROPERTY_CONFIG_REF
+                                + " property in. If list is empty only current resource is checked."
+                                + " If the list is not empty than only those listed resources are used for look up. If you want to include the current resource you can use a dot for the value.")
         String[] configRefResourceNames();
 
-        @AttributeDefinition(name="Config ref. property names",
-                description = "Additional property names to " + PROPERTY_CONFIG_REF + " to look up a configuration reference. The names are used in the order defined, "
-                            + "always starting with " + PROPERTY_CONFIG_REF + ". Once a property with a value is found, that value is used and the following property names are skipped.")
+        @AttributeDefinition(
+                name = "Config ref. property names",
+                description =
+                        "Additional property names to " + PROPERTY_CONFIG_REF
+                                + " to look up a configuration reference. The names are used in the order defined, "
+                                + "always starting with " + PROPERTY_CONFIG_REF
+                                + ". Once a property with a value is found, that value is used and the following property names are skipped.")
         String[] configRefPropertyNames();
 
-        @AttributeDefinition(name = "Service Ranking",
+        @AttributeDefinition(
+                name = "Service Ranking",
                 description = "Priority of persistence strategy (higher = higher priority).")
-            int service_ranking() default 0;
+        int service_ranking() default 0;
     }
 
     private static final Logger log = LoggerFactory.getLogger(DefaultContextPathStrategy.class);
@@ -139,10 +147,10 @@ public class DefaultContextPathStrategy implements ContextPathStrategy {
         private String getConfigRefValue(final Resource resource) {
             final ValueMap map = resource.getValueMap();
             String val = map.get(PROPERTY_CONFIG_REF, String.class);
-            if ( val == null && !ArrayUtils.isEmpty(config.configRefPropertyNames()) ) {
-                for(final String name : config.configRefPropertyNames()) {
+            if (val == null && !ArrayUtils.isEmpty(config.configRefPropertyNames())) {
+                for (final String name : config.configRefPropertyNames()) {
                     val = map.get(name, String.class);
-                    if ( val != null ) {
+                    if (val != null) {
                         break;
                     }
                 }
@@ -166,5 +174,4 @@ public class DefaultContextPathStrategy implements ContextPathStrategy {
             return null;
         }
     }
-
 }

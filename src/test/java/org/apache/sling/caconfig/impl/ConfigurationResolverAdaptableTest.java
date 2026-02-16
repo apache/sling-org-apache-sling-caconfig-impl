@@ -18,14 +18,10 @@
  */
 package org.apache.sling.caconfig.impl;
 
-import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.ConfigurationBuilder;
@@ -38,8 +34,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import static org.apache.sling.caconfig.resource.impl.def.ConfigurationResourceNameConstants.PROPERTY_CONFIG_REF;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test {@link ConfigurationResolver} with custom adaptions (in this case: Sling Models) for reading the config.
@@ -73,16 +71,22 @@ public class ConfigurationResolverAdaptableTest {
 
     @Test
     public void testNonExistingConfigCollection() {
-        Collection<SimpleSlingModel> propsList = underTest.get(site1Page1).name("sampleList").asAdaptableCollection(SimpleSlingModel.class);
+        Collection<SimpleSlingModel> propsList =
+                underTest.get(site1Page1).name("sampleList").asAdaptableCollection(SimpleSlingModel.class);
         assertTrue(propsList.isEmpty());
     }
 
     @Test
     public void testConfig() {
-        context.build().resource("/conf/content/site1/sling:configs/sampleName",
-                "stringParam", "configValue1",
-                "intParam", 111,
-                "boolParam", true);
+        context.build()
+                .resource(
+                        "/conf/content/site1/sling:configs/sampleName",
+                        "stringParam",
+                        "configValue1",
+                        "intParam",
+                        111,
+                        "boolParam",
+                        true);
 
         SimpleSlingModel model = underTest.get(site1Page1).name("sampleName").asAdaptable(SimpleSlingModel.class);
         assertEquals("configValue1", model.getStringParam());
@@ -92,13 +96,15 @@ public class ConfigurationResolverAdaptableTest {
 
     @Test
     public void testConfigCollection() {
-        context.build().resource("/conf/content/site1/sling:configs/sampleList")
-            .siblingsMode()
-            .resource("1", "stringParam", "configValue1.1")
-            .resource("2", "stringParam", "configValue1.2")
-            .resource("3", "stringParam", "configValue1.3");
+        context.build()
+                .resource("/conf/content/site1/sling:configs/sampleList")
+                .siblingsMode()
+                .resource("1", "stringParam", "configValue1.1")
+                .resource("2", "stringParam", "configValue1.2")
+                .resource("3", "stringParam", "configValue1.3");
 
-        Collection<SimpleSlingModel> propsList = underTest.get(site1Page1).name("sampleList").asAdaptableCollection(SimpleSlingModel.class);
+        Collection<SimpleSlingModel> propsList =
+                underTest.get(site1Page1).name("sampleList").asAdaptableCollection(SimpleSlingModel.class);
 
         Iterator<SimpleSlingModel> propsIterator = propsList.iterator();
         assertEquals("configValue1.1", propsIterator.next().getStringParam());
@@ -108,11 +114,12 @@ public class ConfigurationResolverAdaptableTest {
 
     @Test
     public void testConfigWithDefaultValues() {
-        context.registerService(ConfigurationMetadataProvider.class, new DummyConfigurationMetadataProvider("sampleName",
-                ImmutableMap.<String, Object>of("stringParam", "defValue1", "intParam", 999), false));
+        context.registerService(
+                ConfigurationMetadataProvider.class,
+                new DummyConfigurationMetadataProvider(
+                        "sampleName", Map.<String, Object>of("stringParam", "defValue1", "intParam", 999), false));
 
-        context.build().resource("/conf/content/site1/sling:configs/sampleName",
-                "boolParam", true);
+        context.build().resource("/conf/content/site1/sling:configs/sampleName", "boolParam", true);
 
         SimpleSlingModel model = underTest.get(site1Page1).name("sampleName").asAdaptable(SimpleSlingModel.class);
         assertEquals("defValue1", model.getStringParam());
@@ -122,16 +129,19 @@ public class ConfigurationResolverAdaptableTest {
 
     @Test
     public void testConfigCollectionWithDefaultValues() {
-        context.registerService(ConfigurationMetadataProvider.class, new DummyConfigurationMetadataProvider("sampleList",
-                ImmutableMap.<String, Object>of("intParam", 999), true));
+        context.registerService(
+                ConfigurationMetadataProvider.class,
+                new DummyConfigurationMetadataProvider("sampleList", Map.<String, Object>of("intParam", 999), true));
 
-        context.build().resource("/conf/content/site1/sling:configs/sampleList")
-            .siblingsMode()
-            .resource("1", "stringParam", "configValue1.1")
-            .resource("2", "stringParam", "configValue1.2")
-            .resource("3", "stringParam", "configValue1.3");
+        context.build()
+                .resource("/conf/content/site1/sling:configs/sampleList")
+                .siblingsMode()
+                .resource("1", "stringParam", "configValue1.1")
+                .resource("2", "stringParam", "configValue1.2")
+                .resource("3", "stringParam", "configValue1.3");
 
-        List<SimpleSlingModel> propsList = ImmutableList.copyOf(underTest.get(site1Page1).name("sampleList").asAdaptableCollection(SimpleSlingModel.class));
+        List<SimpleSlingModel> propsList =
+                List.copyOf(underTest.get(site1Page1).name("sampleList").asAdaptableCollection(SimpleSlingModel.class));
 
         assertEquals("configValue1.1", propsList.get(0).getStringParam());
         assertEquals(999, propsList.get(0).getIntParam());
@@ -149,21 +159,22 @@ public class ConfigurationResolverAdaptableTest {
 
     @Test
     public void testNonExistingContentResourceCollection() {
-        Collection<SimpleSlingModel> propsList = underTest.get(null).name("sampleList").asAdaptableCollection(SimpleSlingModel.class);
+        Collection<SimpleSlingModel> propsList =
+                underTest.get(null).name("sampleList").asAdaptableCollection(SimpleSlingModel.class);
         assertTrue(propsList.isEmpty());
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testNullConfigName() {
         underTest.get(site1Page1).name(null).asAdaptable(SimpleSlingModel.class);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testInvalidConfigName() {
         underTest.get(site1Page1).name("/a/b/c").asAdaptable(SimpleSlingModel.class);
     }
 
-    @Test(expected=ConfigurationResolveException.class)
+    @Test(expected = ConfigurationResolveException.class)
     public void testWithoutConfigName() {
         underTest.get(site1Page1).asAdaptable(SimpleSlingModel.class);
     }
@@ -173,8 +184,8 @@ public class ConfigurationResolverAdaptableTest {
         context.build().resource("/conf/content/site1/sling:configs/sampleName");
 
         // make sure not endless loop occurs
-        ConfigurationBuilder model = underTest.get(site1Page1).name("sampleName").asAdaptable(ConfigurationBuilder.class);
+        ConfigurationBuilder model =
+                underTest.get(site1Page1).name("sampleName").asAdaptable(ConfigurationBuilder.class);
         assertNull(model);
     }
-
 }

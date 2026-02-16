@@ -45,7 +45,8 @@ public class ResourcePathCollatingIterator extends CollatingIterator<ContextReso
                 Integer ranking2 = o2.getServiceRanking();
                 result = ranking2.compareTo(ranking1);
                 if (result == 0) {
-                    result = StringUtils.defaultString(o1.getConfigRef()).compareTo(StringUtils.defaultString(o2.getConfigRef()));
+                    result = StringUtils.defaultString(o1.getConfigRef())
+                            .compareTo(StringUtils.defaultString(o2.getConfigRef()));
                 }
             }
             return result;
@@ -54,7 +55,6 @@ public class ResourcePathCollatingIterator extends CollatingIterator<ContextReso
 
     @SuppressWarnings("unchecked")
     public ResourcePathCollatingIterator(List<Iterator<ContextResource>> iterator) {
-        super(PATH_LENGTH_COMPARATOR, (Collection)iterator);
+        super(PATH_LENGTH_COMPARATOR, (Collection) iterator);
     }
-
 }

@@ -24,12 +24,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.caconfig.annotation.Configuration;
 import org.apache.sling.caconfig.annotation.Property;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
@@ -127,9 +129,8 @@ public final class AnnotationClassParser {
 
         // configuration metadata and property metadata
         String configName = getConfigurationName(clazz, configAnnotation);
-        ConfigurationMetadata configMetadata = new ConfigurationMetadata(configName,
-                buildConfigurationMetadata_PropertyMetadata(clazz),
-                configAnnotation.collection())
+        ConfigurationMetadata configMetadata = new ConfigurationMetadata(
+                        configName, buildConfigurationMetadata_PropertyMetadata(clazz), configAnnotation.collection())
                 .label(emptyToNull(configAnnotation.label()))
                 .description(emptyToNull(configAnnotation.description()))
                 .properties(propsArrayToMap(configAnnotation.property()));
@@ -142,10 +143,9 @@ public final class AnnotationClassParser {
      * @param clazz Configuration annotation class
      * @return Configuration metadata
      */
-    private static ConfigurationMetadata buildConfigurationMetadata_Nested(Class<?> clazz, String configName, boolean collection) {
-        return new ConfigurationMetadata(configName,
-                buildConfigurationMetadata_PropertyMetadata(clazz),
-                collection);
+    private static ConfigurationMetadata buildConfigurationMetadata_Nested(
+            Class<?> clazz, String configName, boolean collection) {
+        return new ConfigurationMetadata(configName, buildConfigurationMetadata_PropertyMetadata(clazz), collection);
     }
 
     private static Collection<PropertyMetadata<?>> buildConfigurationMetadata_PropertyMetadata(Class<?> clazz) {
@@ -155,69 +155,68 @@ public final class AnnotationClassParser {
             public int compare(PropertyMetadata<?> o1, PropertyMetadata<?> o2) {
                 int compare = Integer.compare(o1.getOrder(), o2.getOrder());
                 if (compare == 0) {
-                    String sort1 = StringUtils.defaultString(o1.getLabel(), o1.getName());
-                    String sort2 = StringUtils.defaultString(o2.getLabel(), o2.getName());
+                    String sort1 = Objects.toString(o1.getLabel(), o1.getName());
+                    String sort2 = Objects.toString(o2.getLabel(), o2.getName());
                     compare = sort1.compareTo(sort2);
                 }
                 return compare;
             }
-          });
+        });
         Method[] propertyMethods = clazz.getDeclaredMethods();
         for (Method propertyMethod : propertyMethods) {
-            PropertyMetadata<?> propertyMetadata = buildPropertyMetadata(propertyMethod, propertyMethod.getReturnType());
+            PropertyMetadata<?> propertyMetadata =
+                    buildPropertyMetadata(propertyMethod, propertyMethod.getReturnType());
             propertyMetadataSet.add(propertyMetadata);
         }
         return propertyMetadataSet;
     }
 
-    @SuppressWarnings({ "unchecked", "unused" })
+    @SuppressWarnings({"unchecked", "unused"})
     private static <T> PropertyMetadata<T> buildPropertyMetadata(Method propertyMethod, Class<T> type) {
         String propertyName = getPropertyName(propertyMethod.getName());
 
         PropertyMetadata<?> propertyMetadata;
         if (type.isArray() && type.getComponentType().isAnnotation()) {
-            ConfigurationMetadata nestedConfigMetadata = buildConfigurationMetadata_Nested(type.getComponentType(), propertyName, true);
+            ConfigurationMetadata nestedConfigMetadata =
+                    buildConfigurationMetadata_Nested(type.getComponentType(), propertyName, true);
             propertyMetadata = new PropertyMetadata<>(propertyName, ConfigurationMetadata[].class)
                     .configurationMetadata(nestedConfigMetadata);
-        }
-        else if (type.isAnnotation()) {
+        } else if (type.isAnnotation()) {
             ConfigurationMetadata nestedConfigMetadata = buildConfigurationMetadata_Nested(type, propertyName, false);
             propertyMetadata = new PropertyMetadata<>(propertyName, ConfigurationMetadata.class)
                     .configurationMetadata(nestedConfigMetadata);
-        }
-        else {
-            propertyMetadata = new PropertyMetadata<>(propertyName, type)
-                    .defaultValue((T)propertyMethod.getDefaultValue());
+        } else {
+            propertyMetadata =
+                    new PropertyMetadata<>(propertyName, type).defaultValue((T) propertyMethod.getDefaultValue());
         }
 
         Property propertyAnnotation = propertyMethod.getAnnotation(Property.class);
         if (propertyAnnotation != null) {
-            propertyMetadata.label(emptyToNull(propertyAnnotation.label()))
-                .description(emptyToNull(propertyAnnotation.description()))
-                .properties(propsArrayToMap(propertyAnnotation.property()))
-                .order(propertyAnnotation.order());
-        }
-        else {
-            Map<String,String> emptyMap = Collections.emptyMap();
+            propertyMetadata
+                    .label(emptyToNull(propertyAnnotation.label()))
+                    .description(emptyToNull(propertyAnnotation.description()))
+                    .properties(propsArrayToMap(propertyAnnotation.property()))
+                    .order(propertyAnnotation.order());
+        } else {
+            Map<String, String> emptyMap = Collections.emptyMap();
             propertyMetadata.properties(emptyMap);
         }
 
-        return (PropertyMetadata)propertyMetadata;
+        return (PropertyMetadata) propertyMetadata;
     }
 
     private static String emptyToNull(String value) {
         if (StringUtils.isEmpty(value)) {
             return null;
-        }
-        else {
+        } else {
             return value;
         }
     }
 
-    private static Map<String,String> propsArrayToMap(String[] properties) {
-        Map<String,String> props = new HashMap<>();
+    private static Map<String, String> propsArrayToMap(String[] properties) {
+        Map<String, String> props = new HashMap<>();
         for (String property : properties) {
-            int index = StringUtils.indexOf(property,  "=");
+            int index = Strings.CS.indexOf(property, "=");
             if (index >= 0) {
                 String key = property.substring(0, index);
                 String value = property.substring(index + 1);
@@ -226,5 +225,4 @@ public final class AnnotationClassParser {
         }
         return props;
     }
-
 }
