@@ -166,7 +166,7 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
                             @NotNull Collection<String> bucketNames,
                             @NotNull String configName) {
                         return getResourceCollection(resource, bucketNames, configName).stream()
-                                .map(r -> IteratorUtils.singletonIterator(r))
+                                .map(IteratorUtils::singletonIterator)
                                 .collect(Collectors.toList());
                     }
 
@@ -221,7 +221,7 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
                             @NotNull Collection<String> bucketNames,
                             @NotNull String configName) {
                         return getResourceCollection(resource, bucketNames, configName).stream()
-                                .map(r -> IteratorUtils.singletonIterator(r))
+                                .map(IteratorUtils::singletonIterator)
                                 .collect(Collectors.toList());
                     }
 
@@ -270,7 +270,7 @@ public class ConfigurationResourceResolvingStrategyMultiplexerImplTest {
 
     private Collection<Resource> first(Collection<Iterator<Resource>> resources) {
         return underTest.getResourceCollectionInheritanceChain(site1Page1, BUCKETS, "feature").stream()
-                .map(input -> input.next())
+                .map(Iterator::next)
                 .collect(Collectors.toList());
     }
 }
