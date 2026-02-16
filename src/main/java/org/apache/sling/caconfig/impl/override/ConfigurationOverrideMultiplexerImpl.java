@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.SyntheticResource;
@@ -82,7 +83,7 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
     @Override
     public boolean isAllOverridden(@NotNull String contextPath, @NotNull String configName) {
         for (OverrideItem override : allOverrides) {
-            if (StringUtils.equals(configName, override.getConfigName()) && override.matchesPath(contextPath)) {
+            if (Strings.CS.equals(configName, override.getConfigName()) && override.matchesPath(contextPath)) {
                 if (override.isAllProperties()) {
                     return true;
                 }
@@ -101,7 +102,7 @@ public class ConfigurationOverrideMultiplexerImpl implements ConfigurationOverri
         Map<String, Object> overrideProperties = new HashMap<>(properties);
 
         for (OverrideItem override : allOverrides) {
-            if (StringUtils.equals(configName, override.getConfigName()) && override.matchesPath(contextPath)) {
+            if (Strings.CS.equals(configName, override.getConfigName()) && override.matchesPath(contextPath)) {
                 if (override.isAllProperties()) {
                     overrideProperties.clear();
                 }

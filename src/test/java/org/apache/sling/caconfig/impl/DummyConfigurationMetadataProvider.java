@@ -21,10 +21,11 @@ package org.apache.sling.caconfig.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
-import com.google.common.collect.ImmutableSortedSet;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.caconfig.spi.ConfigurationMetadataProvider;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
 import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
@@ -45,12 +46,12 @@ class DummyConfigurationMetadataProvider implements ConfigurationMetadataProvide
 
     @Override
     public @NotNull SortedSet<String> getConfigurationNames() {
-        return ImmutableSortedSet.of(configName);
+        return new TreeSet<>(Set.of(configName));
     }
 
     @Override
     public ConfigurationMetadata getConfigurationMetadata(String configName) {
-        if (!StringUtils.equals(this.configName, configName)) {
+        if (!Strings.CS.equals(this.configName, configName)) {
             return null;
         }
         List<PropertyMetadata<?>> properties = new ArrayList<>();

@@ -18,8 +18,9 @@
  */
 package org.apache.sling.caconfig.management.impl;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.caconfig.impl.def.DefaultConfigurationPersistenceStrategy;
@@ -76,7 +77,7 @@ public class ConfigurationDataImplTest {
         configResource = context.create().resource("/conf/test", "prop1", "value1", "prop4", true);
         configMetadata = new ConfigurationMetadata(
                 "testName",
-                ImmutableList.<PropertyMetadata<?>>of(
+                List.<PropertyMetadata<?>>of(
                         new PropertyMetadata<>("prop1", "defValue"),
                         new PropertyMetadata<>("prop2", String.class),
                         new PropertyMetadata<>("prop3", 5),
@@ -104,7 +105,7 @@ public class ConfigurationDataImplTest {
         assertEquals("item1", underTest.getCollectionItemName());
 
         assertEquals(configResource.getPath(), underTest.getResourcePath());
-        assertEquals(ImmutableSet.of("prop1", "prop2", "prop3", "prop4", "propIntArray"), underTest.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop2", "prop3", "prop4", "propIntArray"), underTest.getPropertyNames());
 
         ValueMap values = underTest.getValues();
         assertEquals("value1", values.get("prop1", String.class));
@@ -157,7 +158,7 @@ public class ConfigurationDataImplTest {
         assertEquals("test", underTest.getConfigName());
         assertNull(underTest.getCollectionItemName());
 
-        assertEquals(ImmutableSet.of("prop1", "prop4"), underTest.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop4"), underTest.getPropertyNames());
 
         ValueMap values = underTest.getValues();
         assertEquals("value1", values.get("prop1", String.class));
@@ -193,7 +194,7 @@ public class ConfigurationDataImplTest {
         assertEquals("test", underTest.getConfigName());
         assertNull(underTest.getCollectionItemName());
 
-        assertEquals(ImmutableSet.of("prop1", "prop2", "prop3", "propIntArray"), underTest.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop2", "prop3", "propIntArray"), underTest.getPropertyNames());
 
         ValueMap values = underTest.getValues();
         assertTrue(values.isEmpty());
@@ -232,7 +233,7 @@ public class ConfigurationDataImplTest {
                 false,
                 null);
 
-        assertEquals(ImmutableSet.of("prop1", "prop4"), underTest.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop4"), underTest.getPropertyNames());
 
         assertNull(underTest.getValues().get("jcr:primaryType"));
         assertNull(underTest.getEffectiveValues().get("jcr:primaryType"));

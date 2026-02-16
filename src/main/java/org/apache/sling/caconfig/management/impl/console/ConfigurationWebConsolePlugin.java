@@ -33,6 +33,7 @@ import java.util.Iterator;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.felix.webconsole.AbstractWebConsolePlugin;
 import org.apache.felix.webconsole.WebConsoleConstants;
 import org.apache.sling.api.resource.LoginException;
@@ -312,7 +313,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
         pw.print("<option value=''>(please select)</option>");
         for (String option : options) {
             pw.print("<option");
-            if (StringUtils.equals(option, value)) {
+            if (Strings.CS.equals(option, value)) {
                 pw.print(" selected");
             }
             pw.print(">");
@@ -362,7 +363,7 @@ public class ConfigurationWebConsolePlugin extends AbstractWebConsolePlugin {
                 for (int i = 0; i < Array.getLength(value); i++) {
                     Object itemValue = Array.get(value, i);
                     pw.print(Encode.forHtmlContent(
-                            ObjectUtils.defaultIfNull(itemValue, "").toString()));
+                            ObjectUtils.getIfNull(itemValue, "").toString()));
                     pw.println("<br>");
                 }
             } else {

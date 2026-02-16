@@ -19,8 +19,8 @@
 package org.apache.sling.caconfig.resource.impl.util;
 
 import java.util.Collection;
+import java.util.List;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -36,9 +36,9 @@ public class ConfigNameUtilTest {
         assertTrue(ConfigNameUtil.isValid("a/b/c"));
         assertTrue(ConfigNameUtil.isValid("a/jcr:content/b/c"));
 
-        assertTrue(ConfigNameUtil.isValid(ImmutableList.<String>of()));
-        assertTrue(ConfigNameUtil.isValid(ImmutableList.of("a")));
-        assertTrue(ConfigNameUtil.isValid(ImmutableList.of("a", "a/b", "a/b/c")));
+        assertTrue(ConfigNameUtil.isValid(List.<String>of()));
+        assertTrue(ConfigNameUtil.isValid(List.of("a")));
+        assertTrue(ConfigNameUtil.isValid(List.of("a", "a/b", "a/b/c")));
 
         assertFalse(ConfigNameUtil.isValid((String) null));
         assertFalse(ConfigNameUtil.isValid(""));
@@ -47,7 +47,7 @@ public class ConfigNameUtilTest {
         assertFalse(ConfigNameUtil.isValid("a/b/../c"));
 
         assertFalse(ConfigNameUtil.isValid((Collection<String>) null));
-        assertFalse(ConfigNameUtil.isValid(ImmutableList.of("a", "/a")));
+        assertFalse(ConfigNameUtil.isValid(List.of("a", "/a")));
     }
 
     @Test

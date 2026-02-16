@@ -21,7 +21,6 @@ package org.apache.sling.caconfig.resource.impl.util;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.caconfig.resource.spi.ContextResource;
@@ -44,7 +43,7 @@ public class ResourceEliminateDuplicatesIteratorTest {
         context.build().resource("/content/a").resource("/content/a/b").resource("/content/a/b/c");
 
         ResourceResolver rr = context.resourceResolver();
-        List<ContextResource> list = ImmutableList.of(
+        List<ContextResource> list = List.of(
                 new ContextResource(rr.getResource("/content/a"), "/conf/a", 0),
                 new ContextResource(rr.getResource("/content/a/b"), "/conf/a/b", 0),
                 new ContextResource(rr.getResource("/content/a"), "/conf/a", 0),

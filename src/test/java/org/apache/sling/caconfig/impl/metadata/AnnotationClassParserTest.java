@@ -20,10 +20,9 @@ package org.apache.sling.caconfig.impl.metadata;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.caconfig.example.AllTypesConfig;
 import org.apache.sling.caconfig.example.ListConfig;
 import org.apache.sling.caconfig.example.MetadataSimpleConfig;
@@ -82,17 +81,17 @@ public class AnnotationClassParserTest {
         assertEquals("simpleConfig", metadata.getName());
         assertEquals("Simple configuration", metadata.getLabel());
         assertEquals("This is a configuration example with additional metadata.", metadata.getDescription());
-        assertEquals(ImmutableMap.of("param1", "value1", "param2", "123"), metadata.getProperties());
+        assertEquals(Map.of("param1", "value1", "param2", "123"), metadata.getProperties());
         assertFalse(metadata.isCollection());
 
         List<PropertyMetadata<?>> propertyMetadataList =
-                ImmutableList.copyOf(metadata.getPropertyMetadata().values());
+                List.copyOf(metadata.getPropertyMetadata().values());
         assertEquals(3, propertyMetadataList.size());
 
         PropertyMetadata<?> stringParam = propertyMetadataList.get(0);
         assertEquals("String Param", stringParam.getLabel());
         assertEquals("Enter strings here.", stringParam.getDescription());
-        assertEquals(ImmutableMap.of("p1", "v1"), stringParam.getProperties());
+        assertEquals(Map.of("p1", "v1"), stringParam.getProperties());
         assertNull(stringParam.getDefaultValue());
 
         PropertyMetadata<?> intParam = propertyMetadataList.get(1);
@@ -138,21 +137,21 @@ public class AnnotationClassParserTest {
         assertEquals(4, propertyMetadataList.size());
 
         for (PropertyMetadata<?> propertyMetadata : propertyMetadataList) {
-            if (StringUtils.equals(propertyMetadata.getName(), "stringParam")) {
+            if (Strings.CS.equals(propertyMetadata.getName(), "stringParam")) {
                 assertEquals(String.class, propertyMetadata.getType());
-            } else if (StringUtils.equals(propertyMetadata.getName(), "subConfig")) {
+            } else if (Strings.CS.equals(propertyMetadata.getName(), "subConfig")) {
                 assertEquals(ConfigurationMetadata.class, propertyMetadata.getType());
 
                 ConfigurationMetadata subConfigMetadata = propertyMetadata.getConfigurationMetadata();
                 assertEquals("subConfig", subConfigMetadata.getName());
                 assertEquals(3, subConfigMetadata.getPropertyMetadata().size());
-            } else if (StringUtils.equals(propertyMetadata.getName(), "subListConfig")) {
+            } else if (Strings.CS.equals(propertyMetadata.getName(), "subListConfig")) {
                 assertEquals(ConfigurationMetadata[].class, propertyMetadata.getType());
 
                 ConfigurationMetadata subListConfigMetadata = propertyMetadata.getConfigurationMetadata();
                 assertEquals("subListConfig", subListConfigMetadata.getName());
                 assertEquals(2, subListConfigMetadata.getPropertyMetadata().size());
-            } else if (StringUtils.equals(propertyMetadata.getName(), "subConfigWithoutAnnotation")) {
+            } else if (Strings.CS.equals(propertyMetadata.getName(), "subConfigWithoutAnnotation")) {
                 assertEquals(ConfigurationMetadata.class, propertyMetadata.getType());
 
                 ConfigurationMetadata subConfigWithoutAnnotationMetadata = propertyMetadata.getConfigurationMetadata();

@@ -18,11 +18,10 @@
  */
 package org.apache.sling.caconfig.impl.override;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -33,22 +32,16 @@ import static org.junit.Assert.assertTrue;
 
 public class OverrideStringParserTest {
 
-    private static final Map<String, Object> BASICTYPES_MAP = ImmutableMap.<String, Object>builder()
-            .put("param1", "value1")
-            .put("param2", "value2")
-            .put("param3", 555L)
-            .put("param4", 1.23d)
-            .put("param5", true)
-            .build();
+    private static final Map<String, Object> BASICTYPES_MAP =
+            Map.of("param1", "value1", "param2", "value2", "param3", 555L, "param4", 1.23d, "param5", true);
 
-    private static final Map<String, Object> BASICTYPES_ARRAY_MAP = ImmutableMap.<String, Object>builder()
-            .put("param1", new String[] {"v1a", "v1b"})
-            .put("param2", new String[] {"v2a", "v2b"})
-            .put("param3", new Long[] {555L, 666L})
-            .put("param4", new Double[] {1.23d, 2.34d})
-            .put("param5", new Boolean[] {true, false})
-            .put("param6", new String[0])
-            .build();
+    private static final Map<String, Object> BASICTYPES_ARRAY_MAP = Map.of(
+            "param1", new String[] {"v1a", "v1b"},
+            "param2", new String[] {"v2a", "v2b"},
+            "param3", new Long[] {555L, 666L},
+            "param4", new Double[] {1.23d, 2.34d},
+            "param5", new Boolean[] {true, false},
+            "param6", new String[0]);
 
     @Test
     public void testEmptyList() {
@@ -217,6 +210,6 @@ public class OverrideStringParserTest {
     }
 
     private List<OverrideItem> parse(String... values) {
-        return ImmutableList.copyOf(OverrideStringParser.parse(ImmutableList.copyOf(values)));
+        return List.copyOf(OverrideStringParser.parse(Arrays.asList(values)));
     }
 }

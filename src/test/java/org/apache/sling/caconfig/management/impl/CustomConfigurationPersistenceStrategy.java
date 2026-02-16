@@ -21,7 +21,7 @@ package org.apache.sling.caconfig.management.impl;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.PersistenceException;
@@ -178,7 +178,7 @@ public class CustomConfigurationPersistenceStrategy implements ConfigurationPers
         ModifiableValueMap modValueMap = resource.adaptTo(ModifiableValueMap.class);
         // remove all existing properties that do not have jcr: namespace
         for (String propertyName : new HashSet<>(modValueMap.keySet())) {
-            if (StringUtils.startsWith(propertyName, "jcr:")) {
+            if (Strings.CS.startsWith(propertyName, "jcr:")) {
                 continue;
             }
             modValueMap.remove(propertyName);

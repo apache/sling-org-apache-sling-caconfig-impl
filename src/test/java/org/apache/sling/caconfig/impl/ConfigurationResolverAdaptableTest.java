@@ -21,9 +21,8 @@ package org.apache.sling.caconfig.impl;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.caconfig.ConfigurationResolveException;
@@ -118,9 +117,7 @@ public class ConfigurationResolverAdaptableTest {
         context.registerService(
                 ConfigurationMetadataProvider.class,
                 new DummyConfigurationMetadataProvider(
-                        "sampleName",
-                        ImmutableMap.<String, Object>of("stringParam", "defValue1", "intParam", 999),
-                        false));
+                        "sampleName", Map.<String, Object>of("stringParam", "defValue1", "intParam", 999), false));
 
         context.build().resource("/conf/content/site1/sling:configs/sampleName", "boolParam", true);
 
@@ -134,8 +131,7 @@ public class ConfigurationResolverAdaptableTest {
     public void testConfigCollectionWithDefaultValues() {
         context.registerService(
                 ConfigurationMetadataProvider.class,
-                new DummyConfigurationMetadataProvider(
-                        "sampleList", ImmutableMap.<String, Object>of("intParam", 999), true));
+                new DummyConfigurationMetadataProvider("sampleList", Map.<String, Object>of("intParam", 999), true));
 
         context.build()
                 .resource("/conf/content/site1/sling:configs/sampleList")
@@ -144,8 +140,8 @@ public class ConfigurationResolverAdaptableTest {
                 .resource("2", "stringParam", "configValue1.2")
                 .resource("3", "stringParam", "configValue1.3");
 
-        List<SimpleSlingModel> propsList = ImmutableList.copyOf(
-                underTest.get(site1Page1).name("sampleList").asAdaptableCollection(SimpleSlingModel.class));
+        List<SimpleSlingModel> propsList =
+                List.copyOf(underTest.get(site1Page1).name("sampleList").asAdaptableCollection(SimpleSlingModel.class));
 
         assertEquals("configValue1.1", propsList.get(0).getStringParam());
         assertEquals(999, propsList.get(0).getIntParam());

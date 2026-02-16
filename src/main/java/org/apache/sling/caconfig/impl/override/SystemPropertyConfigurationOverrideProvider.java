@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.caconfig.spi.ConfigurationOverrideProvider;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Activate;
@@ -72,7 +73,7 @@ public final class SystemPropertyConfigurationOverrideProvider implements Config
                 Object keyObject = keys.nextElement();
                 if (keyObject instanceof String) {
                     String key = (String) keyObject;
-                    if (StringUtils.startsWith(key, SYSTEM_PROPERTY_PREFIX)) {
+                    if (Strings.CS.startsWith(key, SYSTEM_PROPERTY_PREFIX)) {
                         overrides.add(StringUtils.substringAfter(key, SYSTEM_PROPERTY_PREFIX) + "="
                                 + System.getProperty(key));
                     }

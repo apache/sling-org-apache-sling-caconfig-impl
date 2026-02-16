@@ -19,8 +19,8 @@
 package org.apache.sling.caconfig.impl.def;
 
 import java.util.Iterator;
+import java.util.List;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.caconfig.spi.ConfigurationInheritanceStrategy;
@@ -46,7 +46,7 @@ public class DefaultConfigurationInheritanceStrategyTest {
     public void testWithoutPropertyMerging() {
         underTest = context.registerInjectActivateService(new DefaultConfigurationInheritanceStrategy());
 
-        Iterator<Resource> resources = ImmutableList.of(
+        Iterator<Resource> resources = List.of(
                         context.create().resource("/conf/resource1", "prop1", "value1a", "prop2", "value2a"),
                         context.create().resource("/conf/resource2", "prop2", "value2b", "prop3", "value3b"),
                         context.create().resource("/conf/resource3", "prop4", "value4b"))
@@ -67,7 +67,7 @@ public class DefaultConfigurationInheritanceStrategyTest {
                 new DefaultConfigurationInheritanceStrategy(),
                 "configPropertyInheritancePropertyNames",
                 PROPERTY_CONFIG_PROPERTY_INHERIT_CUSTOM);
-        Iterator<Resource> resources = ImmutableList.of(
+        Iterator<Resource> resources = List.of(
                         context.create()
                                 .resource(
                                         "/conf/resource1",
@@ -102,7 +102,7 @@ public class DefaultConfigurationInheritanceStrategyTest {
     public void testWithPartialPropertyMerging() {
         underTest = context.registerInjectActivateService(new DefaultConfigurationInheritanceStrategy());
 
-        Iterator<Resource> resources = ImmutableList.of(
+        Iterator<Resource> resources = List.of(
                         context.create()
                                 .resource(
                                         "/conf/resource1",
@@ -130,7 +130,7 @@ public class DefaultConfigurationInheritanceStrategyTest {
         underTest =
                 context.registerInjectActivateService(new DefaultConfigurationInheritanceStrategy(), "enabled", false);
 
-        Iterator<Resource> resources = ImmutableList.of(
+        Iterator<Resource> resources = List.of(
                         context.create()
                                 .resource(
                                         "/conf/resource1",

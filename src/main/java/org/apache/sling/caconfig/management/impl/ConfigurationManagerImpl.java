@@ -32,6 +32,7 @@ import org.apache.commons.collections4.ResettableIterator;
 import org.apache.commons.collections4.Transformer;
 import org.apache.commons.collections4.iterators.ListIteratorWrapper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.caconfig.management.ConfigurationCollectionData;
@@ -476,7 +477,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 
     private ConfigurationMetadata getNestedConfigurationMetadata(
             ConfigurationMetadata configMetadata, String configName, String partialConfigName) {
-        if (StringUtils.startsWith(configName, partialConfigName + "/")) {
+        if (Strings.CS.startsWith(configName, partialConfigName + "/")) {
 
             // depending on different persistence strategies config names can be transformed differently - try all
             // combinations here
@@ -529,7 +530,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
                 partialConfigMetadata.getPropertyMetadata().values()) {
             if (propertyMetadata.isNestedConfiguration()) {
                 ConfigurationMetadata nestedConfigMetadata = propertyMetadata.getConfigurationMetadata();
-                if (StringUtils.equals(configName, nestedConfigMetadata.getName())) {
+                if (Strings.CS.equals(configName, nestedConfigMetadata.getName())) {
                     return nestedConfigMetadata;
                 }
             }

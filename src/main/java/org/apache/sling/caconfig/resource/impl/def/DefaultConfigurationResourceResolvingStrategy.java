@@ -37,6 +37,7 @@ import org.apache.commons.collections4.iterators.ArrayIterator;
 import org.apache.commons.collections4.iterators.FilterIterator;
 import org.apache.commons.collections4.iterators.IteratorChain;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
@@ -276,7 +277,7 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
 
     private boolean isFallbackConfigPath(final String ref) {
         for (final String path : this.config.fallbackPaths()) {
-            if (StringUtils.equals(ref, path) || StringUtils.startsWith(ref, path + "/")) {
+            if (Strings.CS.equals(ref, path) || Strings.CS.startsWith(ref, path + "/")) {
                 return true;
             }
         }
@@ -495,7 +496,7 @@ public class DefaultConfigurationResourceResolvingStrategy implements Configurat
 
     private boolean isValidResourceCollectionItem(Resource resource) {
         // do not include jcr:content nodes in resource collection list
-        return !StringUtils.equals(resource.getName(), "jcr:content");
+        return !Strings.CS.equals(resource.getName(), "jcr:content");
     }
 
     @Override

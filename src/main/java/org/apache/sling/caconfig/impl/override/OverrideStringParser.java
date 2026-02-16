@@ -43,6 +43,7 @@ import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.caconfig.spi.metadata.PropertyMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,8 +128,8 @@ class OverrideStringParser {
                 boolean foundMatchingItem = false;
                 for (OverrideItem existingItem : result) {
                     if (!existingItem.isAllProperties()
-                            && StringUtils.equals(item.getPath(), existingItem.getPath())
-                            && StringUtils.equals(item.getConfigName(), existingItem.getConfigName())) {
+                            && Strings.CS.equals(item.getPath(), existingItem.getPath())
+                            && Strings.CS.equals(item.getConfigName(), existingItem.getConfigName())) {
                         existingItem.getProperties().putAll(item.getProperties());
                         foundMatchingItem = true;
                         break;
@@ -153,7 +154,7 @@ class OverrideStringParser {
      * @throws JSONException when JSON parsing failed
      */
     private static JsonObject toJson(String value) {
-        if (!StringUtils.startsWith(value, "{")) {
+        if (!Strings.CS.startsWith(value, "{")) {
             return null;
         }
         try (Reader reader = new StringReader(value);
@@ -239,17 +240,17 @@ class OverrideStringParser {
      */
     private static boolean isValid(OverrideItem item, String overrideString) {
         if (item.getPath() != null
-                && (!StringUtils.startsWith(item.getPath(), "/") || StringUtils.contains(item.getPath(), ".."))) {
+                && (!Strings.CS.startsWith(item.getPath(), "/") || Strings.CS.contains(item.getPath(), ".."))) {
             log.warn("Ignore config override string - invalid path: {}", overrideString);
             return false;
         }
-        if (StringUtils.startsWith(item.getConfigName(), "/") || StringUtils.contains(item.getConfigName(), "..")) {
+        if (Strings.CS.startsWith(item.getConfigName(), "/") || Strings.CS.contains(item.getConfigName(), "..")) {
             log.warn("Ignore config override string - invalid configName: {}", overrideString);
             return false;
         }
         for (Map.Entry<String, Object> entry : item.getProperties().entrySet()) {
             String propertyName = entry.getKey();
-            if (StringUtils.isEmpty(propertyName) || StringUtils.contains(propertyName, "/")) {
+            if (StringUtils.isEmpty(propertyName) || Strings.CS.contains(propertyName, "/")) {
                 log.warn(
                         "Ignore config override string - invalid property name ({}): {}", propertyName, overrideString);
                 return false;

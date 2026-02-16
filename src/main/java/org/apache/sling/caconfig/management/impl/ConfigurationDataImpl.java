@@ -25,12 +25,13 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.api.resource.ValueMap;
@@ -206,7 +207,7 @@ final class ConfigurationDataImpl implements ConfigurationData {
                         resolvedConfigurationResource != null ? resolvedConfigurationResource.getPath() : null;
                 String nestedConfigName;
                 if (configResourceCollection) {
-                    String nestedCollectionItemName = StringUtils.defaultString(getCollectionItemName(), "newItem");
+                    String nestedCollectionItemName = Objects.toString(getCollectionItemName(), "newItem");
                     nestedConfigName = configurationPersistenceStrategy.getCollectionItemConfigName(
                                     configurationPersistenceStrategy.getCollectionParentConfigName(
                                                     configName, relatedConfigPath)
@@ -291,7 +292,7 @@ final class ConfigurationDataImpl implements ConfigurationData {
             if (writebackConfigurationResource == null) {
                 return true;
             } else {
-                return !StringUtils.equals(
+                return !Strings.CS.equals(
                         writebackConfigurationResource.getPath(), resolvedConfigurationResource.getPath());
             }
         }

@@ -18,7 +18,8 @@
  */
 package org.apache.sling.caconfig.management.impl;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
+
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.caconfig.impl.def.DefaultConfigurationPersistenceStrategy;
@@ -73,7 +74,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImplTest {
         assertFalse(underTest.persistConfigurationCollection(
                 context.resourceResolver(),
                 "/conf/testCol",
-                new ConfigurationCollectionPersistData(ImmutableList.of(
+                new ConfigurationCollectionPersistData(List.of(
                         new ConfigurationPersistData(resource1.getValueMap()).collectionItemName(resource1.getName()),
                         new ConfigurationPersistData(resource2.getValueMap())
                                 .collectionItemName(resource2.getName())))));
@@ -91,7 +92,7 @@ public class ConfigurationPersistenceStrategyMultiplexerImplTest {
         assertTrue(underTest.persistConfigurationCollection(
                 context.resourceResolver(),
                 "/conf/testCol",
-                new ConfigurationCollectionPersistData(ImmutableList.of(
+                new ConfigurationCollectionPersistData(List.of(
                         new ConfigurationPersistData(resource1.getValueMap()).collectionItemName(resource1.getName()),
                         new ConfigurationPersistData(resource2.getValueMap())
                                 .collectionItemName(resource2.getName())))));
@@ -235,20 +236,20 @@ public class ConfigurationPersistenceStrategyMultiplexerImplTest {
         assertEquals(resource1.getPath(), underTest.getCollectionParentConfigName(resource1.getPath(), null));
         assertEquals(resource2.getPath(), underTest.getCollectionItemConfigName(resource1.getPath(), null));
         assertEquals(
-                ImmutableList.of(resource2.getPath(), resource1.getPath()),
-                ImmutableList.copyOf(underTest.getAllConfigNames(resource1.getPath())));
+                List.of(resource2.getPath(), resource1.getPath()),
+                List.copyOf(underTest.getAllConfigNames(resource1.getPath())));
         assertEquals(
-                ImmutableList.of(resource1.getPath()),
-                ImmutableList.copyOf(underTest.getAllCollectionParentConfigNames(resource1.getPath())));
+                List.of(resource1.getPath()),
+                List.copyOf(underTest.getAllCollectionParentConfigNames(resource1.getPath())));
         assertEquals(
-                ImmutableList.of(resource2.getPath(), resource1.getPath()),
-                ImmutableList.copyOf(underTest.getAllCollectionItemConfigNames(resource1.getPath())));
+                List.of(resource2.getPath(), resource1.getPath()),
+                List.copyOf(underTest.getAllCollectionItemConfigNames(resource1.getPath())));
         assertTrue(underTest.persistConfiguration(
                 context.resourceResolver(), "/conf/test1", new ConfigurationPersistData(resource1.getValueMap())));
         assertTrue(underTest.persistConfigurationCollection(
                 context.resourceResolver(),
                 "/conf/testCol",
-                new ConfigurationCollectionPersistData(ImmutableList.of(
+                new ConfigurationCollectionPersistData(List.of(
                         new ConfigurationPersistData(resource1.getValueMap()).collectionItemName(resource1.getName()),
                         new ConfigurationPersistData(resource2.getValueMap())
                                 .collectionItemName(resource2.getName())))));

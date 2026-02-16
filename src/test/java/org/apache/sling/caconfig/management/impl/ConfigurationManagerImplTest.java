@@ -19,11 +19,10 @@
 package org.apache.sling.caconfig.management.impl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -217,7 +216,7 @@ public class ConfigurationManagerImplTest {
         // config metadata singleton config
         ConfigurationMetadata configMetadata = new ConfigurationMetadata(
                 CONFIG_NAME,
-                ImmutableList.<PropertyMetadata<?>>of(
+                List.<PropertyMetadata<?>>of(
                         new PropertyMetadata<>("prop1", "defValue"),
                         new PropertyMetadata<>("prop2", String.class),
                         new PropertyMetadata<>("prop3", 5)),
@@ -228,7 +227,7 @@ public class ConfigurationManagerImplTest {
         // config metadata config collection
         ConfigurationMetadata configColMetadata = new ConfigurationMetadata(
                 CONFIG_COL_NAME,
-                ImmutableList.<PropertyMetadata<?>>of(
+                List.<PropertyMetadata<?>>of(
                         new PropertyMetadata<>("prop1", "defValue"),
                         new PropertyMetadata<>("prop2", String.class),
                         new PropertyMetadata<>("prop3", 5)),
@@ -254,11 +253,11 @@ public class ConfigurationManagerImplTest {
          */
         ConfigurationMetadata propSubLevel2Metadata = new ConfigurationMetadata(
                 "propSubLevel2",
-                ImmutableList.<PropertyMetadata<?>>of(new PropertyMetadata<>("prop1", "defValueLevel2")),
+                List.<PropertyMetadata<?>>of(new PropertyMetadata<>("prop1", "defValueLevel2")),
                 false);
         ConfigurationMetadata propSubMetadata = new ConfigurationMetadata(
                 "propSub",
-                ImmutableList.<PropertyMetadata<?>>of(
+                List.<PropertyMetadata<?>>of(
                         new PropertyMetadata<>("prop1", "defValue"),
                         new PropertyMetadata<>("prop2", String.class),
                         new PropertyMetadata<>("prop3", 5),
@@ -267,14 +266,14 @@ public class ConfigurationManagerImplTest {
                 false);
         ConfigurationMetadata propSubListMetadata = new ConfigurationMetadata(
                 "propSubList",
-                ImmutableList.<PropertyMetadata<?>>of(
+                List.<PropertyMetadata<?>>of(
                         new PropertyMetadata<>("prop1", "defValueSubList"),
                         new PropertyMetadata<>("propSub", ConfigurationMetadata.class)
                                 .configurationMetadata(propSubMetadata)),
                 true);
         ConfigurationMetadata configNestedMetadata = new ConfigurationMetadata(
                 CONFIG_NESTED_NAME,
-                ImmutableList.<PropertyMetadata<?>>of(
+                List.<PropertyMetadata<?>>of(
                         new PropertyMetadata<>("prop1", "defValue"),
                         new PropertyMetadata<>("propSub", ConfigurationMetadata.class)
                                 .configurationMetadata(propSubMetadata),
@@ -285,7 +284,7 @@ public class ConfigurationManagerImplTest {
                 .thenReturn(configNestedMetadata);
 
         when(configurationMetadataProvider.getConfigurationNames())
-                .thenReturn(ImmutableSortedSet.of(CONFIG_NAME, CONFIG_COL_NAME, CONFIG_NESTED_NAME));
+                .thenReturn(new TreeSet<>(Set.of(CONFIG_NAME, CONFIG_COL_NAME, CONFIG_NESTED_NAME)));
     }
 
     protected void provideCustomOsgiConfig() throws Exception {
@@ -326,7 +325,7 @@ public class ConfigurationManagerImplTest {
         assertNotNull(configData);
         assertFalse(configData.isInherited());
 
-        assertEquals(ImmutableSet.of("prop1", "prop2", "prop3", "prop4"), configData.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop2", "prop3", "prop4"), configData.getPropertyNames());
         assertEquals("value1", configData.getValues().get("prop1", String.class));
         assertEquals((Integer) 5, configData.getEffectiveValues().get("prop3", 0));
 
@@ -342,7 +341,7 @@ public class ConfigurationManagerImplTest {
         assertNotNull(configData);
         assertTrue(configData.isInherited());
 
-        assertEquals(ImmutableSet.of("prop1", "prop2", "prop3", "prop4"), configData.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop2", "prop3", "prop4"), configData.getPropertyNames());
         assertNull(configData.getValues().get("prop1", String.class));
         assertEquals("value1", configData.getEffectiveValues().get("prop1", String.class));
         assertEquals((Integer) 5, configData.getEffectiveValues().get("prop3", 0));
@@ -362,9 +361,7 @@ public class ConfigurationManagerImplTest {
         assertNotNull(configData);
         assertFalse(configData.isInherited());
 
-        assertTrue(configData
-                .getPropertyNames()
-                .containsAll(ImmutableSet.of("prop1", "prop2", "prop3", "prop4", "prop5")));
+        assertTrue(configData.getPropertyNames().containsAll(Set.of("prop1", "prop2", "prop3", "prop4", "prop5")));
         assertNull(configData.getValues().get("prop1", String.class));
         assertNull(configData.getValues().get("prop2", String.class));
         assertNull(configData.getValues().get("prop3", Integer.class));
@@ -404,7 +401,7 @@ public class ConfigurationManagerImplTest {
         assertFalse(configData.isInherited());
         assertTrue(configData.isOverridden());
 
-        assertEquals(ImmutableSet.of("prop1", "prop2", "prop3"), configData.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop2", "prop3"), configData.getPropertyNames());
         assertEquals("value1", configData.getValues().get("prop1", String.class));
         assertEquals("override1", configData.getEffectiveValues().get("prop1", String.class));
         assertEquals((Integer) 5, configData.getEffectiveValues().get("prop3", 0));
@@ -434,7 +431,7 @@ public class ConfigurationManagerImplTest {
         assertFalse(configData.isInherited());
         assertTrue(configData.isOverridden());
 
-        assertEquals(ImmutableSet.of("prop1", "prop2", "prop3"), configData.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop2", "prop3"), configData.getPropertyNames());
         assertNull(configData.getValues().get("prop1", String.class));
         assertEquals("override1", configData.getEffectiveValues().get("prop1", String.class));
         assertEquals((Integer) 5, configData.getEffectiveValues().get("prop3", 0));
@@ -451,7 +448,7 @@ public class ConfigurationManagerImplTest {
         assertNotNull(configData);
         assertFalse(configData.isInherited());
 
-        assertEquals(ImmutableSet.of("prop1", "prop2", "prop3"), configData.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop2", "prop3"), configData.getPropertyNames());
         assertNull(configData.getValues().get("prop1", String.class));
         assertEquals((Integer) 5, configData.getEffectiveValues().get("prop3", 0));
 
@@ -468,7 +465,7 @@ public class ConfigurationManagerImplTest {
         assertNotNull(configData);
         assertFalse(configData.isInherited());
 
-        assertEquals(ImmutableSet.of("prop1", "prop4"), configData.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop4"), configData.getPropertyNames());
         assertEquals("value1", configData.getValues().get("prop1", String.class));
         assertEquals((Integer) 0, configData.getEffectiveValues().get("prop3", 0));
 
@@ -489,13 +486,13 @@ public class ConfigurationManagerImplTest {
     public void testGetConfigurationCollection() {
         ConfigurationCollectionData configCollectionData =
                 underTest.getConfigurationCollection(contextResource, CONFIG_COL_NAME);
-        List<ConfigurationData> configDatas = ImmutableList.copyOf(configCollectionData.getItems());
+        List<ConfigurationData> configDatas = List.copyOf(configCollectionData.getItems());
         assertEquals(2, configDatas.size());
 
         ConfigurationData configData1 = configDatas.get(0);
         assertFalse(configData1.isInherited());
         assertEquals("1", configData1.getCollectionItemName());
-        assertEquals(ImmutableSet.of("prop1", "prop2", "prop3"), configData1.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop2", "prop3"), configData1.getPropertyNames());
         assertEquals("value1", configData1.getValues().get("prop1", String.class));
         assertEquals((Integer) 5, configData1.getEffectiveValues().get("prop3", 0));
 
@@ -505,7 +502,7 @@ public class ConfigurationManagerImplTest {
         ConfigurationData configData2 = configDatas.get(1);
         assertFalse(configData2.isInherited());
         assertEquals("2", configData2.getCollectionItemName());
-        assertEquals(ImmutableSet.of("prop1", "prop2", "prop3", "prop4"), configData2.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop2", "prop3", "prop4"), configData2.getPropertyNames());
         assertNull(configData2.getValues().get("prop1", String.class));
         assertEquals((Integer) 5, configData2.getEffectiveValues().get("prop3", 0));
 
@@ -521,12 +518,12 @@ public class ConfigurationManagerImplTest {
     public void testGetConfigurationCollection_WithResourceCollectionInheritance() {
         ConfigurationCollectionData configCollectionData =
                 underTest.getConfigurationCollection(contextResourceLevel2, CONFIG_COL_NAME);
-        List<ConfigurationData> configDatas = ImmutableList.copyOf(configCollectionData.getItems());
+        List<ConfigurationData> configDatas = List.copyOf(configCollectionData.getItems());
         assertEquals(2, configDatas.size());
 
         ConfigurationData configData1 = configDatas.get(0);
         assertFalse(configData1.isInherited());
-        assertEquals(ImmutableSet.of("prop1", "prop2", "prop3"), configData1.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop2", "prop3"), configData1.getPropertyNames());
         assertEquals("value1_level2", configData1.getValues().get("prop1", String.class));
         assertEquals("value1_level2", configData1.getEffectiveValues().get("prop1", String.class));
         assertEquals((Integer) 5, configData1.getEffectiveValues().get("prop3", 0));
@@ -540,7 +537,7 @@ public class ConfigurationManagerImplTest {
 
         ConfigurationData configData2 = configDatas.get(1);
         assertTrue(configData2.isInherited());
-        assertEquals(ImmutableSet.of("prop1", "prop2", "prop3", "prop4"), configData2.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop2", "prop3", "prop4"), configData2.getPropertyNames());
         assertNull(configData2.getValues().get("prop1", String.class));
         assertEquals((Integer) 5, configData2.getEffectiveValues().get("prop3", 0));
 
@@ -560,18 +557,14 @@ public class ConfigurationManagerImplTest {
     public void testGetConfigurationCollection_WithResourceCollectionAndPropertyInheritance() {
         ConfigurationCollectionData configCollectionData =
                 underTest.getConfigurationCollection(contextResourceLevel3, CONFIG_COL_NAME);
-        List<ConfigurationData> configDatas = ImmutableList.copyOf(configCollectionData.getItems());
+        List<ConfigurationData> configDatas = List.copyOf(configCollectionData.getItems());
         assertEquals(2, configDatas.size());
 
         ConfigurationData configData1 = configDatas.get(0);
         assertFalse(configData1.isInherited());
-        assertTrue(configData1
-                .getPropertyNames()
-                .containsAll(ImmutableSet.of("prop1", "prop2", "prop3", "prop4", "prop5")));
+        assertTrue(configData1.getPropertyNames().containsAll(Set.of("prop1", "prop2", "prop3", "prop4", "prop5")));
 
-        assertTrue(configData1
-                .getPropertyNames()
-                .containsAll(ImmutableSet.of("prop1", "prop2", "prop3", "prop4", "prop5")));
+        assertTrue(configData1.getPropertyNames().containsAll(Set.of("prop1", "prop2", "prop3", "prop4", "prop5")));
         assertNull(configData1.getValues().get("prop1", String.class));
         assertNull(configData1.getValues().get("prop2", String.class));
         assertNull(configData1.getValues().get("prop3", Integer.class));
@@ -602,7 +595,7 @@ public class ConfigurationManagerImplTest {
 
         ConfigurationData configData2 = configDatas.get(1);
         assertFalse(configData1.isInherited());
-        assertEquals(ImmutableSet.of("prop1", "prop2", "prop3", "prop4"), configData2.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop2", "prop3", "prop4"), configData2.getPropertyNames());
         assertNull(configData2.getValues().get("prop1", String.class));
         assertEquals((Integer) 5, configData2.getEffectiveValues().get("prop3", 0));
 
@@ -625,7 +618,7 @@ public class ConfigurationManagerImplTest {
                 ConfigurationOverrideProvider.class,
                 new DummyConfigurationOverrideProvider("[/content]" + CONFIG_COL_NAME + "/prop1=\"override1\""));
 
-        List<ConfigurationData> configDatas = ImmutableList.copyOf(underTest
+        List<ConfigurationData> configDatas = List.copyOf(underTest
                 .getConfigurationCollection(contextResource, CONFIG_COL_NAME)
                 .getItems());
         assertEquals(2, configDatas.size());
@@ -633,7 +626,7 @@ public class ConfigurationManagerImplTest {
         ConfigurationData configData1 = configDatas.get(0);
         assertFalse(configData1.isInherited());
         assertFalse(configData1.isOverridden());
-        assertEquals(ImmutableSet.of("prop1", "prop2", "prop3"), configData1.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop2", "prop3"), configData1.getPropertyNames());
         assertEquals("value1", configData1.getValues().get("prop1", String.class));
         assertEquals("override1", configData1.getEffectiveValues().get("prop1", String.class));
         assertEquals((Integer) 5, configData1.getEffectiveValues().get("prop3", 0));
@@ -646,7 +639,7 @@ public class ConfigurationManagerImplTest {
         ConfigurationData configData2 = configDatas.get(1);
         assertFalse(configData2.isInherited());
         assertFalse(configData2.isOverridden());
-        assertEquals(ImmutableSet.of("prop1", "prop2", "prop3", "prop4"), configData2.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop2", "prop3", "prop4"), configData2.getPropertyNames());
         assertNull(configData2.getValues().get("prop1", String.class));
         assertEquals("override1", configData2.getEffectiveValues().get("prop1", String.class));
         assertEquals((Integer) 5, configData2.getEffectiveValues().get("prop3", 0));
@@ -659,7 +652,7 @@ public class ConfigurationManagerImplTest {
 
     @Test
     public void testGetConfigurationCollection_NoConfigResources() {
-        List<ConfigurationData> configDatas = ImmutableList.copyOf(underTest
+        List<ConfigurationData> configDatas = List.copyOf(underTest
                 .getConfigurationCollection(contextResourceNoConfig, CONFIG_COL_NAME)
                 .getItems());
         assertEquals(0, configDatas.size());
@@ -670,14 +663,14 @@ public class ConfigurationManagerImplTest {
         when(configurationMetadataProvider.getConfigurationMetadata(CONFIG_COL_NAME))
                 .thenReturn(null);
 
-        List<ConfigurationData> configDatas = ImmutableList.copyOf(underTest
+        List<ConfigurationData> configDatas = List.copyOf(underTest
                 .getConfigurationCollection(contextResource, CONFIG_COL_NAME)
                 .getItems());
         assertEquals(2, configDatas.size());
 
         ConfigurationData configData1 = configDatas.get(0);
         assertFalse(configData1.isInherited());
-        assertEquals(ImmutableSet.of("prop1"), configData1.getPropertyNames());
+        assertEquals(Set.of("prop1"), configData1.getPropertyNames());
         assertEquals("value1", configData1.getValues().get("prop1", String.class));
         assertEquals((Integer) 0, configData1.getEffectiveValues().get("prop3", 0));
 
@@ -686,7 +679,7 @@ public class ConfigurationManagerImplTest {
 
         ConfigurationData configData2 = configDatas.get(1);
         assertFalse(configData2.isInherited());
-        assertEquals(ImmutableSet.of("prop4"), configData2.getPropertyNames());
+        assertEquals(Set.of("prop4"), configData2.getPropertyNames());
         assertNull(configData2.getValues().get("prop1", String.class));
         assertEquals((Integer) 0, configData2.getEffectiveValues().get("prop3", 0));
 
@@ -699,7 +692,7 @@ public class ConfigurationManagerImplTest {
         when(configurationMetadataProvider.getConfigurationMetadata(CONFIG_COL_NAME))
                 .thenReturn(null);
 
-        List<ConfigurationData> configDatas = ImmutableList.copyOf(underTest
+        List<ConfigurationData> configDatas = List.copyOf(underTest
                 .getConfigurationCollection(contextResourceNoConfig, CONFIG_COL_NAME)
                 .getItems());
         assertEquals(0, configDatas.size());
@@ -710,7 +703,7 @@ public class ConfigurationManagerImplTest {
         underTest.persistConfiguration(
                 contextResourceNoConfig,
                 CONFIG_NAME,
-                new ConfigurationPersistData(ImmutableMap.<String, Object>of("prop1", "value1")));
+                new ConfigurationPersistData(Map.<String, Object>of("prop1", "value1")));
         context.resourceResolver().commit();
 
         String configPath = getConfigPersistPath("/conf/testNoConfig/sling:configs/" + CONFIG_NAME);
@@ -723,12 +716,12 @@ public class ConfigurationManagerImplTest {
         underTest.persistConfigurationCollection(
                 contextResourceNoConfig,
                 CONFIG_COL_NAME,
-                new ConfigurationCollectionPersistData(ImmutableList.of(
-                                new ConfigurationPersistData(ImmutableMap.<String, Object>of("prop1", "value1"))
+                new ConfigurationCollectionPersistData(List.of(
+                                new ConfigurationPersistData(Map.<String, Object>of("prop1", "value1"))
                                         .collectionItemName("0"),
-                                new ConfigurationPersistData(ImmutableMap.<String, Object>of("prop2", 5))
+                                new ConfigurationPersistData(Map.<String, Object>of("prop2", 5))
                                         .collectionItemName("1")))
-                        .properties(ImmutableMap.<String, Object>of("sling:configCollectionInherit", true)));
+                        .properties(Map.<String, Object>of("sling:configCollectionInherit", true)));
         context.resourceResolver().commit();
 
         String configPath0 = getConfigCollectionItemPersistPath(
@@ -765,7 +758,7 @@ public class ConfigurationManagerImplTest {
     @Test
     public void testGetConfigurationConfigurationNames() {
         assertEquals(
-                ImmutableSortedSet.of(CONFIG_NAME, CONFIG_COL_NAME, CONFIG_NESTED_NAME),
+                new TreeSet<>(Set.of(CONFIG_NAME, CONFIG_COL_NAME, CONFIG_NESTED_NAME)),
                 underTest.getConfigurationNames());
     }
 
@@ -781,7 +774,7 @@ public class ConfigurationManagerImplTest {
         assertNotNull(configData);
 
         // root level
-        assertEquals(ImmutableSet.of("prop1", "propSub", "propSubList", "prop4"), configData.getPropertyNames());
+        assertEquals(Set.of("prop1", "propSub", "propSubList", "prop4"), configData.getPropertyNames());
         assertEquals("value1", configData.getValues().get("prop1", String.class));
         assertEquals("value1", configData.getEffectiveValues().get("prop1", String.class));
         assertTrue(configData.getValues().get("prop4", false));
@@ -876,7 +869,7 @@ public class ConfigurationManagerImplTest {
         ConfigurationData configData = underTest.getConfiguration(contextResourceNoConfig, CONFIG_NESTED_NAME);
         assertNotNull(configData);
 
-        assertEquals(ImmutableSet.of("prop1", "propSub", "propSubList"), configData.getPropertyNames());
+        assertEquals(Set.of("prop1", "propSub", "propSubList"), configData.getPropertyNames());
         assertNull(configData.getValues().get("prop1", String.class));
         assertEquals("defValue", configData.getEffectiveValues().get("prop1", String.class));
 
@@ -929,7 +922,7 @@ public class ConfigurationManagerImplTest {
     @Test
     public void testGetConfigurationNames() {
         assertEquals(
-                ImmutableSortedSet.of(CONFIG_NAME, CONFIG_COL_NAME, CONFIG_NESTED_NAME),
+                new TreeSet<>(Set.of(CONFIG_NAME, CONFIG_COL_NAME, CONFIG_NESTED_NAME)),
                 underTest.getConfigurationNames());
     }
 
@@ -1038,7 +1031,7 @@ public class ConfigurationManagerImplTest {
         underTest.persistConfiguration(
                 contextResourceLevel2,
                 getConfigResolvePath(getConfigResolvePath(CONFIG_NESTED_NAME) + "/propSub") + "/propSubLevel2",
-                new ConfigurationPersistData(ImmutableMap.<String, Object>of("prop1", "value1_persist")));
+                new ConfigurationPersistData(Map.<String, Object>of("prop1", "value1_persist")));
         context.resourceResolver().commit();
 
         ConfigurationData configData = underTest.getConfiguration(contextResourceLevel2, CONFIG_NESTED_NAME);
@@ -1056,12 +1049,12 @@ public class ConfigurationManagerImplTest {
         underTest.persistConfigurationCollection(
                 contextResourceLevel2,
                 getConfigResolvePath(CONFIG_NESTED_NAME) + "/propSubList",
-                new ConfigurationCollectionPersistData(ImmutableList.of(
-                        new ConfigurationPersistData(ImmutableMap.<String, Object>of("prop1", "value1_persist"))
+                new ConfigurationCollectionPersistData(List.of(
+                        new ConfigurationPersistData(Map.<String, Object>of("prop1", "value1_persist"))
                                 .collectionItemName("item1"),
-                        new ConfigurationPersistData(ImmutableMap.<String, Object>of("prop1", "value2_persist"))
+                        new ConfigurationPersistData(Map.<String, Object>of("prop1", "value2_persist"))
                                 .collectionItemName("item2"),
-                        new ConfigurationPersistData(ImmutableMap.<String, Object>of("prop1", "value3_persist"))
+                        new ConfigurationPersistData(Map.<String, Object>of("prop1", "value3_persist"))
                                 .collectionItemName("item3"))));
         context.resourceResolver().commit();
 
@@ -1079,7 +1072,7 @@ public class ConfigurationManagerImplTest {
         underTest.deleteConfiguration(contextResource, CONFIG_NAME);
 
         ConfigurationData configData = underTest.getConfiguration(contextResource, CONFIG_NAME);
-        assertEquals(ImmutableSet.of("prop1", "prop2", "prop3"), configData.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop2", "prop3"), configData.getPropertyNames());
 
         assertNull(configData.getValues().get("prop1", String.class));
         assertEquals("defValue", configData.getEffectiveValues().get("prop1", String.class));
@@ -1095,7 +1088,7 @@ public class ConfigurationManagerImplTest {
 
         ConfigurationCollectionData configCollectionData =
                 underTest.getConfigurationCollection(contextResource, CONFIG_COL_NAME);
-        List<ConfigurationData> configDatas = ImmutableList.copyOf(configCollectionData.getItems());
+        List<ConfigurationData> configDatas = List.copyOf(configCollectionData.getItems());
         assertEquals(0, configDatas.size());
     }
 }

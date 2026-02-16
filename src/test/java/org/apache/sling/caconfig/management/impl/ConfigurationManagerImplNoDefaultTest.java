@@ -19,9 +19,8 @@
 package org.apache.sling.caconfig.management.impl;
 
 import java.util.List;
+import java.util.Set;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.caconfig.impl.ConfigurationTestUtils;
 import org.apache.sling.caconfig.management.ConfigurationData;
@@ -76,7 +75,7 @@ public class ConfigurationManagerImplNoDefaultTest {
 
         configMetadata = new ConfigurationMetadata(
                 CONFIG_NAME,
-                ImmutableList.<PropertyMetadata<?>>of(
+                List.<PropertyMetadata<?>>of(
                         new PropertyMetadata<>("prop1", "defValue"),
                         new PropertyMetadata<>("prop2", String.class),
                         new PropertyMetadata<>("prop3", 5)),
@@ -86,7 +85,7 @@ public class ConfigurationManagerImplNoDefaultTest {
 
         configMetadata = new ConfigurationMetadata(
                 CONFIG_COL_NAME,
-                ImmutableList.<PropertyMetadata<?>>of(
+                List.<PropertyMetadata<?>>of(
                         new PropertyMetadata<>("prop1", "defValue"),
                         new PropertyMetadata<>("prop2", String.class),
                         new PropertyMetadata<>("prop3", 5)),
@@ -104,7 +103,7 @@ public class ConfigurationManagerImplNoDefaultTest {
         ConfigurationData configData = underTest.getConfiguration(contextResourceNoConfig, CONFIG_NAME);
         assertNotNull(configData);
 
-        assertEquals(ImmutableSet.of("prop1", "prop2", "prop3"), configData.getPropertyNames());
+        assertEquals(Set.of("prop1", "prop2", "prop3"), configData.getPropertyNames());
         assertNull(configData.getValues().get("prop1", String.class));
         assertEquals((Integer) 5, configData.getEffectiveValues().get("prop3", 0));
 
@@ -123,7 +122,7 @@ public class ConfigurationManagerImplNoDefaultTest {
 
     @Test
     public void testGetCollection_NoConfigResources() {
-        List<ConfigurationData> configDatas = ImmutableList.copyOf(underTest
+        List<ConfigurationData> configDatas = List.copyOf(underTest
                 .getConfigurationCollection(contextResourceNoConfig, CONFIG_COL_NAME)
                 .getItems());
         assertEquals(0, configDatas.size());
@@ -134,7 +133,7 @@ public class ConfigurationManagerImplNoDefaultTest {
         when(configurationMetadataProvider.getConfigurationMetadata(CONFIG_COL_NAME))
                 .thenReturn(null);
 
-        List<ConfigurationData> configDatas = ImmutableList.copyOf(underTest
+        List<ConfigurationData> configDatas = List.copyOf(underTest
                 .getConfigurationCollection(contextResourceNoConfig, CONFIG_COL_NAME)
                 .getItems());
         assertEquals(0, configDatas.size());

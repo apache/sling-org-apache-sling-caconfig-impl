@@ -24,12 +24,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.caconfig.annotation.Configuration;
 import org.apache.sling.caconfig.annotation.Property;
 import org.apache.sling.caconfig.spi.metadata.ConfigurationMetadata;
@@ -153,8 +155,8 @@ public final class AnnotationClassParser {
             public int compare(PropertyMetadata<?> o1, PropertyMetadata<?> o2) {
                 int compare = Integer.compare(o1.getOrder(), o2.getOrder());
                 if (compare == 0) {
-                    String sort1 = StringUtils.defaultString(o1.getLabel(), o1.getName());
-                    String sort2 = StringUtils.defaultString(o2.getLabel(), o2.getName());
+                    String sort1 = Objects.toString(o1.getLabel(), o1.getName());
+                    String sort2 = Objects.toString(o2.getLabel(), o2.getName());
                     compare = sort1.compareTo(sort2);
                 }
                 return compare;
@@ -214,7 +216,7 @@ public final class AnnotationClassParser {
     private static Map<String, String> propsArrayToMap(String[] properties) {
         Map<String, String> props = new HashMap<>();
         for (String property : properties) {
-            int index = StringUtils.indexOf(property, "=");
+            int index = Strings.CS.indexOf(property, "=");
             if (index >= 0) {
                 String key = property.substring(0, index);
                 String value = property.substring(index + 1);

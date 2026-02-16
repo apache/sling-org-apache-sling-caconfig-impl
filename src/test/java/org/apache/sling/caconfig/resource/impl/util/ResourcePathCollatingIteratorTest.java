@@ -21,7 +21,6 @@ package org.apache.sling.caconfig.resource.impl.util;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.caconfig.resource.spi.ContextResource;
@@ -51,12 +50,12 @@ public class ResourcePathCollatingIteratorTest {
                 .resource("/content/a/b/c/d");
 
         ResourceResolver rr = context.resourceResolver();
-        List<Resource> list1 = ImmutableList.of(rr.getResource("/content/a/b/c/d"), rr.getResource("/content/a"));
-        List<Resource> list2 = ImmutableList.of(
-                rr.getResource("/content/a/b/c"), rr.getResource("/content/a/b"), rr.getResource("/content/a"));
+        List<Resource> list1 = List.of(rr.getResource("/content/a/b/c/d"), rr.getResource("/content/a"));
+        List<Resource> list2 =
+                List.of(rr.getResource("/content/a/b/c"), rr.getResource("/content/a/b"), rr.getResource("/content/a"));
 
-        Iterator<Resource> result = toResourceIterator(new ResourcePathCollatingIterator(ImmutableList.of(
-                toContextResourceIterator(list1.iterator()), toContextResourceIterator(list2.iterator()))));
+        Iterator<Resource> result = toResourceIterator(new ResourcePathCollatingIterator(
+                List.of(toContextResourceIterator(list1.iterator()), toContextResourceIterator(list2.iterator()))));
         assertThat(
                 result,
                 ResourceIteratorMatchers.paths(
@@ -72,11 +71,11 @@ public class ResourcePathCollatingIteratorTest {
                 .resource("/content/a/b/c/d");
 
         ResourceResolver rr = context.resourceResolver();
-        List<ContextResource> list1 = ImmutableList.of(new ContextResource(rr.getResource("/content/a"), "/conf/z", 0));
-        List<ContextResource> list2 = ImmutableList.of(new ContextResource(rr.getResource("/content/a"), "/conf/a", 0));
+        List<ContextResource> list1 = List.of(new ContextResource(rr.getResource("/content/a"), "/conf/z", 0));
+        List<ContextResource> list2 = List.of(new ContextResource(rr.getResource("/content/a"), "/conf/a", 0));
 
         Iterator<ContextResource> result =
-                new ResourcePathCollatingIterator(ImmutableList.of(list1.iterator(), list2.iterator()));
+                new ResourcePathCollatingIterator(List.of(list1.iterator(), list2.iterator()));
         ContextResource item1 = result.next();
         ContextResource item2 = result.next();
         assertFalse(result.hasNext());
@@ -97,13 +96,11 @@ public class ResourcePathCollatingIteratorTest {
                 .resource("/content/a/b/c/d");
 
         ResourceResolver rr = context.resourceResolver();
-        List<ContextResource> list1 =
-                ImmutableList.of(new ContextResource(rr.getResource("/content/a"), "/conf/z", 500));
-        List<ContextResource> list2 =
-                ImmutableList.of(new ContextResource(rr.getResource("/content/a"), "/conf/a", 100));
+        List<ContextResource> list1 = List.of(new ContextResource(rr.getResource("/content/a"), "/conf/z", 500));
+        List<ContextResource> list2 = List.of(new ContextResource(rr.getResource("/content/a"), "/conf/a", 100));
 
         Iterator<ContextResource> result =
-                new ResourcePathCollatingIterator(ImmutableList.of(list1.iterator(), list2.iterator()));
+                new ResourcePathCollatingIterator(List.of(list1.iterator(), list2.iterator()));
         ContextResource item1 = result.next();
         ContextResource item2 = result.next();
         assertFalse(result.hasNext());

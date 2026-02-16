@@ -18,8 +18,9 @@
  */
 package org.apache.sling.caconfig.management.impl;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.sling.caconfig.management.ConfigurationManagementSettings;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
 import org.junit.Rule;
@@ -37,14 +38,13 @@ public class ConfigurationManagementSettingsImplTest {
         ConfigurationManagementSettings underTest =
                 context.registerInjectActivateService(new ConfigurationManagementSettingsImpl());
 
-        assertEquals(ImmutableSet.<String>of(), underTest.getIgnoredPropertyNames(ImmutableSet.<String>of()));
+        assertEquals(Set.<String>of(), underTest.getIgnoredPropertyNames(Set.<String>of()));
+        assertEquals(Set.<String>of(), underTest.getIgnoredPropertyNames(Set.<String>of("abc", "def")));
         assertEquals(
-                ImmutableSet.<String>of(), underTest.getIgnoredPropertyNames(ImmutableSet.<String>of("abc", "def")));
-        assertEquals(
-                ImmutableSet.<String>of("jcr:xyz", "jcr:def"),
-                underTest.getIgnoredPropertyNames(ImmutableSet.<String>of("abc", "jcr:xyz", "jcr:def")));
+                Set.<String>of("jcr:xyz", "jcr:def"),
+                underTest.getIgnoredPropertyNames(Set.<String>of("abc", "jcr:xyz", "jcr:def")));
 
-        assertEquals(ImmutableList.of("."), underTest.getConfigCollectionPropertiesResourceNames());
+        assertEquals(List.of("."), underTest.getConfigCollectionPropertiesResourceNames());
     }
 
     @Test
@@ -56,14 +56,12 @@ public class ConfigurationManagementSettingsImplTest {
                 "configCollectionPropertiesResourceNames",
                 new String[] {"a", "b"});
 
-        assertEquals(ImmutableSet.<String>of(), underTest.getIgnoredPropertyNames(ImmutableSet.<String>of()));
+        assertEquals(Set.<String>of(), underTest.getIgnoredPropertyNames(Set.<String>of()));
+        assertEquals(Set.<String>of("abc", "def"), underTest.getIgnoredPropertyNames(Set.<String>of("abc", "def")));
         assertEquals(
-                ImmutableSet.<String>of("abc", "def"),
-                underTest.getIgnoredPropertyNames(ImmutableSet.<String>of("abc", "def")));
-        assertEquals(
-                ImmutableSet.<String>of("abc", "jcr:def"),
-                underTest.getIgnoredPropertyNames(ImmutableSet.<String>of("abc", "jcr:xyz", "jcr:def")));
+                Set.<String>of("abc", "jcr:def"),
+                underTest.getIgnoredPropertyNames(Set.<String>of("abc", "jcr:xyz", "jcr:def")));
 
-        assertEquals(ImmutableList.of("a", "b"), underTest.getConfigCollectionPropertiesResourceNames());
+        assertEquals(List.of("a", "b"), underTest.getConfigCollectionPropertiesResourceNames());
     }
 }

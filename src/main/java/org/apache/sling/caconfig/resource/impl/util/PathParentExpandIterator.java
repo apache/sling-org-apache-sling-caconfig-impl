@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.api.resource.ResourceUtil;
 
 /**
@@ -57,7 +57,7 @@ public class PathParentExpandIterator implements Iterator<String> {
     private void expandPaths(String path) {
         expandedPaths.add(path);
         String parentPath = ResourceUtil.getParent(path);
-        if (parentPath != null && !StringUtils.equals(parentPath, rootPath)) {
+        if (parentPath != null && !Strings.CS.equals(parentPath, rootPath)) {
             expandPaths(parentPath);
         }
     }
