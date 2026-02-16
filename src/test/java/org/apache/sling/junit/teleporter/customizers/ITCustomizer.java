@@ -43,7 +43,6 @@ public class ITCustomizer implements TeleporterRule.Customizer {
         cst.setServerCredentials(S.getServerUsername(), S.getServerPassword());
         cst.setTestReadyTimeoutSeconds(TimeoutsProvider.getInstance().getTimeout(5));
         cst.includeDependencyPrefix("org.apache.sling.caconfig.it.testing");
-        cst.includeDependencyPrefix("org.apache.sling.resourcebuilder");
 
         // additionally check for the registration of mandatory sling models components
         try (OsgiConsoleClient osgiClient =

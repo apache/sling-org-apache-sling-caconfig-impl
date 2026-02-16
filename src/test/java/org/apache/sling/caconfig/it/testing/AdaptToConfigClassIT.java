@@ -79,7 +79,7 @@ public class AdaptToConfigClassIT {
     public void testExistingConfig() {
         resourceBuilder
                 .resource(
-                        CONFIG_PATH + "/sling:configs/org.apache.sling.caconfig.it.example.SimpleConfig",
+                        CONFIG_PATH + "/sling:configs/" + SimpleConfig.class.getName(),
                         "stringParam",
                         "value1",
                         "intParam",
