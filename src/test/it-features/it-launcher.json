@@ -1,0 +1,38 @@
+{
+    "bundles": [
+        {
+            "id": "org.apache.sling/org.apache.sling.caconfig.api/${caconfig.api.version}",
+            "start-order": 20
+        },
+        {
+            "id": "org.apache.sling/org.apache.sling.caconfig.spi/${caconfig.spi.version}",
+            "start-order": 20
+        },
+        {
+            "id": "org.apache.sling/org.apache.sling.caconfig.impl/${project.version}",
+            "start-order": 20
+        },
+        {
+            "id": "org.apache.sling/org.apache.sling.resourcebuilder/1.0.4",
+            "start-order": 20
+        },
+        {
+            "id": "org.apache.sling/org.apache.sling.caconfig.impl/${project.version}//it-testbundle",
+            "start-order": 20
+        }
+    ],
+    "configurations": {
+        "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~integration-tests": {
+            "user.mapping": [
+                "org.apache.sling.junit.core=caconfig-it"
+            ]
+        },
+        "org.apache.sling.commons.log.LogManager.factory.config~integration-tests": {
+            "org.apache.sling.commons.log.names": [
+                "org.apache.sling.caconfig"
+            ],
+            "org.apache.sling.commons.log.level": "${it.caconfig.log.level}"
+        }
+    },
+    "repoinit:TEXT|true": "@file"
+}
