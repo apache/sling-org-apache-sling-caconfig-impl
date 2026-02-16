@@ -41,8 +41,15 @@
     </scm>
 
     <properties>
-        <sling.java.version>11</sling.java.version>
         <project.build.outputTimestamp>2025-03-12T12:14:50Z</project.build.outputTimestamp>
+        <sling.java.version>11</sling.java.version>
+        <caconfig.api.version>1.2.0</caconfig.api.version>
+        <caconfig.spi.version>1.4.0</caconfig.spi.version>
+        <!-- integration tests -->
+        <sling.starter.version>14-SNAPSHOT</sling.starter.version>
+        <starter.min.bundles.count>200</starter.min.bundles.count>
+        <it.startTimeoutSeconds>60</it.startTimeoutSeconds>
+        <it.caconfig.log.level>debug</it.caconfig.log.level>
     </properties>
 
     <dependencies>
@@ -70,13 +77,13 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.caconfig.api</artifactId>
-            <version>1.2.0</version>
+            <version>${caconfig.api.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.caconfig.spi</artifactId>
-            <version>1.4.0</version>
+            <version>${caconfig.spi.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -208,6 +215,44 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Integration test dependencies -->
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.junit.core</artifactId>
+            <version>1.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.testing.rules</artifactId>
+            <version>2.0.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.testing.clients</artifactId>
+            <version>3.1.0</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.junit.teleporter</artifactId>
+            <version>1.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.8.184</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -239,5 +284,22 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!--
+          Debugging profile:
+          - Run on port 8080 (not random port)
+          - Waits for user input after tests are completed to allow inspection before shutting down the Sling instance
+          - Sets log level for Sling CAConfig to TRACE
+         -->
+        <profile>
+            <id>it-debug</id>
+            <properties>
+                <http.port>8080</http.port>
+                <feature-launcher.waitForInput>true</feature-launcher.waitForInput>
+                <it.caconfig.log.level>trace</it.caconfig.log.level>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
