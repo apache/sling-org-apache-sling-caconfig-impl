@@ -62,7 +62,7 @@ public class ConfigurationResolverConfigClassIT {
     }
 
     @Test
-    public void testNonExistingConfig() throws Exception {
+    public void testNonExistingConfig() {
         Resource resourcePage1 = resourceBuilder.resource(PAGE_PATH).getCurrentParent();
 
         ConfigurationResolver configResolver = teleporter.getService(ConfigurationResolver.class);
@@ -77,7 +77,7 @@ public class ConfigurationResolverConfigClassIT {
 
     @Test
     @SuppressWarnings("null")
-    public void testExistingConfig() throws Exception {
+    public void testExistingConfig() {
         resourceBuilder
                 .resource(
                         CONFIG_PATH + "/sling:configs/test",

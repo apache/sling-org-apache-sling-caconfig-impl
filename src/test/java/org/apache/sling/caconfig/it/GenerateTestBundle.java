@@ -88,7 +88,7 @@ public class GenerateTestBundle {
     static List<Class<?>> getAllClasses() {
         try (ScanResult scanResult = new ClassGraph()
                 .enableClassInfo()
-                .acceptPackages("org.apache.sling.models.it.testbundle")
+                .acceptPackages("org.apache.sling.caconfig.it.testbundle")
                 .scan()) {
             return scanResult.getAllClasses().stream().map(ClassInfo::loadClass).collect(Collectors.toList());
         }

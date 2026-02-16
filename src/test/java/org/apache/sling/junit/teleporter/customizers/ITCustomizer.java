@@ -30,7 +30,7 @@ import org.apache.sling.testing.serversetup.instance.SlingTestBase;
 import org.apache.sling.testing.teleporter.client.ClientSideTeleporter;
 import org.apache.sling.testing.timeouts.TimeoutsProvider;
 
-public class IT_TeleporterCustomizer implements TeleporterRule.Customizer {
+public class ITCustomizer implements TeleporterRule.Customizer {
 
     private static final SlingTestBase S = new SlingTestBase();
 
@@ -43,6 +43,7 @@ public class IT_TeleporterCustomizer implements TeleporterRule.Customizer {
         cst.setServerCredentials(S.getServerUsername(), S.getServerPassword());
         cst.setTestReadyTimeoutSeconds(TimeoutsProvider.getInstance().getTimeout(5));
         cst.includeDependencyPrefix("org.apache.sling.caconfig.it.testing");
+        cst.includeDependencyPrefix("org.apache.sling.resourcebuilder");
 
         // additionally check for the registration of mandatory sling models components
         try (OsgiConsoleClient osgiClient =

@@ -85,7 +85,7 @@ public class ConfigurationManagerIT {
     }
 
     @Test
-    public void testNonExistingConfig() throws Exception {
+    public void testNonExistingConfig() {
         ConfigurationData config = configManager.getConfiguration(resourcePage1, CONFIG_NAME);
         assertNotNull(config);
 
@@ -97,7 +97,7 @@ public class ConfigurationManagerIT {
     }
 
     @Test
-    public void testExistingConfig() throws Exception {
+    public void testExistingConfig() {
         resourceBuilder.resource(
                 CONFIG_PATH + "/sling:configs/" + CONFIG_NAME,
                 "stringParam",

@@ -63,7 +63,7 @@ public class AdaptToConfigClassIT {
 
     @Test
     @SuppressWarnings("null")
-    public void testNonExistingConfig() throws Exception {
+    public void testNonExistingConfig() {
         Resource resourcePage1 = resourceBuilder.resource(PAGE_PATH).getCurrentParent();
 
         SimpleConfig config = resourcePage1.adaptTo(ConfigurationBuilder.class).as(SimpleConfig.class);
@@ -76,7 +76,7 @@ public class AdaptToConfigClassIT {
 
     @Test
     @SuppressWarnings("null")
-    public void testExistingConfig() throws Exception {
+    public void testExistingConfig() {
         resourceBuilder
                 .resource(
                         CONFIG_PATH + "/sling:configs/org.apache.sling.caconfig.it.example.SimpleConfig",
