@@ -29,6 +29,7 @@ import java.util.TreeSet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.api.scripting.LazyBindings;
 import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.caconfig.ConfigurationBuilder;
@@ -75,6 +76,9 @@ public class ConfigurationBindingsValueProviderTest {
     @Mock(strictness = Strictness.LENIENT)
     private Bindings bindings;
 
+    @Mock(strictness = Strictness.LENIENT)
+    private LazyBindings lazyBindings;
+
     @Mock
     private ConfigurationBuilder configBuilder;
 
@@ -98,6 +102,8 @@ public class ConfigurationBindingsValueProviderTest {
 
         when(bindings.containsKey(SlingBindings.REQUEST)).thenReturn(true);
         when(bindings.get(SlingBindings.REQUEST)).thenReturn(request);
+        when(lazyBindings.containsKey(SlingBindings.REQUEST)).thenReturn(true);
+        when(lazyBindings.get(SlingBindings.REQUEST)).thenReturn(request);
         when(request.getResource()).thenReturn(resource);
 
         when(resource.adaptTo(ConfigurationBuilder.class)).thenReturn(configBuilder);
@@ -134,6 +140,25 @@ public class ConfigurationBindingsValueProviderTest {
         verify(bindings).put(eq(ConfigurationBindingsValueProvider.BINDING_VARIABLE), configMapCaptor.capture());
 
         Map<String, ValueMap> configMap = configMapCaptor.getValue();
+        assertEquals(CONFIG_NAMES, configMap.keySet());
+        assertEquals(VALUEMAP, configMap.get("name1"));
+        assertEquals(List.of(VALUEMAP), configMap.get("name.2"));
+    }
+
+    @Test
+    @SuppressWarnings("null")
+    public void testWithConfigAndLazyBindings() {
+        when(configurationBindingsResourceDetectionStrategy.detectResource(request))
+                .thenReturn(resource);
+
+        underTest = context.registerInjectActivateService(new ConfigurationBindingsValueProvider(), "enabled", true);
+        underTest.addBindings(lazyBindings);
+
+        ArgumentCaptor<LazyBindings.Supplier> lazyBindingsCaptor = ArgumentCaptor.forClass(LazyBindings.Supplier.class);
+        verify(lazyBindings).put(eq(ConfigurationBindingsValueProvider.BINDING_VARIABLE), lazyBindingsCaptor.capture());
+
+        Map<String, ValueMap> configMap =
+                (Map<String, ValueMap>) lazyBindingsCaptor.getValue().get();
         assertEquals(CONFIG_NAMES, configMap.keySet());
         assertEquals(VALUEMAP, configMap.get("name1"));
         assertEquals(List.of(VALUEMAP), configMap.get("name.2"));
