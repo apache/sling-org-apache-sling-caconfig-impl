@@ -46,7 +46,7 @@
         <caconfig.api.version>1.2.0</caconfig.api.version>
         <caconfig.spi.version>1.4.0</caconfig.spi.version>
         <!-- integration tests -->
-        <sling.starter.version>14-SNAPSHOT</sling.starter.version>
+        <sling.starter.version>14</sling.starter.version>
         <starter.min.bundles.count>200</starter.min.bundles.count>
         <it.startTimeoutSeconds>60</it.startTimeoutSeconds>
         <it.caconfig.log.level>debug</it.caconfig.log.level>
