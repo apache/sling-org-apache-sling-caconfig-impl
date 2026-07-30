@@ -21,6 +21,7 @@ package org.apache.sling.caconfig.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.sling.api.resource.Resource;
@@ -36,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.Designate;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
@@ -62,6 +64,9 @@ public class ConfigurationResolverImpl implements ConfigurationResolver, Configu
 
     @Reference
     private ConfigurationMetadataProviderMultiplexer configurationMetadataProvider;
+
+    @Reference(cardinality = ReferenceCardinality.OPTIONAL)
+    private DecryptService decryptService;
 
     @ObjectClassDefinition(
             name = "Apache Sling Context-Aware Configuration Resolver",
@@ -99,6 +104,7 @@ public class ConfigurationResolverImpl implements ConfigurationResolver, Configu
                 configurationInheritanceStrategy,
                 configurationOverrideMultiplexer,
                 configurationMetadataProvider,
+                Optional.ofNullable(decryptService),
                 configBucketNames);
     }
 

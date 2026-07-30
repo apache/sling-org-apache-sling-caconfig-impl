@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.collections4.ResettableListIterator;
@@ -63,6 +65,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     private final ConfigurationInheritanceStrategy configurationInheritanceStrategy;
     private final ConfigurationOverrideMultiplexer configurationOverrideMultiplexer;
     private final ConfigurationMetadataProvider configurationMetadataProvider;
+    private final Optional<UnaryOperator<String>> decryptOperator;
     private final Collection<String> configBucketNames;
     private final String configName;
 
@@ -76,6 +79,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
             final ConfigurationInheritanceStrategy configurationInheritanceStrategy,
             final ConfigurationOverrideMultiplexer configurationOverrideMultiplexer,
             final ConfigurationMetadataProvider configurationMetadataProvider,
+            final Optional<UnaryOperator<String>> decryptOperator,
             final Collection<String> configBucketNames) {
         this(
                 resource,
@@ -85,6 +89,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
                 configurationInheritanceStrategy,
                 configurationOverrideMultiplexer,
                 configurationMetadataProvider,
+                decryptOperator,
                 configBucketNames,
                 null);
     }
@@ -97,6 +102,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
             final ConfigurationInheritanceStrategy configurationInheritanceStrategy,
             final ConfigurationOverrideMultiplexer configurationOverrideMultiplexer,
             final ConfigurationMetadataProvider configurationMetadataProvider,
+            final Optional<UnaryOperator<String>> decryptOperator,
             final Collection<String> configBucketNames,
             final String configName) {
         this.contentResource = resource;
@@ -106,6 +112,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
         this.configurationInheritanceStrategy = configurationInheritanceStrategy;
         this.configurationOverrideMultiplexer = configurationOverrideMultiplexer;
         this.configurationMetadataProvider = configurationMetadataProvider;
+        this.decryptOperator = decryptOperator;
         this.configBucketNames = configBucketNames;
         this.configName = configName;
     }
@@ -121,6 +128,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
                 configurationInheritanceStrategy,
                 configurationOverrideMultiplexer,
                 configurationMetadataProvider,
+                decryptOperator,
                 configBucketNames,
                 configName);
     }
@@ -254,16 +262,16 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     }
 
     /**
-     * Apply default values from configuration metadata (where no real data is present).
+     * Apply transformations on the underlying resource, e.g. to add default values from configuration metadata (where no real data is present) or to decrypt encrypted values.
      * @param resource Resource
      * @param configName Configuration name
-     * @return null if no default values found, or a wrapped resource with added default properties.
+     * @return the resource with transformed properties.
      */
-    private Resource applyDefaultValues(Resource resource, String configName) {
+    private Resource applyTransformations(Resource resource, String configName) {
         if (resource == null) {
             return null;
         }
-        Map<String, Object> updatedMap = applyDefaultValues(resource.getValueMap(), configName);
+        Map<String, Object> updatedMap = applyPropertyMetadata(resource.getValueMap(), configName);
         if (updatedMap == null) {
             return resource;
         }
@@ -271,12 +279,12 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
     }
 
     /**
-     * Apply default values from configuration metadata (where no real data is present).
+     * Apply default values from configuration metadata (where no real data is present) and decrypt encrypted values.
      * @param props Properties
      * @param configName Configuration name
-     * @return null if no default values found, or a new map with added default properties.
+     * @return null if no transformations applied, or a new map with transformed properties.
      */
-    private Map<String, Object> applyDefaultValues(Map<String, Object> props, String configName) {
+    private Map<String, Object> applyPropertyMetadata(Map<String, Object> props, String configName) {
         ConfigurationMetadata metadata = configurationMetadataProvider.getConfigurationMetadata(configName);
         if (metadata == null) {
             // probably a configuration list - remove item name from end
@@ -288,17 +296,29 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
                 return null;
             }
         }
-        Map<String, Object> updatedMap = new HashMap<>();
+        Map<String, Object> updatedMap = new HashMap<>(props);
+        boolean isTransformed = false;
         for (PropertyMetadata<?> propertyMetadata :
                 metadata.getPropertyMetadata().values()) {
-            if (propertyMetadata.getDefaultValue() != null) {
+            if (propertyMetadata.getDefaultValue() != null && !props.containsKey(propertyMetadata.getName())) {
                 updatedMap.put(propertyMetadata.getName(), propertyMetadata.getDefaultValue());
+                isTransformed = true;
+            }
+            if (propertyMetadata.isEncrypted() && props.containsKey(propertyMetadata.getName())) {
+                Object value = props.get(propertyMetadata.getName());
+                if (value instanceof String) {
+                    String decryptedValue = decryptOperator
+                            .map(operator -> operator.apply((String) value))
+                            .orElseThrow(() -> new IllegalStateException(
+                                    "CryptoService not available to decrypt property " + propertyMetadata.getName()));
+                    updatedMap.put(propertyMetadata.getName(), decryptedValue);
+                    isTransformed = true;
+                }
             }
         }
-        if (updatedMap.isEmpty()) {
+        if (!isTransformed) {
             return null;
         }
-        updatedMap.putAll(props);
         return updatedMap;
     }
 
@@ -397,7 +417,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
         @Override
         public ValueMap convert(Resource resource, Class<ValueMap> clazz, String configName, boolean isCollection) {
             ValueMap props = ResourceUtil.getValueMap(resource);
-            Map<String, Object> updatedMap = applyDefaultValues(props, configName);
+            Map<String, Object> updatedMap = applyPropertyMetadata(props, configName);
             if (updatedMap != null) {
                 return new ValueMapDecorator(updatedMap);
             } else {
@@ -439,7 +459,7 @@ class ConfigurationBuilderImpl implements ConfigurationBuilder {
             if (resource == null || clazz == ConfigurationBuilder.class) {
                 return null;
             }
-            return applyDefaultValues(resource, configName).adaptTo(clazz);
+            return applyTransformations(resource, configName).adaptTo(clazz);
         }
     }
 
