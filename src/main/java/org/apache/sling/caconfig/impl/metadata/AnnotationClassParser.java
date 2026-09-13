@@ -196,7 +196,8 @@ public final class AnnotationClassParser {
                     .label(emptyToNull(propertyAnnotation.label()))
                     .description(emptyToNull(propertyAnnotation.description()))
                     .properties(propsArrayToMap(propertyAnnotation.property()))
-                    .order(propertyAnnotation.order());
+                    .order(propertyAnnotation.order())
+                    .encrypted(propertyAnnotation.encrypted());
         } else {
             Map<String, String> emptyMap = Collections.emptyMap();
             propertyMetadata.properties(emptyMap);
